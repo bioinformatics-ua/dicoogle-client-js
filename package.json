@@ -8,7 +8,7 @@
   "keywords": [
     "dicoogle"
   ],
-  "version": "0.1.3",
+  "version": "1.0.0",
   "main": "./node/dicoogle-client",
   "files": [
     "dicoogle-client.js",
@@ -18,7 +18,9 @@
     "Gruntfile.js",
     "node/dicoogle-client.js",
     "browser/build/dicoogle-client.js",
-    "browser/build/dicoogle-client.min.js"
+    "browser/build/dicoogle-client.min.js",
+    "servicerequest-browser.js",
+    "servicerequest-node.js"
   ],
   "license": "GPL-3.0+",
   "devDependencies": {
