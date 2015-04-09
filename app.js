@@ -29,9 +29,8 @@ console.log("Querying:", query);
 var dicoogleClient = require("./node/dicoogle-client");
 
 var Dicoogle = dicoogleClient(server);
-var queryFn = keyword ? Dicoogle.queryAdvanced : Dicoogle.queryFreeText;
-queryFn(query, 
-  function cb(error, result) {
+Dicoogle.search(query, { keyword: keyword }, 
+  function (error, result) {
     if (error) { console.log(error); }
     else console.log(JSON.stringify(result));
   });

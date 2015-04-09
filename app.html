@@ -17,7 +17,7 @@ span {
     var res_span = document.getElementById('res');
     res_span.innerHTML = "Querying ...";
 
-    Dicoogle.queryFreeText(query,
+    Dicoogle.search(query,
       function cb(error, result) {
     if (error) { console.log(error);
        res_span.innerHTML = "An error occurred: \n"

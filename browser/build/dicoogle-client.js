@@ -25,24 +25,37 @@ var dicoogle=function dicoogle_module(){
 // private variables of the module
 var url_="http://localhost:8080";
 // module
-var m={};var EndPoints={SEARCH:"search",PROVIDERS:"providers"};m.Endpoints=EndPoints;/** Perform a raw request.
-   * @param service the URI endpoint of the service
-   * @param qs the query string of the request
-   * @param callback (error, result)
-   */
-m.request=function dicoogle_queryFreeText(service,qs,callback){service_request("GET",service,qs,function(err,data){callback(err,data?data:null)})};/** Perform a free text query.
+var m={};var EndPoints={SEARCH:"search",PROVIDERS:"providers",DUMP:"dump"};m.Endpoints=EndPoints;/** search(query[, options], callback)
+   * Perform a text query.
    * @param query text query
+   * @param options a hash of options (none are required):
+   *   keyword [ boolean ] : whether the query is keyword-based, false by default
+   *   provider [ string[] ] : an array of query provider names, or a string of a provider, defaults to the server's default query provider
    * @param callback (error, result)
    */
-m.queryFreeText=function dicoogle_queryFreeText(query,callback){service_request("GET",EndPoints.SEARCH,{keyword:false,query:query},function(err,data){callback(err,data?data.results:null)})};/** Perform an advanced query.
-   * @param query text query
+m.search=function(query,options,callback){if(!options){options={}}else if(!callback&&typeof options==="function"){callback=options;options={}}service_request("GET",EndPoints.SEARCH,{query:query,keyword:options.keyword===true,providers:options.providers},function(err,data){callback(err,data?data.results:null)})};/** dump(uid, callback)
+   * Retrieve an image's meta-data (perform an information dump)
+   * @param uid the SOP instance UID
    * @param callback (error, result)
    */
-m.queryAdvanced=function dicoogle_queryAdvanced(query,callback){service_request("GET",EndPoints.SEARCH,{keyword:true,query:query},function(err,data){callback(err,data?data.results:null)})};
+m.dump=function(uid,callback){service_request("GET",EndPoints.DUMP,{uid:uid},function(err,data){callback(err,data?data.results:null)})};/** getProviders([type, ]callback)
+   * Retrieve a list of provider plugins
+   * @param type the type of provider ("query", "index", ...) - defaults to "query"
+   * @param callback (error, result)
+   */
+m.getProviders=function(type,callback){var options={type:typeof type==="string"?type:"query"};service_request("GET",EndPoints.PROVIDERS,options,function(err,data){callback(err,data?data:null)})};/** getQueryProviders(callback)
+   * Retrieve a list of query provider plugins
+   * @param callback (error, result)
+   */
+m.getQueryProviders=function(callback){m.getProviders("query",callback)};/** getIndexProviders(callback)
+   * Retrieve a list of index provider plugins
+   * @param callback (error, result)
+   */
+m.getQueryProviders=function(callback){m.getProviders("index",callback)};
 //---------------------private methods--------------------------
 function isArray(it){var ostring=Object.prototype.toString;return ostring.call(it)==="[object Array]"}function parseUrl(uri,qs){
 // create full query string
-var end_url=url_;if(isArray(qs[uri])){end_url+=uri.join("/")}else{end_url+=uri}var qstring;if(!qs){qstring=""}if(typeof qs==="string"){qstring="?"+qs}else{var qparams=[];for(var pname in qs){if(isArray(qs[pname])){for(var j=0;j<qs[pname].length;j++){qparams.push(pname+"="+encodeURIComponent(qs[pname][j]))}}else if(qs[pname]){qparams.push(pname+"="+encodeURIComponent(qs[pname]))}else{qparams.push(pname)}}qstring="?"+qparams.join("&")}return end_url+qstring}/**
+var end_url=url_;if(isArray(qs[uri])){end_url+=uri.join("/")}else{end_url+=uri}var qstring;if(!qs){qstring=""}if(typeof qs==="string"){qstring="?"+qs}else{var qparams=[];for(var pname in qs){if(isArray(qs[pname])){for(var j=0;j<qs[pname].length;j++){qparams.push(pname+"="+encodeURIComponent(qs[pname][j]))}}else if(qs[pname]){qparams.push(pname+"="+encodeURIComponent(qs[pname]))}else if(qs[name]===null){qparams.push(pname)}}qstring="?"+qparams.join("&")}return end_url+qstring}/**
    * send a REST request to the service
    *
    * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')

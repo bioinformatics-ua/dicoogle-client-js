@@ -13,7 +13,8 @@ var dicoogle = (function dicoogle_module() {
 
   var EndPoints = {
     SEARCH: "search",
-    PROVIDERS: "providers"
+    PROVIDERS: "providers",
+    DUMP: "dump"
 //    IMAGESEARCH: "imageSearch",
 //    DIC2PNG: "dic2png",
 //    DICTAGS: "dictags",
@@ -21,7 +22,6 @@ var dicoogle = (function dicoogle_module() {
 //    INDEX: "indexer",
 //    DIM: "dim",
 //    FILE: "file",
-//    DUMP: "dump",
 //    TAGS: "tags",
 //    IMAGE: "image",
 //    ENUMFIELD: "enumField",
@@ -30,40 +30,70 @@ var dicoogle = (function dicoogle_module() {
   };
   
   m.Endpoints = EndPoints;
-
-  /** Perform a raw request.
-   * @param service the URI endpoint of the service
-   * @param qs the query string of the request
-   * @param callback (error, result)
-   */
-  m.request = function dicoogle_queryFreeText(service, qs, callback) {
-      service_request('GET', service, qs, function(err, data) {
-        callback(err, data ? data : null);
-      });
-  };
   
-  /** Perform a free text query.
+  /** search(query[, options], callback)
+   * Perform a text query.
    * @param query text query
+   * @param options a hash of options (none are required):
+   *   keyword [ boolean ] : whether the query is keyword-based, false by default
+   *   provider [ string[] ] : an array of query provider names, or a string of a provider, defaults to the server's default query provider
    * @param callback (error, result)
    */
-  m.queryFreeText = function dicoogle_queryFreeText(query, callback) {
+  m.search = function (query, options, callback) {
+      if (!options) {
+        options = {};
+      } else if (!callback && typeof options === 'function') {
+        callback = options;
+        options = {};
+      }
       service_request('GET', EndPoints.SEARCH, {
-        keyword: false, query: query
+        query: query,
+        keyword: options.keyword===true,
+        providers: options.providers
         }, function(err, data) {
           callback(err, data ? data.results : null);
       });
   };
   
-  /** Perform an advanced query.
-   * @param query text query
+  /** dump(uid, callback)
+   * Retrieve an image's meta-data (perform an information dump)
+   * @param uid the SOP instance UID
    * @param callback (error, result)
    */
-  m.queryAdvanced = function dicoogle_queryAdvanced(query, callback) {
-    service_request('GET', EndPoints.SEARCH, {
-      keyword: true,
-      query: query}, function(err, data) {
+  m.dump = function (uid, callback) {
+    service_request('GET', EndPoints.DUMP, {
+        uid : uid
+      }, function(err, data) {
         callback(err, data ? data.results : null);
     });
+  };
+  
+  /** getProviders([type, ]callback)
+   * Retrieve a list of provider plugins
+   * @param type the type of provider ("query", "index", ...) - defaults to "query"
+   * @param callback (error, result)
+   */
+  m.getProviders = function(type, callback) {
+    var options = { type : typeof type === 'string' ? type : 'query' }; 
+    service_request('GET', EndPoints.PROVIDERS, options, function(err, data) {
+        callback(err, data ? data : null);
+    });
+  };
+
+  /** getQueryProviders(callback)
+   * Retrieve a list of query provider plugins
+   * @param callback (error, result)
+   */
+  m.getQueryProviders = function(callback) {
+    m.getProviders('query', callback);
+  };
+
+  /** getIndexProviders(callback)
+   * Retrieve a list of index provider plugins
+   * @param callback (error, result)
+   */
+  m.getQueryProviders = function(callback) {
+    m.getProviders('index', callback);
   };
 
 //---------------------private methods--------------------------
@@ -96,7 +126,7 @@ var dicoogle = (function dicoogle_module() {
           }
         } else if (qs[pname]) {
           qparams.push(pname + '=' + encodeURIComponent(qs[pname]));
-        } else {
+        } else if (qs[name] === null) {
           qparams.push(pname);
         }
       }
