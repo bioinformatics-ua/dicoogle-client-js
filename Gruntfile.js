@@ -1,51 +1,33 @@
 module.exports = function(grunt) {
 
-  var globals = {
-    "console": false,
-    "define": false,
-    "module": false,
-    "exports": true,
-    "XMLHttpRequest": false,
-    "XDomainRequest": false
-  };
-
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    replace: {
+    eslint: {
+      gruntfile: ['Gruntfile.js'],
       browser: {
-        src: ['<%= pkg.name %>.js'],      // source files array (supports minimatch)
-        dest: 'browser/<%= pkg.name %>.js',  // destination directory or file
-        replacements: [{
-          from: /var\s+service_request\s*;?\s*(\/\/.*)?/,  // regex replacement
-          to: '<%= grunt.file.read("servicerequest-browser.js") %>'
-        }]
+        src: ['dicoogle-client.js', 'servicerequest-browser.js'],
+        options: {
+          configFile: '.eslintrc.browser'
+        }
       },
       node: {
-        src: ['<%= pkg.name %>.js'],      // source files array (supports minimatch)
-        dest: 'node/<%= pkg.name %>.js',  // destination directory or file
-        replacements: [{
-          from: /var\s+service_request\s*;?\s*(\/\/.*)?/,  // regex replacement
-          to: '<%= grunt.file.read("servicerequest-node.js") %>'
-        }]
-      }
-    },
-    jshint: {
-      all: ['Gruntfile.js', '<%= pkg.name %>.js', 'browser/<%= pkg.name %>.js', 'node/<%= pkg.name %>.js'],
-      options: {
-        globals: globals
+        src: ['dicoogle-client.js', 'dicoogle-query-cli.js', 'servicerequest.js'],
+        options: {
+          configFile: '.eslintrc.node'
+        }
       }
     },
     browserify: {
       standalone: {
-        src: [ './browser/<%= pkg.name %>.js' ],
-        dest: './browser/build/<%= pkg.name %>.js',
+        src: [ './<%= pkg.name %>.js' ],
+        dest: './build/<%= pkg.name %>.js',
         options: {
           browserifyOptions: {
-            standalone: '<%= pkg.name %>'
+            standalone: 'DicoogleClient'
           }
         }
-      },
+      }
     },
     uglify: {
       options: {
@@ -57,33 +39,21 @@ module.exports = function(grunt) {
           preserveComments: false,
           mangle: true
         },
-        src: './browser/build/<%= pkg.name %>.js',
-        dest: './browser/build/<%= pkg.name %>.min.js'
-      },
-      pretty: {
-        options: {
-          compress: false,
-          mangle: false,
-          preserveComments: true,
-          sourceMap: true
-        },
-        src: 'browser/build/<%= pkg.name %>.js',
-        dest: 'browser/build/<%= pkg.name %>.js'
+        src: './build/<%= pkg.name %>.js',
+        dest: './dist/<%= pkg.name %>.min.js'
       }
     }
   });
 
   // Load plugin tasks.
-  grunt.loadNpmTasks('grunt-text-replace');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-eslint');
   
   // Default task(s).
   grunt.registerTask('default', [
-    'replace',
-    'jshint',
+    'eslint',
     'browserify',
-    'uglify:minimize','uglify:pretty']);
+    'uglify:minimize']);
 
 };

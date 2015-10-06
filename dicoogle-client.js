@@ -1,23 +1,23 @@
 /**
  * Dicoogle Service Wrapper
  */
+var serviceRequest = require('./servicerequest');
 
 /** @namespace */
-var dicoogle = (function dicoogle_module() {
+var dicoogle = (function DicoogleModule() {
 
   // private variables of the module
-  var url_ = "http://localhost:8080";
+  var url_ = '';
   
   // module
-  var m =  {};
+  var m = {};
 
   var EndPoints = {
     SEARCH: "search",
     PROVIDERS: "providers",
-    DUMP: "dump"
-//    IMAGESEARCH: "imageSearch",
-//    DIC2PNG: "dic2png",
-//    DICTAGS: "dictags",
+    DUMP: "dump",
+    DIC2PNG: "dic2png",
+    DICTAGS: "dictags"
 //    PLUGINS: "plugin",
 //    INDEX: "indexer",
 //    DIM: "dim",
@@ -36,7 +36,7 @@ var dicoogle = (function dicoogle_module() {
    * @param query text query
    * @param options a hash of options (none are required):
    *   keyword [ boolean ] : whether the query is keyword-based, false by default
-   *   provider [ string[] ] : an array of query provider names, or a string of a provider, defaults to the server's default query provider
+   *   provider [ string[] ] : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
    * @param callback (error, result)
    */
   m.search = function (query, options, callback) {
@@ -46,12 +46,13 @@ var dicoogle = (function dicoogle_module() {
         callback = options;
         options = {};
       }
-      service_request('GET', EndPoints.SEARCH, {
+      var prv = options.provider || options.providers;
+      serviceRequest('GET', [url_, EndPoints.SEARCH], {
         query: query,
-        keyword: options.keyword===true,
-        providers: options.providers
+        keyword: options.keyword === true,
+        provider: prv
         }, function(err, data) {
-          callback(err, data ? data.results : null);
+          callback(err, data ? (data.results || []) : null);
       });
   };
   
@@ -61,8 +62,8 @@ var dicoogle = (function dicoogle_module() {
    * @param callback (error, result)
    */
   m.dump = function (uid, callback) {
-    service_request('GET', EndPoints.DUMP, {
-        uid : uid
+    serviceRequest('GET', [url_, EndPoints.DUMP], {
+        uid: uid
       }, function(err, data) {
         callback(err, data ? data.results : null);
     });
@@ -74,9 +75,9 @@ var dicoogle = (function dicoogle_module() {
    * @param callback (error, result)
    */
   m.getProviders = function(type, callback) {
-    var options = { type : typeof type === 'string' ? type : 'query' }; 
-    service_request('GET', EndPoints.PROVIDERS, options, function(err, data) {
-        callback(err, data ? data : null);
+    var options = { type: typeof type === 'string' ? type : 'query' }; 
+    serviceRequest('GET', [url_, EndPoints.PROVIDERS], options, function(err, data) {
+        callback(err, data || null);
     });
   };
 
@@ -92,72 +93,25 @@ var dicoogle = (function dicoogle_module() {
    * Retrieve a list of index provider plugins
    * @param callback (error, result)
    */
-  m.getQueryProviders = function(callback) {
+  m.getIndexProviders = function(callback) {
     m.getProviders('index', callback);
   };
 
-//---------------------private methods--------------------------
-
-  function isArray(it) {
-    var ostring = Object.prototype.toString;
-    return ostring.call(it) === '[object Array]';
-  }
-  
-  function parseUrl(uri, qs) {
-    // create full query string
-    var end_url = url_;
-    if (isArray(qs[uri])) {
-      end_url += uri.join('/');
-    } else {
-      end_url += uri;
-    }
-    
-    var qstring;
-    if (!qs) {
-      qstring = '';
-    } if (typeof qs === 'string') {
-      qstring = '?' + qs;
-    } else {
-      var qparams = [];
-      for (var pname in qs) {
-        if (isArray(qs[pname])) {
-          for (var j = 0 ; j < qs[pname].length ; j++) {
-            qparams.push(pname + '=' + encodeURIComponent(qs[pname][j]));
-          }
-        } else if (qs[pname]) {
-          qparams.push(pname + '=' + encodeURIComponent(qs[pname]));
-        } else if (qs[name] === null) {
-          qparams.push(pname);
-        }
-      }
-      qstring = '?' + qparams.join('&');
-    }
-    return end_url + qstring;
-  }
-
   /**
-   * send a REST request to the service
-   *
-   * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
-   * @param {string} uri the request URI
-   * @param {string|hash} qs the query string parameters
-   * @param {Function(error,outcome)} callback
-   */
-  var service_request; // ACTIVE PLACEHOLDER
-  
-  /**
-   * Initialize a new Dicoogle access object, which can be used multiple times.
+   * Initialize the Dicoogle access object, which can be used multiple times.
    *
    * @param {String} url the controller service's base url
+   * @param {boolean} [secure = false] whether to use HTTPS instead of HTTP
    * @return a dicoogle service access object
    */
-  return function(url) {
+  return function(url, secure) {
 
-    url_ = url || "http://localhost:8080/";
-    if (url_[url_.length-1] !== '/')
-      url_ += '/';
+    url_ = url || '';
+    if (url_[url_.length-1] === '/') {
+      url_ = url_.slice(-1);
+    }
     if (url_.indexOf('://') === -1) {
-      url_ = 'http://' + url_;
+      url_ = (secure ? 'https://' : 'http://') + url_;
     }
     
     return m;

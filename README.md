@@ -1,29 +1,34 @@
 # dicoogle-client
 
-This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source P2P PACS, for use in JavaScript applications. Both browser JavaScript and Node.js are supported.
+This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
+This library is compatible with browser-based JavaScript and Node.js. A CLI application for searching medical images in Dicoogle is also included (`dicoogle-query`).
 
-## How to use
+## Using the CLI client
 
-In Node.js, install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
+Install this package globally (`npm install -g dicoogle-client`), then run `dicoogle-query --help` for usage instructions.
+
+## Using the JavaScript API
+
+In Node.js and Browserify, install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
 
 ```JavaScript
-var dicoogleClient = require("dicoogle-client");
+var DicoogleClient = require("dicoogle-client");
 ```
 
-In a browser, include the "dicoogle-client.js" file in the browser/build folder as a script. The module also supports AMD.
+When not using Browserify, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient`.
 
 ```HTML
-<script src='./dicoogle-client.js'></script>
+<script src='./dist/dicoogle-client.js'></script>
 ```
 
-Afterwards, invoke the module to obtain an access object. The object may be used multiple times.
+Afterwards, invoke the `DicoogleClient` module with the Dicoogle server's endpoint to obtain an access object. The object may then be used multiple times.
 
 ```JavaScript
-var Dicoogle = dicoogleClient("localhost:8080");
+var Dicoogle = DicoogleClient("localhost:8080");
 
 ...
 
-Dicoogle.queryFreeText("(PatientName:Pinho^Eduardo)", function(error, result) {
+Dicoogle.search("(PatientName:Pinho^Eduardo)", function(error, result) {
   if (error) {
     console.log(error);
     return;
@@ -34,12 +39,12 @@ Dicoogle.queryFreeText("(PatientName:Pinho^Eduardo)", function(error, result) {
 
 The repository includes two examples of dicoogle-client for simple querying:
 
- - "app.js" is a stand-alone Node.js application that outputs the result to the standard output.
- - "app.html" is a browser application that prints the result to the web page.
+ - "dicoogle-query-cli.js" is a complete stand-alone Node.js application for querying Dicoogle. This is the source code of the `dicoogle-query` application.
+ - "app.html" is a web page demonstrating simple querying.
 
 ## Further Notice
 
-This library is using the latest Dicoogle web service API, which is not fully stable.  This client wrapper will be developed as the API matures.
+This library is compatible with versions 2.0.X of Dicoogle. This client wrapper can be updated as new services emerge.
 
 ## License
 

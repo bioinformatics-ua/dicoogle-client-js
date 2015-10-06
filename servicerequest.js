@@ -1,11 +1,13 @@
 
+var URL = require('url');
+
 function makeUrl(uri, qs) {
   // create full query string
-  var end_url = '';
+  var end_url;
   if (Array.isArray(uri)) {
-    end_url += uri.join('/');
+    end_url = uri.join('/');
   } else {
-    end_url += uri;
+    end_url = uri;
   }
   
   var qstring;
@@ -22,7 +24,7 @@ function makeUrl(uri, qs) {
         }
       } else if (qs[pname]) {
         qparams.push(pname + '=' + encodeURIComponent(qs[pname]));
-      } else if (qs[name] === null) {
+      } else if (qs[pname] === null) {
         qparams.push(pname);
       }
     }
@@ -35,35 +37,46 @@ function makeUrl(uri, qs) {
   * send a REST request to the service
   *
   * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
-  * @param {string} uri the request URI
+  * @param {string|string[]} uri the request URI as a string or array of URI resources
   * @param {string|object} qs the query string parameters
   * @param {function(error,outcome)} callback
   */
 module.exports = function service_request(method, uri, qs, callback) {
   var end_url = makeUrl(uri, qs);
-  // This XDomainRequest thing is for IE support (lulz)
-  var req = (typeof XDomainRequest !== 'undefined') ? new XDomainRequest() : new XMLHttpRequest();
-  req.onreadystatechange = function() {
-    if (req.readyState === 4) {
-      if (req.status !== 200) {
-        callback({code: "SERVER-"+req.status, message: req.statusText}, null);
-        return;
-      }
-      var type = req.getResponseHeader('Content-Type');
+  var options = URL.parse(end_url);
+  options.method = method;
+  var req = require('http').request(options, function(res) {
+    if (res.statusCode !== 200) {
+      callback({code: 'SERVER-' + res.statusCode,
+                message: res.statusMessage}, null);
+      req.abort();
+      return;
+    }
+    // accumulate chunks and convert to JSON in the end.
+    // raw usage of http module, no external libraries.
+    res.setEncoding('utf8');
+    var acc_data = '';
+    res.on('data', function(chunk) {
+      acc_data += chunk;
+    });
+    res.on('end', function() {
+      var type = res.headers['content-type'];
       var mime = type;
       if (mime.indexOf(";") !== -1) {
         mime = mime.split(";")[0];
       }
       var result;
       if (mime === 'application/json') {
-        result = JSON.parse(req.responseText);
+        result = JSON.parse(acc_data);
         callback(null, result);
       } else {
-        result = { type: type, text: req.responseText };
+        result = {type: type, text: acc_data};
         callback(null, result);
       }
-    }
-  };
-  req.open(method, end_url, true);
-  req.send();
+    });
+  });
+  req.on('error', function (exception) {
+    callback({code: 'EXCEPT', exception: exception});
+  });
+  req.end();
 };

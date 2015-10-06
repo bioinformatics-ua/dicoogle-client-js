@@ -7,10 +7,10 @@ span {
     font-family: "Courier New", monospace;
 }
 </style>
-<script src='./browser/build/dicoogle-client.js'></script>
+<script src='./dist/dicoogle-client.min.js'></script>
 <script>
   var server = "http://localhost:8080";
-  var Dicoogle = dicoogleClient(server);
+  var Dicoogle = DicoogleClient(server);
 
   function doQuery() {
     var query = document.getElementById('txt').value;
@@ -25,7 +25,6 @@ span {
     }
     else {
       var j = JSON.stringify(result);
-      console.log(j);
       res_span.innerHTML = j;
       }
     });
