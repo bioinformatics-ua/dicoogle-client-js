@@ -9,7 +9,7 @@
     "dicoogle", "client", "api"
   ],
   "version": "2.0.0",
-  "main": "./node/dicoogle-client",
+  "main": "./dicoogle-client",
   "browser": {
     "./servicerequest.js": "./servicerequest-browser.js"
   },
@@ -17,7 +17,7 @@
     "dicoogle-client.js",
     "dicoogle-query-cli.js",
     "dist/dicoogle-client.min.js",
-    "servicerequest-node.js"
+    "servicerequest.js"
   ],
   "bin": {
     "dicoogle-query": "dicoogle-query-cli.js"

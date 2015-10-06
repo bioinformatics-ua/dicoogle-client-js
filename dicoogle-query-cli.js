@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /** Dicoogle query request application in Node.js
  *
  * Usage:
