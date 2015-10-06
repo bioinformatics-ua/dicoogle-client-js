@@ -17,7 +17,7 @@
     "dicoogle-client.js",
     "dicoogle-query-cli.js",
     "dist/dicoogle-client.min.js",
-    "servicerequest-node.js"
+    "servicerequest.js"
   ],
   "bin": {
     "dicoogle-query": "dicoogle-query-cli.js"
