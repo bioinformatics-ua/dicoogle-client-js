@@ -18,7 +18,7 @@ var DicoogleClient = require("dicoogle-client");
 When not using Browserify, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient`.
 
 ```HTML
-<script src='./dist/dicoogle-client.js'></script>
+<script src='./dist/dicoogle-client.min.js'></script>
 ```
 
 Afterwards, invoke the `DicoogleClient` module with the Dicoogle server's endpoint to obtain an access object. The object may then be used multiple times.
