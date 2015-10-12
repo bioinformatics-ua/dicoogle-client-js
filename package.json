@@ -6,9 +6,11 @@
   ],
   "description": "Dicoogle web service client for JavaScript applications",
   "keywords": [
-    "dicoogle", "client", "api"
+    "dicoogle",
+    "client",
+    "api"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "./dicoogle-client",
   "browser": {
     "./servicerequest.js": "./servicerequest-browser.js"
