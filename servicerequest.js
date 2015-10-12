@@ -1,5 +1,7 @@
 
 var URL = require('url');
+var http = require('http');
+var https = require('https');
 
 function makeUrl(uri, qs) {
   // create full query string
@@ -45,7 +47,7 @@ module.exports = function service_request(method, uri, qs, callback) {
   var end_url = makeUrl(uri, qs);
   var options = URL.parse(end_url);
   options.method = method;
-  var req = require('http').request(options, function(res) {
+  var req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
     if (res.statusCode !== 200) {
       callback({code: 'SERVER-' + res.statusCode,
                 message: res.statusMessage}, null);
