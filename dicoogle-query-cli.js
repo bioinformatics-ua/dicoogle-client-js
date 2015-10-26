@@ -47,6 +47,7 @@ if (!query) {
 
 if (debug) {
   console.log('Service Endpoint: ', server + '/search');
+  console.log('Sending query: ', query);
 }
 
 process.stdout.on('error', function(error) {

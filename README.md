@@ -1,3 +1,5 @@
+[![version](https://img.shields.io/npm/v/dicoogle-client.svg)](https://www.npmjs.org/package/dicoogle-client)
+
 # dicoogle-client
 
 This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
