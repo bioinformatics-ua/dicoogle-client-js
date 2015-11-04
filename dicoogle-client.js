@@ -12,15 +12,16 @@ var dicoogle = (function DicoogleModule() {
   // module
   var m = {};
 
-  var EndPoints = {
+  var Endpoints = {
     SEARCH: "search",
     PROVIDERS: "providers",
     DUMP: "dump",
     DIC2PNG: "dic2png",
-    DICTAGS: "dictags"
+    DICTAGS: "dictags",
+    MANAGEMENT: "management"
   };
   
-  m.Endpoints = EndPoints;
+  m.Endpoints = Endpoints;
   
   /** search(query[, options], callback)
    * Perform a text query.
@@ -28,7 +29,7 @@ var dicoogle = (function DicoogleModule() {
    * @param {object} [options] a hash of options (none are required):
    *   {[boolean]} keyword : force whether the query is keyword-based. Defaults to automatic detection.
    *   {[string[]]} provider : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @param callback (error, result)
+   * @param {function(error, result)} callback
    */
   m.search = function(query, options, callback) {
       if (!options) {
@@ -39,7 +40,7 @@ var dicoogle = (function DicoogleModule() {
       }
       var prv = options.provider || options.providers;
       var kw = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
-      serviceRequest('GET', [url_, EndPoints.SEARCH], {
+      serviceRequest('GET', [url_, Endpoints.SEARCH], {
         query: query,
         keyword: kw,
         provider: prv
@@ -50,11 +51,11 @@ var dicoogle = (function DicoogleModule() {
   
   /** dump(uid, callback)
    * Retrieve an image's meta-data (perform an information dump)
-   * @param uid the SOP instance UID
-   * @param callback (error, result)
+   * @param {string} uid the SOP instance UID
+   * @param {function(error, result)} callback
    */
   m.dump = function(uid, callback) {
-    serviceRequest('GET', [url_, EndPoints.DUMP], {
+    serviceRequest('GET', [url_, Endpoints.DUMP], {
         uid: uid
       }, function(err, data) {
         callback(err, data ? data.results : null);
@@ -63,19 +64,23 @@ var dicoogle = (function DicoogleModule() {
   
   /** getProviders([type, ]callback)
    * Retrieve a list of provider plugins
-   * @param type the type of provider ("query", "index", ...) - defaults to "query"
+   * @param {string} [type] the type of provider ("query", "index", ...) - defaults to "query"
    * @param callback (error, result)
    */
   m.getProviders = function(type, callback) {
+    if (typeof type === 'function' && !callback) {
+      callback = type;
+      type = 'query';
+    }
     var options = { type: typeof type === 'string' ? type : 'query' }; 
-    serviceRequest('GET', [url_, EndPoints.PROVIDERS], options, function(err, data) {
+    serviceRequest('GET', [url_, Endpoints.PROVIDERS], options, function(err, data) {
         callback(err, data || null);
     });
   };
 
   /** getQueryProviders(callback)
    * Retrieve a list of query provider plugins
-   * @param callback (error, result)
+   * @param callback (error, {string[]}result)
    */
   m.getQueryProviders = function(callback) {
     m.getProviders('query', callback);
@@ -83,17 +88,37 @@ var dicoogle = (function DicoogleModule() {
 
   /** getIndexProviders(callback)
    * Retrieve a list of index provider plugins
-   * @param callback (error, result)
+   * @param callback (error, {string[]}result)
    */
   m.getIndexProviders = function(callback) {
     m.getProviders('index', callback);
+  };
+  
+  /** getStorageServiceStatus(callback)
+   * Obtain information about the DICOM Storage service.
+   * @param {function(error, object{running, autostart, port})} callback
+   */
+  m.getStorageServiceStatus = function(callback) {
+    serviceRequest('GET', [url_, Endpoints.MANAGEMENT, "dicom", "storage"], function(err, data) {
+        callback(err, data || null);
+    });
+  };
+
+  /** getQueryRetrieveServiceStatus(callback)
+   * Obtain information about the DICOM Query Retrieve service.
+   * @param {function(error, object{running, autostart, port})} callback
+   */
+  m.getQueryRetrieveServiceStatus = function(callback) {
+    serviceRequest('GET', [url_, Endpoints.MANAGEMENT, "dicom", "query"], function(err, data) {
+        callback(err, data || null);
+    });
   };
 
   /**
    * Initialize the Dicoogle access object, which can be used multiple times.
    *
    * @param {String} url the controller service's base url
-   * @param {boolean} [secure = false] whether to use HTTPS instead of HTTP
+   * @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
    * @return a dicoogle service access object
    */
   return function(url, secure) {

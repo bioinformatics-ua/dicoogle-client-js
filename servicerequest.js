@@ -40,10 +40,14 @@ function makeUrl(uri, qs) {
   *
   * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
   * @param {string|string[]} uri the request URI as a string or array of URI resources
-  * @param {string|object} qs the query string parameters
+  * @param {string|object} [qs] the query string parameters
   * @param {function(error,outcome)} callback
   */
 module.exports = function service_request(method, uri, qs, callback) {
+  if (typeof qs === 'function' && !callback) {
+    callback = qs;
+    qs = {};
+  }
   var end_url = makeUrl(uri, qs);
   var options = URL.parse(end_url);
   options.method = method;

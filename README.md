@@ -46,7 +46,7 @@ The repository includes two examples of dicoogle-client for simple querying:
 
 ## Further Notice
 
-This library is compatible with versions 2.0.X of Dicoogle. This client wrapper can be updated as new services emerge.
+This library is compatible with versions of Dicoogle in the range `>=2.0.0 <2.2.0`. This client wrapper can be updated as new services emerge.
 
 ## License
 

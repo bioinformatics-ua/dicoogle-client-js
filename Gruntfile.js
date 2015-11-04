@@ -49,7 +49,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-eslint');
-  
+
+  // Just check
+  grunt.registerTask('check', [
+    'eslint']);
+
   // Default task(s).
   grunt.registerTask('default', [
     'eslint',
