@@ -18,28 +18,19 @@ var dicoogle = (function DicoogleModule() {
     DUMP: "dump",
     DIC2PNG: "dic2png",
     DICTAGS: "dictags"
-//    PLUGINS: "plugin",
-//    INDEX: "indexer",
-//    DIM: "dim",
-//    FILE: "file",
-//    TAGS: "tags",
-//    IMAGE: "image",
-//    ENUMFIELD: "enumField",
-//    WADO: "wado",
-//    EXAMTIME: "examTime"
   };
   
   m.Endpoints = EndPoints;
   
   /** search(query[, options], callback)
    * Perform a text query.
-   * @param query text query
-   * @param options a hash of options (none are required):
-   *   keyword [ boolean ] : whether the query is keyword-based, false by default
-   *   provider [ string[] ] : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @param {string} query text query
+   * @param {object} [options] a hash of options (none are required):
+   *   {[boolean]} keyword : force whether the query is keyword-based. Defaults to automatic detection.
+   *   {[string[]]} provider : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
    * @param callback (error, result)
    */
-  m.search = function (query, options, callback) {
+  m.search = function(query, options, callback) {
       if (!options) {
         options = {};
       } else if (!callback && typeof options === 'function') {
@@ -47,9 +38,10 @@ var dicoogle = (function DicoogleModule() {
         options = {};
       }
       var prv = options.provider || options.providers;
+      var kw = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       serviceRequest('GET', [url_, EndPoints.SEARCH], {
         query: query,
-        keyword: options.keyword === true,
+        keyword: kw,
         provider: prv
         }, function(err, data) {
           callback(err, data ? (data.results || []) : null);
@@ -61,7 +53,7 @@ var dicoogle = (function DicoogleModule() {
    * @param uid the SOP instance UID
    * @param callback (error, result)
    */
-  m.dump = function (uid, callback) {
+  m.dump = function(uid, callback) {
     serviceRequest('GET', [url_, EndPoints.DUMP], {
         uid: uid
       }, function(err, data) {

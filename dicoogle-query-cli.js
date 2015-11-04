@@ -7,9 +7,10 @@
  * @author Eduardo Pinho (eduardopinho@ua.pt)
  */
 var dicoogleClient = require("./dicoogle-client");
+var util = require('util');
 var server = "localhost:8080";
 var query;
-var keyword = false;
+var keyword = undefined;
 var debug = false;
 var forceTTY = false;
 var providers = [];
@@ -18,7 +19,8 @@ for (var i = 2; i < process.argv.length; i++) {
   if (process.argv[i] === '--help' || process.argv[i] === '-h') {
     console.log("Usage: dicoogle-query [OPTIONS] QUERY\n");
     console.log("Options:");
-    console.log("  -k, --keyword         : perform a keyword-based query");
+    console.log("  -k, --keyword         : forcefully perform a keyword-based query");
+    console.log("  -F, --free-text       : forcefully perform a free text query");
     console.log("  -T, --tty             : force terminal (TTY) output instead of minified JSON");
     console.log("  -p, --provider <name> : include this query provider");
     console.log("  -s, --server <url>    : set the Dicoogle server's base endpoint");
@@ -26,8 +28,10 @@ for (var i = 2; i < process.argv.length; i++) {
     process.exit(0);
   } else if (process.argv[i] === '--keyword' || process.argv[i] === '-k') {
     keyword = true;
+  } else if (process.argv[i] === '--free-text' || process.argv[i] === '-F') {
+    keyword = false;
   } else if (process.argv[i] === '--tty' || process.argv[i] === '-T') {
-    keyword = true;
+    forceTTY = true;
   } else if (process.argv[i] === '--debug' || process.argv[i] === '-D') {
     debug = true;
   } else if (process.argv[i] === '--provider' || process.argv[i] === '-p') {
@@ -52,7 +56,6 @@ if (debug) {
 
 process.stdout.on('error', function(error) {
   // ignore problem, the user must have just closed the consumer
-  console.error(error);
 });
 
 var Dicoogle = dicoogleClient(server);
@@ -62,7 +65,7 @@ Dicoogle.search(query, { keyword: keyword, providers: providers },
       console.error(error);
     } else {
       if (process.stdout.isTTY || forceTTY) {
-        console.log(result);
+        console.log(util.inspect(result, {colors: true, depth: 2}));
       } else {
         console.log(JSON.stringify(result));
       }
