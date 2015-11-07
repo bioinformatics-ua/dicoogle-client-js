@@ -5,23 +5,23 @@ var https = require('https');
 
 function makeUrl(uri, qs) {
   // create full query string
-  var end_url;
+  let end_url;
   if (Array.isArray(uri)) {
     end_url = uri.join('/');
   } else {
     end_url = uri;
   }
   
-  var qstring;
+  let qstring;
   if (!qs) {
     qstring = '';
   } if (typeof qs === 'string') {
     qstring = '?' + qs;
   } else {
     var qparams = [];
-    for (var pname in qs) {
+    for (let pname in qs) {
       if (Array.isArray(qs[pname])) {
-        for (var j = 0; j < qs[pname].length; j++) {
+        for (let j = 0; j < qs[pname].length; j++) {
           qparams.push(pname + '=' + encodeURIComponent(qs[pname][j]));
         }
       } else if (qs[pname]) {
@@ -43,46 +43,48 @@ function makeUrl(uri, qs) {
   * @param {string|object} [qs] the query string parameters
   * @param {function(error,outcome)} callback
   */
-module.exports = function service_request(method, uri, qs, callback) {
+export default function service_request(method, uri, qs, callback) {
   if (typeof qs === 'function' && !callback) {
     callback = qs;
     qs = {};
   }
-  var end_url = makeUrl(uri, qs);
-  var options = URL.parse(end_url);
+  let end_url = makeUrl(uri, qs);
+  let options = URL.parse(end_url);
   options.method = method;
-  var req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
+  let req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
+    let error = null;
     if (res.statusCode !== 200) {
-      callback({code: 'SERVER-' + res.statusCode,
-                message: res.statusMessage}, null);
-      req.abort();
-      return;
+      error = {
+        code: 'SERVER-' + res.statusCode,
+        message: res.statusMessage
+      };
     }
     // accumulate chunks and convert to JSON in the end.
     // raw usage of http module, no external libraries.
     res.setEncoding('utf8');
-    var acc_data = '';
+    let acc_data = '';
     res.on('data', function(chunk) {
       acc_data += chunk;
     });
     res.on('end', function() {
-      var type = res.headers['content-type'];
-      var mime = type;
+      let type = res.headers['content-type'];
+      let mime = type || "";
       if (mime.indexOf(";") !== -1) {
         mime = mime.split(";")[0];
       }
-      var result;
+      let result;
       if (mime === 'application/json') {
         result = JSON.parse(acc_data);
-        callback(null, result);
+      } else if (mime.startsWith('text')) {
+        result = acc_data;
       } else {
-        result = {type: type, text: acc_data};
-        callback(null, result);
+        result = { type, text: acc_data };
       }
+      callback(error, result);
     });
   });
   req.on('error', function (exception) {
     callback({code: 'EXCEPT', exception: exception});
   });
   req.end();
-};
+}
