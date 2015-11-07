@@ -36,7 +36,7 @@ for (var i = 2; i < process.argv.length; i++) {
     debug = true;
   } else if (process.argv[i] === '--provider' || process.argv[i] === '-p') {
     providers.push(process.argv[++i]);
-  } else if (process.argv[i] == '--server', process.argv[i] === '-s') {
+  } else if (process.argv[i] == '--server' || process.argv[i] === '-s') {
     server = process.argv[++i];
   } else {
     query = process.argv[i];
