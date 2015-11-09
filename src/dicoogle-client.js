@@ -23,7 +23,8 @@ var dicoogle = (function DicoogleModule() {
     INDEX: "management/tasks/index",
     UNINDEX: "management/tasks/unindex",
     REMOVE: "management/tasks/remove",
-    RUNNING_TASKS: "index/task"
+    RUNNING_TASKS: "index/task",
+    VERSION: "ext/version"
   });
   
   m.Endpoints = Endpoints;
@@ -177,6 +178,15 @@ var dicoogle = (function DicoogleModule() {
     serviceRequest('POST', [url_, Endpoints.REMOVE], {
       uri
     }, callback);
+  };
+
+  /** getVersion(callback)
+   * Retrieve the running Dicoogle version.
+   * Indices will not be updated, hence the files should be unindexed manually if so is intended.
+   * @param {function(error, { {string}version })} callback
+   */
+  m.getVersion = function Dicoogle_getVersion(callback) {
+    serviceRequest('GET', [url_, Endpoints.VERSION], callback);
   };
 
   /** request(method, uri[, options], callback)
