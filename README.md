@@ -46,7 +46,21 @@ The repository includes two examples of dicoogle-client for simple querying:
 
 ### Using the CLI client
 
-Install this package globally (`npm install -g dicoogle-client`), then run `dicoogle-query --help` for usage instructions.
+Install this package globally (`npm install -g dicoogle-client`), then use `dicoogle-query`.
+
+**Usage:** `dicoogle-query [OPTIONS] QUERY`
+
+**Options:**
+
+ - `-h`, `--help` : show this help
+ - `-k`, `--keyword` : forcefully perform a keyword-based query
+ - `-F`, `--free-text` : forcefully perform a free text query
+ - `-T`, `--tty` : force terminal (TTY) output instead of minified JSON
+ - `-p`, `--provider <name>` : include this query provider
+ - `-s`, `--server <url>` : set the Dicoogle server's base endpoint
+ - `-D`, `--debug` : output additional information
+
+**Example:** `dicoogle-query -p lucene -s "http://demo.dicoogle.com" "Modality:MR"`
 
 ### Further Notice
 
@@ -58,12 +72,12 @@ Copyright (C) 2015  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - h
 
 This software is part of Dicoogle.
 
-Dicoogle/dicoogle-client is free software: you can redistribute it and/or modify
+Dicoogle/dicoogle-client-js is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Dicoogle/dicoogle-client is distributed in the hope that it will be useful,
+Dicoogle/dicoogle-client-js is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.

@@ -17,8 +17,10 @@ var providers = [];
 
 for (var i = 2; i < process.argv.length; i++) {
   if (process.argv[i] === '--help' || process.argv[i] === '-h') {
-    console.log("Usage: dicoogle-query [OPTIONS] QUERY\n");
+    console.log("Usage: dicoogle-query [OPTIONS] QUERY");
+    console.log("Description: search for images in Dicoogle using text queries\n");
     console.log("Options:");
+    console.log("  -h, --help            : show this help");
     console.log("  -k, --keyword         : forcefully perform a keyword-based query");
     console.log("  -F, --free-text       : forcefully perform a free text query");
     console.log("  -T, --tty             : force terminal (TTY) output instead of minified JSON");
