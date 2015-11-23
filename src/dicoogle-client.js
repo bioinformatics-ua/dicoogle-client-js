@@ -224,7 +224,7 @@ var dicoogle = (function DicoogleModule() {
   /**
    * Initialize the Dicoogle access object, which can be used multiple times.
    *
-   * @param {String} [url] the controller service's base url, can be null iif an access object was previously created
+   * @param {String} [url] the controller service's base url, can be null iif the endpoint is the browser context's host or an access object was previously created
    * @deprecated @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
    * @return a singleton dicoogle service access object
    */
