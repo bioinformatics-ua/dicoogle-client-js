@@ -6,6 +6,9 @@
     "commonjs": true,
      "es6": true
   },
+  "globals": {
+    "window": false
+  },
   "rules": {
     "no-alert": 0,
     "no-console": 0,

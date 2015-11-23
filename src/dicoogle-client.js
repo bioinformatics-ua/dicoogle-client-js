@@ -213,21 +213,38 @@ var dicoogle = (function DicoogleModule() {
       }
       serviceRequest(method, path, options, callback);
   };
+  
+  /** Obtain the base URL of all Dicoogle services.
+   * @returns {string} the currently configured base endpoint of Dicoogle
+   */
+  m.getBase = function Dicoogle_getBase() {
+    return url_;
+  }
 
   /**
    * Initialize the Dicoogle access object, which can be used multiple times.
    *
    * @param {String} [url] the controller service's base url, can be null iif an access object was previously created
-   * @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
+   * @deprecated @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
    * @return a singleton dicoogle service access object
    */
   return function(url, secure) {
-    url_ = url || url_ || '';
+    url_ = url || url_;
+    if (typeof url_ !== 'string') {
+      if (typeof window === 'object') {
+        url_ = window.location.protocol + "//" + window.location.host;
+      } else {
+        throw "Missing URL to Dicoogle services";
+      }
+    }
+    
     if (url_[url_.length-1] === '/') {
       url_ = url_.slice(-1);
     }
-    if (url_.indexOf('://') === -1) {
-      url_ = (secure ? 'https://' : 'http://') + url_;
+    if (url_ !== '') {
+      if (url_.indexOf('://') === -1) {
+        url_ = (secure ? 'https://' : 'http://') + url_;
+      }
     }
     
     return m;
