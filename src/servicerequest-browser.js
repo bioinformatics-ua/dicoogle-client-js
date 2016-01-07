@@ -1,4 +1,3 @@
-
 function makeUrl(uri, qs) {
   // create full query string
   let end_url = '';
@@ -39,6 +38,10 @@ function makeUrl(uri, qs) {
   * @param {function(error,outcome)} callback
   */
 export default function service_request(method, uri, qs, callback) {
+  if (typeof qs === 'function' && !callback) {
+    callback = qs;
+    qs = {};
+  }
   let end_url = makeUrl(uri, qs);
   // This XDomainRequest thing is for IE support (lulz)
   let req = (typeof XDomainRequest !== 'undefined') ? new XDomainRequest() : new XMLHttpRequest();
