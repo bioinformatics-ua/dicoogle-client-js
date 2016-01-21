@@ -13,7 +13,7 @@
     "client",
     "api"
   ],
-  "version": "2.4.2",
+  "version": "2.4.3",
   "main": "./lib/dicoogle-client",
   "browser": {
     "./lib/servicerequest.js": "./lib/servicerequest-browser.js"
