@@ -4,13 +4,13 @@
 import serviceRequest from './servicerequest';
 
 /** @namespace */
-var dicoogle = (function DicoogleModule() {
+const dicoogle = (function DicoogleModule() {
 
   // private variables of the module
   var url_ = null;
-  var username = null;
+//  var username = null;
   var token = null;
-  
+
   // module
   var m = {};
 
@@ -30,16 +30,16 @@ var dicoogle = (function DicoogleModule() {
     LOGIN: 'login',
     LOGOUT: 'logout'
   });
-  
+
   m.Endpoints = Endpoints;
-  
+
   /** search(query[, options], callback)
    * Perform a text query.
    * @param {string} query text query
    * @param {object} [options] a hash of options (none are required):
    *   {[boolean]} keyword : force whether the query is keyword-based. Defaults to automatic detection.
    *   {[string[]]} provider : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @param {function(error, {object[]}result)} callback
+   * @param {function(error, result:Object[])} callback the callback function
    */
   m.search = function Dicoogle_search(query, options, callback) {
       if (!options) {
@@ -58,11 +58,11 @@ var dicoogle = (function DicoogleModule() {
           callback(err, data ? (data.results || []) : null);
       });
   };
-  
+
   /** dump(uid, callback)
    * Retrieve an image's meta-data (perform an information dump)
    * @param {string} uid the SOP instance UID
-   * @param {function(error, result)} callback
+   * @param {function(error, result)} callback the callback function
    */
   m.dump = function Dicoogle_dump(uid, callback) {
     serviceRequest('GET', [url_, Endpoints.DUMP], {
@@ -71,18 +71,18 @@ var dicoogle = (function DicoogleModule() {
         callback(err, data ? data.results : null);
     });
   };
-  
+
   /** getProviders([type, ]callback)
    * Retrieve a list of provider plugins
    * @param {string} [type] the type of provider ("query", "index", ...) - defaults to "query"
-   * @param callback (error, {string[]}result)
+   * @param {function(error, result:string)} callback the callback function
    */
   m.getProviders = function Dicoogle_getProviders(type, callback) {
     if (typeof type === 'function' && !callback) {
       callback = type;
       type = 'query';
     }
-    let options = { type: typeof type === 'string' ? type : 'query' }; 
+    let options = { type: typeof type === 'string' ? type : 'query' };
     serviceRequest('GET', [url_, Endpoints.PROVIDERS], options, (err, data) => {
         callback(err, data || null);
     });
@@ -90,7 +90,7 @@ var dicoogle = (function DicoogleModule() {
 
   /** getQueryProviders(callback)
    * Retrieve a list of query provider plugins
-   * @param {function(error, {string[]}result)} callback
+   * @param {function(error, result:string[])} callback the callback function
    */
   m.getQueryProviders = function Dicoogle_getQueryProviders(callback) {
     m.getProviders('query', callback);
@@ -98,7 +98,7 @@ var dicoogle = (function DicoogleModule() {
 
   /** getIndexProviders(callback)
    * Retrieve a list of index provider plugins
-   * @param {function(error, {string[]}result)} callback
+   * @param {function(error, result:string[])} callback the callback function
    */
   m.getIndexProviders = function Dicoogle_getIndexProviders(callback) {
     m.getProviders('index', callback);
@@ -106,15 +106,15 @@ var dicoogle = (function DicoogleModule() {
 
   /** getStorageProviders(callback)
    * Retrieve a list of storage interface plugins
-   * @param {function(error, {string[]}result)} callback
+   * @param {function(error, result:string[])} callback the callback function
    */
   m.getStorageProviders = function Dicoogle_getStorageProviders(callback) {
     m.getProviders('storage', callback);
   };
-  
+
   /** getStorageServiceStatus(callback)
    * Obtain information about the DICOM Storage service.
-   * @param {function(error, {running, autostart, port})} callback
+   * @param {function(error, {running, autostart, port})} callback the callback function
    */
   m.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
     serviceRequest('GET', [url_, Endpoints.STORAGE_SERVICE], function(err, data) {
@@ -124,7 +124,7 @@ var dicoogle = (function DicoogleModule() {
 
   /** getQueryRetrieveServiceStatus(callback)
    * Obtain information about the DICOM Query Retrieve service.
-   * @param {function(error, {running, autostart, port})} callback
+   * @param {function(error, {running, autostart, port})} callback the callback function
    */
   m.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
     serviceRequest('GET', [url_, Endpoints.QR_SERVICE], function(err, data) {
@@ -132,13 +132,26 @@ var dicoogle = (function DicoogleModule() {
     });
   };
 
+  /** @typedef {Object} TaskInfo
+   * @property {string} taskUid - the UUID of the task
+   * @property {string} taskName - a human readable task name
+   * @property {number} taskProgress - a number between 0 and 1 representing the task's progress; any negative number means no prediction is available
+   * @property {boolean} [complete] - whether the task is complete
+   * @property {number} [elapsedTime] - only if complete; the time elapsed while the task was running
+   * @property {number} [nIndexed] - the number of files successfully indexed
+   * @property {number} [nErrors] - only if complete; the number of indexation errors
+   */
+
   /** getRunningTasks(callback)
    * Obtain information about Dicoogle's running (or terminated) tasks.
-   * @param {function(error, {taskUid, taskName, taskProgress, [complete], [elapsedTime], [nIndexed], [nErrors]}[])} callback
+   * @param {function(error, {tasks:TaskInfo[], count:number})} callback the callback function
    */
   m.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
     serviceRequest('GET', [url_, Endpoints.RUNNING_TASKS], function(err, data) {
-        callback(err, data || null);
+        callback(err, data ? {
+            tasks: data.results,
+            count: data.count
+        } : null);
     });
   };
 
@@ -146,7 +159,7 @@ var dicoogle = (function DicoogleModule() {
    * Request a new indexation task over a given URI. The operation is recursive, indexing anything in the URI's endpoint.
    * @param {string|string[]} uri a URI or array of URIs representing the root resource of the files to be indexed
    * @param {string|string[]} [provider] a provider or array of provider names in which the indexation will carry out, all by default
-   * @param {function(error)} callback
+   * @param {function(error)} callback the function to call when the task is successfully issued
    */
   m.index = function Dicoogle_index(uri, provider, callback) {
     if (typeof provider === 'function' && !callback) {
@@ -163,7 +176,7 @@ var dicoogle = (function DicoogleModule() {
    * Request that the file at the given URI is unindexed. The operation, unlike index(), is not recursive.
    * @param {string|string[]} uri a URI or array of URIs representing the files to be unindexed
    * @param {string|string[]} provider a provider or array of provider names in which the unindexation will carry out, all by default
-   * @param {function(error)} callback
+   * @param {function(error)} callback the function to call on completion
    */
   m.unindex = function Dicoogle_unindex(uri, provider, callback) {
     serviceRequest('POST', [url_, Endpoints.UNINDEX], {
@@ -176,7 +189,7 @@ var dicoogle = (function DicoogleModule() {
    * Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
    * Indices will not be updated, hence the files should be unindexed manually if so is intended.
    * @param {string|string[]} uri a URI or array of URIs representing the files to be removed
-   * @param {function(error)} callback
+   * @param {function(error)} callback the function to call on completion
    */
   m.remove = function Dicoogle_remove(uri, callback) {
     serviceRequest('POST', [url_, Endpoints.REMOVE], {
@@ -187,27 +200,26 @@ var dicoogle = (function DicoogleModule() {
   /** getVersion(callback)
    * Retrieve the running Dicoogle version.
    * Indices will not be updated, hence the files should be unindexed manually if so is intended.
-   * @param {function(error, { {string}version })} callback
+   * @param {function(error, {version:string})} callback the callback function
    */
   m.getVersion = function Dicoogle_getVersion(callback) {
     serviceRequest('GET', [url_, Endpoints.VERSION], callback);
   };
 
 
-  /** login(callback)
-   * Login.
-   * @param {string} username an username that should be used in Login
-   * @param {password} password to authentication 
-   * @param {function(error, { {string}result })} callback
+  /** login(username, password, callback)
+   * Manually log in to Dicoogle using the given credentials.
+   * @param {string} username the unique user name for the client
+   * @param {password} password the user's password for authentication
+   * @param {function(error, {result:string})} callback the callback function, returns the authentication token
    */
   m.login = function Dicoogle_login(username, password, callback) {
-    serviceRequest('POST', [url_, Endpoints.LOGIN], {username: username,password: password
-    }, callback);
+    serviceRequest('POST', [url_, Endpoints.LOGIN], {username, password}, callback);
   };
 
-    /** logout(callback)
+  /** logout(callback)
    * Logout.
-   * @param {function(error, { {string}result })} callback
+   * @param {function(error)} callback the callback function
    */
   m.logout = function Dicoogle_logout(callback) {
     serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback);
@@ -217,10 +229,10 @@ var dicoogle = (function DicoogleModule() {
   /** request(method, uri[, options], callback)
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
    * service exposed by Dicoogle, including those from plugins.
-   * @param {?string} method the kind of HTTP method to make, defaults to "GET" 
-   * @param {string|string[]} uri a URI or array of resource sequences to the service, relative to Dicoogle's base URL 
+   * @param {?string} method the kind of HTTP method to make, defaults to "GET"
+   * @param {string|string[]} uri a URI or array of resource sequences to the service, relative to Dicoogle's base URL
    * @param {object} [options] an object of options to be passed as query strings
-   * @param {function(error, result)} callback
+   * @param {function(error, result)} callback the callback function
    */
   m.request = function Dicoogle_request(method, uri, options, callback) {
       method = method || 'GET';
@@ -238,7 +250,7 @@ var dicoogle = (function DicoogleModule() {
       }
       serviceRequest(method, path, options, callback, token);
   };
-  
+
   /** Obtain the base URL of all Dicoogle services.
    * @returns {string} the currently configured base endpoint of Dicoogle
    */
@@ -246,14 +258,22 @@ var dicoogle = (function DicoogleModule() {
     return url_;
   }
 
+  /** Object type for containing Dicoogle client options.
+   * @typedef {Object} DicoogleClientOptions
+   *
+   * @property {string} user - The client's user name.
+   * @property {password} password - The user's password for authentication.
+   * @property {boolean} secure - whether to use HTTPS instead of HTTP, if no scheme is specified in the url
+   */
+
   /**
    * Initialize the Dicoogle access object, which can be used multiple times.
    *
-   * @param {String} [url] the controller service's base url, can be null iif the endpoint is the browser context's host or an access object was previously created
-   * @deprecated @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
-   * @return a singleton dicoogle service access object
+   * @param {String} [url] the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
+   * @param {DicoogleClientOptions} options a set of options regarding service access and user authentication
+   * @returns {Object} a singleton dicoogle service access object
    */
-  return function(url, secure, user, password) {
+  return function(url, options = {}) {
     url_ = url || url_;
     if (typeof url_ !== 'string') {
       if (typeof window === 'object') {
@@ -262,8 +282,10 @@ var dicoogle = (function DicoogleModule() {
         throw "Missing URL to Dicoogle services";
       }
     }
-    
-    if (url_[url_.length-1] === '/') {
+
+    const {user, password, secure} = options;
+
+    if (url_[url_.length - 1] === '/') {
       url_ = url_.slice(-1);
     }
     if (url_ !== '') {
@@ -271,16 +293,16 @@ var dicoogle = (function DicoogleModule() {
         url_ = (secure ? 'https://' : 'http://') + url_;
       }
     }
-    
-    if (user!==undefined && password!==undefined)
+
+    if (typeof user === 'string' && password)
     {
         m.login(url_, user, password, function(data)
         {
             token = data.token;
-            username = user;
+//            username = user;
         });
     }
-    
+
     return m;
   };
 })();

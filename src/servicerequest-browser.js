@@ -35,7 +35,7 @@ function makeUrl(uri, qs) {
   * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
   * @param {string} uri the request URI
   * @param {string|object} qs the query string parameters
-  * @param {function(error,outcome)} callback
+  * @param {function(error,outcome)} callback the callback function
   */
 export default function service_request(method, uri, qs, callback) {
   if (typeof qs === 'function' && !callback) {

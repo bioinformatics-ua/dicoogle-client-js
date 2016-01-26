@@ -15,6 +15,9 @@ var debug = false;
 var forceTTY = false;
 var providers = [];
 
+var USER = process.env.DICOOGLE_USER;
+var PASSWORD = process.env.DICOOGLE_PASSWORD;
+
 for (var i = 2; i < process.argv.length; i++) {
   if (process.argv[i] === '--help' || process.argv[i] === '-h') {
     console.log("Usage: dicoogle-query [OPTIONS] QUERY");
@@ -27,6 +30,9 @@ for (var i = 2; i < process.argv.length; i++) {
     console.log("  -p, --provider <name> : include this query provider");
     console.log("  -s, --server <url>    : set the Dicoogle server's base endpoint");
     console.log("  -D, --debug           : output additional details");
+    console.log("Environment variables:");
+    console.log("  DICOOGLE_USER         : the client's user name");
+    console.log("  DICOOGLE_PASSWORD     : the user's password for authentication");
     process.exit(0);
   } else if (process.argv[i] === '--keyword' || process.argv[i] === '-k') {
     keyword = true;
@@ -56,12 +62,12 @@ if (debug) {
   console.log('Sending query: ', query);
 }
 
-process.stdout.on('error', function(error) {
+process.stdout.on('error', function() {
   // ignore problem, the user must have just closed the consumer
 });
 
-var Dicoogle = dicoogleClient(server);
-Dicoogle.search(query, { keyword: keyword, providers: providers }, 
+var Dicoogle = dicoogleClient(server, {user: USER, password: PASSWORD});
+Dicoogle.search(query, { keyword: keyword, providers: providers },
   function (error, result) {
     if (error) {
       console.error(error);
