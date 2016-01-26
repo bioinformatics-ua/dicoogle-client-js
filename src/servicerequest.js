@@ -43,19 +43,29 @@ function makeUrl(uri, qs) {
   * @param {string|object} [qs] the query string parameters
   * @param {function(error,outcome)} callback
   */
-export default function service_request(method, uri, qs, callback, token) {
+export default function service_request(method, uri, qs, callback, token, mimeType) {
   if (typeof qs === 'function' && !callback) {
     callback = qs;
     qs = {};
   }
+  
   let end_url = makeUrl(uri, qs);
   let options = URL.parse(end_url);
   options.method = method;
+  options.headers = {}
   if (token!==null)
   {
     options.headers = {
         'Authorization': token
         };
+  }
+  if (mimeType!==null)
+  {
+      options.headers['Content-Type'] =  mimeType;
+      options.headers['Content-Length'] =  JSON.stringify(qs).length;
+      if (mime === 'application/x-www-form-urlencoded') {
+          options.form = qs ;
+      }
   }  
   let req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
     let error = null;
@@ -93,5 +103,8 @@ export default function service_request(method, uri, qs, callback, token) {
   req.on('error', function (exception) {
     callback({code: 'EXCEPT', exception: exception});
   });
+  if (mime === 'application/x-www-form-urlencoded') {
+    req.write(qs);
+  }
   req.end();
 }

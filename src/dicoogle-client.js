@@ -201,8 +201,7 @@ var dicoogle = (function DicoogleModule() {
    * @param {function(error, { {string}result })} callback
    */
   m.login = function Dicoogle_login(username, password, callback) {
-    serviceRequest('POST', [url_, Endpoints.LOGIN], {username: username,password: password
-    }, callback);
+    serviceRequest('POST', [url_, Endpoints.LOGIN], false, callback, null, 'application/x-www-form-urlencoded', {username: username,password: password});
   };
 
     /** logout(callback)
@@ -210,7 +209,7 @@ var dicoogle = (function DicoogleModule() {
    * @param {function(error, { {string}result })} callback
    */
   m.logout = function Dicoogle_logout(callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback);
+    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback, token);
   };
 
 
@@ -274,7 +273,7 @@ var dicoogle = (function DicoogleModule() {
     
     if (user!==undefined && password!==undefined)
     {
-        m.login(url_, user, password, function(data)
+        m.login(user, password, function(data)
         {
             token = data.token;
             username = user;
