@@ -55,11 +55,8 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
   let options = URL.parse(end_url);
   options.method = method;
   options.headers = {}
-  if (token !== null)
-  {
-    options.headers = {
-        'Authorization': token
-        };
+  if (token) {
+    options.headers['Authorization'] = token;
   }
   if (mimeType)
   {
