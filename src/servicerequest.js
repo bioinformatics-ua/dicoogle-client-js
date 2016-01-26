@@ -42,6 +42,8 @@ function makeUrl(uri, qs) {
   * @param {string|string[]} uri the request URI as a string or array of URI resources
   * @param {string|object} [qs] the query string parameters
   * @param {function(error,outcome)} callback
+  * @param {string} [token] token 
+  * @param {string} [mimeType] mimeType 
   */
 export default function service_request(method, uri, qs, callback, token, mimeType) {
   if (typeof qs === 'function' && !callback) {

@@ -36,6 +36,9 @@ function makeUrl(uri, qs) {
   * @param {string} uri the request URI
   * @param {string|object} qs the query string parameters
   * @param {function(error,outcome)} callback
+  * @param {string} [token] token of authorization
+  * @param {string} [mimeType] mimeType of request 
+  * @param {string} [formContent] used if it is a form post. 
   */
 export default function service_request(method, uri, qs, callback, token, mimeType, formContent) {
   if (typeof qs === 'function' && !callback) {
