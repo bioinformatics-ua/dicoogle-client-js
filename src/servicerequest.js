@@ -43,7 +43,7 @@ function makeUrl(uri, qs) {
   * @param {string|object} [qs] the query string parameters
   * @param {function(error,outcome)} callback the callback function
   * @param {string} [token] the sessions' authentication token
-  * @param {string} [mimeType] the MIME type 
+  * @param {string} [mimeType] the MIME type
   */
 export default function service_request(method, uri, qs, callback, token, mimeType) {
   if (typeof qs === 'function' && !callback) {

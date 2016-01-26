@@ -23,7 +23,10 @@ Afterwards, invoke the `DicoogleClient` module with the Dicoogle server's endpoi
 Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.
 
 ```JavaScript
-var Dicoogle = DicoogleClient("localhost:8080");
+var Dicoogle = DicoogleClient("localhost:8080", {
+  user: 'dicoogle',
+  password: 'd1c00g1e'
+});
 
 ...
 
@@ -59,6 +62,11 @@ Install this package globally (`npm install -g dicoogle-client`), then use `dico
  - `-p`, `--provider <name>` : include this query provider
  - `-s`, `--server <url>` : set the Dicoogle server's base endpoint
  - `-D`, `--debug` : output additional information
+
+**Environment variables:**
+
+ - `DICOOGLE_USERNAME` : The client's unique user name.
+ - `DICOOGLE_PASSWORD` : The user's password.
 
 **Example:** `dicoogle-query -p lucene -s "http://demo.dicoogle.com" "Modality:MR"`
 

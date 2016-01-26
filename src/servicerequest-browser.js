@@ -56,7 +56,7 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
       let error = null;
       if (req.status !== 200) {
         error = {
-          code: "SERVER-"+req.status,
+          code: "SERVER-" + req.status,
           message: req.statusText
         };
       }

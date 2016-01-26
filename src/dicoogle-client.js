@@ -235,6 +235,13 @@ const dicoogle = (function DicoogleModule() {
     return token_ !== null;
   };
 
+  /** getUsername()
+   * Get the user name of the currently authenticated user.
+   * @returns {string} the unique user name
+   */
+  m.getUsername = function Dicoogle_getUsername() {
+    return username_;
+  };
 
   /** login(username, password, callback)
    * Manually log in to Dicoogle using the given credentials.
