@@ -63,10 +63,10 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
   }
   if (mimeType!==null)
   {
-      options.headers['Content-Type'] =  mimeType;
-      options.headers['Content-Length'] =  JSON.stringify(qs).length;
-      if (mime === 'application/x-www-form-urlencoded') {
-          options.form = qs ;
+      options.headers['Content-Type'] = mimeType;
+      options.headers['Content-Length'] = JSON.stringify(qs).length;
+      if (mimeType === 'application/x-www-form-urlencoded'){
+          options.form = qs;
       }
   }  
   let req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
@@ -105,7 +105,7 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
   req.on('error', function (exception) {
     callback({code: 'EXCEPT', exception: exception});
   });
-  if (mime === 'application/x-www-form-urlencoded') {
+  if (mimeType === 'application/x-www-form-urlencoded') {
     req.write(qs);
   }
   req.end();
