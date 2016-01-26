@@ -37,9 +37,9 @@ const dicoogle = (function DicoogleModule() {
    * Perform a text query.
    * @param {string} query text query
    * @param {object} [options] a hash of options (none are required):
-   *   {[boolean]} keyword : force whether the query is keyword-based. Defaults to automatic detection.
-   *   {[string[]]} provider : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @param {function(error, result:Object[])} callback the callback function
+   *   - {boolean} keyword: force whether the query is keyword-based. Defaults to automatic detection.
+   *   - {string|string[]} [provider] : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @param {function(error, {results:object[], elapsedTime:number})} callback the callback function providing the outcome
    */
   m.search = function Dicoogle_search(query, options, callback) {
       if (!options) {
@@ -55,7 +55,7 @@ const dicoogle = (function DicoogleModule() {
         keyword,
         provider
         }, function(err, data) {
-          callback(err, data ? (data.results || []) : null);
+          callback(err, data);
       });
   };
 

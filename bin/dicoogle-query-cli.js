@@ -68,10 +68,11 @@ process.stdout.on('error', function() {
 
 var Dicoogle = dicoogleClient(server, {user: USER, password: PASSWORD});
 Dicoogle.search(query, { keyword: keyword, providers: providers },
-  function (error, result) {
+  function (error, outcome) {
     if (error) {
       console.error(error);
     } else {
+      var result = outcome.results;
       if (process.stdout.isTTY || forceTTY) {
         console.log(util.inspect(result, {colors: true, depth: 2}));
       } else {

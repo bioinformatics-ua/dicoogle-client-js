@@ -8,7 +8,6 @@ var uglify = require('gulp-uglify');
 var eslint = require('gulp-eslint');
 var rm = require('gulp-rm');
 var babel = require('gulp-babel');
-var gutil = require('gulp-util');
 var header = require('gulp-header');
 var fs = require('fs');
 
