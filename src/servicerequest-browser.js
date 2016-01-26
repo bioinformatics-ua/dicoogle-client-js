@@ -41,10 +41,14 @@ function makeUrl(uri, qs) {
   * @param {string} [formContent] used if it is a form post. 
   */
 export default function service_request(method, uri, qs, callback, token, mimeType, formContent) {
+    
   if (typeof qs === 'function' && !callback) {
     callback = qs;
     qs = {};
   }
+  if (token==null)
+    token = localStorage.token;
+  
   let end_url = makeUrl(uri, qs);
   
   // This XDomainRequest thing is for IE support (lulz)
@@ -92,7 +96,7 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
           }
           var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
           dataForm = urlEncodedData;
-          req.setRequestHeader('Content-Length', urlEncodedData.length);
+          //req.setRequestHeader('Content-Length', urlEncodedData.length);
       }
   } 
 

@@ -192,6 +192,20 @@ var dicoogle = (function DicoogleModule() {
   m.getVersion = function Dicoogle_getVersion(callback) {
     serviceRequest('GET', [url_, Endpoints.VERSION], callback);
   };
+  
+   /** getToken
+   * Retrieve the authentication token 
+   */
+  m.getToken = function Dicoogle_getToken() {
+    return 
+  };
+  
+   /** isAuthenticated
+   * Retrieve if it is authenticated or not.
+   */
+  m.isAuthenticated = function Dicoogle_isAuthenticated() {
+    return token!=null;
+  };
 
 
   /** login(callback)
@@ -201,7 +215,15 @@ var dicoogle = (function DicoogleModule() {
    * @param {function(error, { {string}result })} callback
    */
   m.login = function Dicoogle_login(username, password, callback) {
-    serviceRequest('POST', [url_, Endpoints.LOGIN], false, callback, null, 'application/x-www-form-urlencoded', {username: username,password: password});
+    
+    var changedCallback = function(error, data)
+    {
+        token = data.token;
+        username = data.user;
+        callback(data);  
+    };
+      
+    serviceRequest('POST', [url_, Endpoints.LOGIN], false, changedCallback, null, 'application/x-www-form-urlencoded', {username: username,password: password});
   };
 
     /** logout(callback)
