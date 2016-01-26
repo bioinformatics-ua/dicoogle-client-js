@@ -36,13 +36,21 @@ function makeUrl(uri, qs) {
   * @param {string} uri the request URI
   * @param {string|object} qs the query string parameters
   * @param {function(error,outcome)} callback
+  * @param {string} [token] token of authorization
+  * @param {string} [mimeType] mimeType of request 
+  * @param {string} [formContent] used if it is a form post. 
   */
-export default function service_request(method, uri, qs, callback) {
+export default function service_request(method, uri, qs, callback, token, mimeType, formContent) {
+    
   if (typeof qs === 'function' && !callback) {
     callback = qs;
     qs = {};
   }
+  if (token==null)
+    token = localStorage.token;
+  
   let end_url = makeUrl(uri, qs);
+  
   // This XDomainRequest thing is for IE support (lulz)
   let req = (typeof XDomainRequest !== 'undefined') ? new XDomainRequest() : new XMLHttpRequest();
   req.onreadystatechange = function() {
@@ -71,5 +79,30 @@ export default function service_request(method, uri, qs, callback) {
     }
   };
   req.open(method, end_url, true);
-  req.send();
+
+  if (token!==null)
+  {
+      req.setRequestHeader("Authorization", token);
+  }
+  
+  var dataForm = null;
+  if (mimeType!==null)
+  {
+      req.setRequestHeader("Content-Type", mimeType);
+      if (mimeType == 'application/x-www-form-urlencoded') {
+          var urlEncodedDataPairs = [];
+          for (let pname in formContent) {
+              urlEncodedDataPairs.push(encodeURIComponent(pname) + '=' + encodeURIComponent(formContent[pname]));
+          }
+          var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
+          dataForm = urlEncodedData;
+          //req.setRequestHeader('Content-Length', urlEncodedData.length);
+      }
+  } 
+
+  if (dataForm!=null)
+    req.send(dataForm);
+  else 
+    req.send();
+
 }

@@ -8,6 +8,8 @@ var dicoogle = (function DicoogleModule() {
 
   // private variables of the module
   var url_ = null;
+  var username = null;
+  var token = null;
   
   // module
   var m = {};
@@ -24,7 +26,9 @@ var dicoogle = (function DicoogleModule() {
     UNINDEX: "management/tasks/unindex",
     REMOVE: "management/tasks/remove",
     RUNNING_TASKS: "index/task",
-    VERSION: "ext/version"
+    VERSION: "ext/version",
+    LOGIN: 'login',
+    LOGOUT: 'logout'
   });
   
   m.Endpoints = Endpoints;
@@ -187,6 +191,48 @@ var dicoogle = (function DicoogleModule() {
   m.getVersion = function Dicoogle_getVersion(callback) {
     serviceRequest('GET', [url_, Endpoints.VERSION], callback);
   };
+  
+   /** getToken
+   * Retrieve the authentication token 
+   */
+  m.getToken = function Dicoogle_getToken() {
+    return 
+  };
+  
+   /** isAuthenticated
+   * Retrieve if it is authenticated or not.
+   */
+  m.isAuthenticated = function Dicoogle_isAuthenticated() {
+    return token!=null;
+  };
+
+
+  /** login(callback)
+   * Login.
+   * @param {string} username an username that should be used in Login
+   * @param {password} password to authentication 
+   * @param {function(error, { {string}result })} callback
+   */
+  m.login = function Dicoogle_login(username, password, callback) {
+    
+    var changedCallback = function(error, data)
+    {
+        token = data.token;
+        username = data.user;
+        callback(data);  
+    };
+      
+    serviceRequest('POST', [url_, Endpoints.LOGIN], false, changedCallback, null, 'application/x-www-form-urlencoded', {username: username,password: password});
+  };
+
+    /** logout(callback)
+   * Logout.
+   * @param {function(error, { {string}result })} callback
+   */
+  m.logout = function Dicoogle_logout(callback) {
+    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback, token);
+  };
+
 
   /** request(method, uri[, options], callback)
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
@@ -210,7 +256,7 @@ var dicoogle = (function DicoogleModule() {
       } else {
         path = [url_].concat(uri);
       }
-      serviceRequest(method, path, options, callback);
+      serviceRequest(method, path, options, callback, token);
   };
   
   /** Obtain the base URL of all Dicoogle services.
@@ -227,7 +273,7 @@ var dicoogle = (function DicoogleModule() {
    * @deprecated @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
    * @return a singleton dicoogle service access object
    */
-  return function(url, secure) {
+  return function(url, secure, user, password) {
     url_ = url || url_;
     if (typeof url_ !== 'string') {
       if (typeof window === 'object') {
@@ -244,6 +290,15 @@ var dicoogle = (function DicoogleModule() {
       if (url_.indexOf('://') === -1) {
         url_ = (secure ? 'https://' : 'http://') + url_;
       }
+    }
+    
+    if (user!==undefined && password!==undefined)
+    {
+        m.login(user, password, function(data)
+        {
+            token = data.token;
+            username = user;
+        });
     }
     
     return m;
