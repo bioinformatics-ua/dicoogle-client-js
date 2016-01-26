@@ -51,7 +51,7 @@ export default function service_request(method, uri, qs, callback, token) {
   let end_url = makeUrl(uri, qs);
   let options = URL.parse(end_url);
   options.method = method;
-  if (token!==undefined)
+  if (token!==null)
   {
     options.headers = {
         'Authorization': token

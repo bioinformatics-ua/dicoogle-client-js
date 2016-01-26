@@ -201,7 +201,8 @@ var dicoogle = (function DicoogleModule() {
    * @param {function(error, { {string}result })} callback
    */
   m.login = function Dicoogle_login(username, password, callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGIN], callback);
+    serviceRequest('POST', [url_, Endpoints.LOGIN], {username: username,password: password
+    }, callback);
   };
 
     /** logout(callback)
@@ -209,7 +210,7 @@ var dicoogle = (function DicoogleModule() {
    * @param {function(error, { {string}result })} callback
    */
   m.logout = function Dicoogle_logout(callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGOUT], callback);
+    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback);
   };
 
 
@@ -235,7 +236,7 @@ var dicoogle = (function DicoogleModule() {
       } else {
         path = [url_].concat(uri);
       }
-      serviceRequest(method, path, options, callback);
+      serviceRequest(method, path, options, callback, token);
   };
   
   /** Obtain the base URL of all Dicoogle services.
