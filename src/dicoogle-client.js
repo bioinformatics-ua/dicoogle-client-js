@@ -8,6 +8,8 @@ var dicoogle = (function DicoogleModule() {
 
   // private variables of the module
   var url_ = null;
+  var username = null;
+  var token = null;
   
   // module
   var m = {};
@@ -24,7 +26,9 @@ var dicoogle = (function DicoogleModule() {
     UNINDEX: "management/tasks/unindex",
     REMOVE: "management/tasks/remove",
     RUNNING_TASKS: "index/task",
-    VERSION: "ext/version"
+    VERSION: "ext/version",
+    LOGIN: 'login',
+    LOGOUT: 'logout'
   });
   
   m.Endpoints = Endpoints;
@@ -189,6 +193,26 @@ var dicoogle = (function DicoogleModule() {
     serviceRequest('GET', [url_, Endpoints.VERSION], callback);
   };
 
+
+  /** login(callback)
+   * Login.
+   * @param {string} username an username that should be used in Login
+   * @param {password} password to authentication 
+   * @param {function(error, { {string}result })} callback
+   */
+  m.login = function Dicoogle_login(username, password, callback) {
+    serviceRequest('GET', [url_, Endpoints.LOGIN], callback);
+  };
+
+    /** logout(callback)
+   * Logout.
+   * @param {function(error, { {string}result })} callback
+   */
+  m.logout = function Dicoogle_logout(callback) {
+    serviceRequest('GET', [url_, Endpoints.LOGOUT], callback);
+  };
+
+
   /** request(method, uri[, options], callback)
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
    * service exposed by Dicoogle, including those from plugins.
@@ -228,7 +252,7 @@ var dicoogle = (function DicoogleModule() {
    * @deprecated @param {boolean} [secure] whether to use HTTPS instead of HTTP, if no scheme is specified in the url
    * @return a singleton dicoogle service access object
    */
-  return function(url, secure) {
+  return function(url, secure, user, password) {
     url_ = url || url_;
     if (typeof url_ !== 'string') {
       if (typeof window === 'object') {
@@ -245,6 +269,15 @@ var dicoogle = (function DicoogleModule() {
       if (url_.indexOf('://') === -1) {
         url_ = (secure ? 'https://' : 'http://') + url_;
       }
+    }
+    
+    if (user!==undefined && password!==undefined)
+    {
+        m.login(url_, user, password, function(data)
+        {
+            token = data.token;
+            username = user;
+        });
     }
     
     return m;

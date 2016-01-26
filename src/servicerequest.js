@@ -43,7 +43,7 @@ function makeUrl(uri, qs) {
   * @param {string|object} [qs] the query string parameters
   * @param {function(error,outcome)} callback
   */
-export default function service_request(method, uri, qs, callback) {
+export default function service_request(method, uri, qs, callback, token) {
   if (typeof qs === 'function' && !callback) {
     callback = qs;
     qs = {};
@@ -51,6 +51,12 @@ export default function service_request(method, uri, qs, callback) {
   let end_url = makeUrl(uri, qs);
   let options = URL.parse(end_url);
   options.method = method;
+  if (token!==undefined)
+  {
+    options.headers = {
+        'Authorization': token
+        };
+  }  
   let req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
     let error = null;
     if (res.statusCode !== 200) {
@@ -59,6 +65,7 @@ export default function service_request(method, uri, qs, callback) {
         message: res.statusMessage
       };
     }
+    
     // accumulate chunks and convert to JSON in the end.
     // raw usage of http module, no external libraries.
     res.setEncoding('utf8');
