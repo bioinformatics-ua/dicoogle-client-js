@@ -35,7 +35,7 @@ var dicoogle = (function DicoogleModule() {
    * @param {object} [options] a hash of options (none are required):
    *   {[boolean]} keyword : force whether the query is keyword-based. Defaults to automatic detection.
    *   {[string[]]} provider : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @param {function(error, {object[]}result)} callback
+   * @param {function(error, {results?: object[], elapsedTime?: number})} callback
    */
   m.search = function Dicoogle_search(query, options, callback) {
       if (!options) {
@@ -51,7 +51,7 @@ var dicoogle = (function DicoogleModule() {
         keyword,
         provider
         }, function(err, data) {
-          callback(err, data ? (data.results || []) : null);
+          callback(err, data);
       });
   };
   

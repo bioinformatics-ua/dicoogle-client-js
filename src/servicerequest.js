@@ -18,7 +18,7 @@ function makeUrl(uri, qs) {
   } else {
     let qparams = [];
     for (let pname in qs) {
-      if (Array.isArray(qs[pname])) {
+      if (qs[pname] instanceof Array) {
         for (let j = 0; j < qs[pname].length; j++) {
           qparams.push(pname + '=' + encodeURIComponent(qs[pname][j]));
         }

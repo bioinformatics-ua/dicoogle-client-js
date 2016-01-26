@@ -72,5 +72,10 @@ module.exports = function createDicoogleMock() {
         "dropbox"
         ]);
 
+    nock(BASE_URL) // mock index
+        .post('/management/tasks/index')
+        .query({uri: '/opt/another-dataset', plugin: 'lucene'})
+        .reply(200);
+
     return DicoogleClient(BASE_URL);
 };

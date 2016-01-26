@@ -54,15 +54,29 @@ describe('Dicoogle Node.js Client', function() {
         for (var i = 0; i < outcome.results.length; i++) {
             assert.equal(typeof outcome.results[i], 'object', 'all results must be objects');
             assert.equal(typeof outcome.results[i].fields, 'object', 'all results must have a fields object');
-            assert.equal(typeof outcome.results[i].fields.Modality, 'MR', 'all results must be MR');
+            assert.equal(outcome.results[i].fields.Modality, 'MR', 'all results must be MR');
         }
+        assert(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
         done();
       });
     });
   });
 
+  describe('#index() a provider', function() {
+    it("should say ok with no error", function (done) {
+        Dicoogle.index('/opt/another-dataset', 'lucene', function(error) {
+            assert.equal(error, null);
+            done();
+        });
+    });
+  });
+  
+  describe('#unindex()', function() {
+    it("should say ok with no error"); // TODO
+  });
+
   describe('#search() free text', function() {
-    it("should give some results with no error"); // TODO
+    it("should auto-detect a free text query and give some results with no error"); // TODO
   });
   
   describe('#dump()', function() {
@@ -73,5 +87,12 @@ describe('Dicoogle Node.js Client', function() {
     it("should give a list of task information with no error"); // TODO
   });
   
+  describe('#getQueryServiceStatus()', function() {
+    it("should give information about the DICOM QR service with no error"); // TODO
+  });
+
+  describe('#getStorageServiceStatus()', function() {
+    it("should give information about the DICOM storage service with no error"); // TODO
+  });
 });
 
