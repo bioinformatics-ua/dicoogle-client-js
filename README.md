@@ -1,4 +1,4 @@
-[![version](https://img.shields.io/npm/v/dicoogle-client.svg)](https://www.npmjs.org/package/dicoogle-client)
+[![version](https://img.shields.io/npm/v/dicoogle-client.svg)](https://www.npmjs.org/package/dicoogle-client) [![Build Status](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js.svg?branch=master)](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js)
 
 # dicoogle-client
 
