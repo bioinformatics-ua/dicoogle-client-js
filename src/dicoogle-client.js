@@ -182,8 +182,7 @@ var dicoogle = (function DicoogleModule() {
 
   /** getVersion(callback)
    * Retrieve the running Dicoogle version.
-   * Indices will not be updated, hence the files should be unindexed manually if so is intended.
-   * @param {function(error, { {string}version })} callback
+   * @param {function(error, { version:string })} callback
    */
   m.getVersion = function Dicoogle_getVersion(callback) {
     serviceRequest('GET', [url_, Endpoints.VERSION], callback);

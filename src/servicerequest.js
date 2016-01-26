@@ -12,13 +12,11 @@ function makeUrl(uri, qs) {
     end_url = uri;
   }
   
-  let qstring;
-  if (!qs) {
-    qstring = '';
-  } if (typeof qs === 'string') {
+  let qstring = '';
+  if (typeof qs === 'string' && qs.length > 0) {
     qstring = '?' + qs;
   } else {
-    var qparams = [];
+    let qparams = [];
     for (let pname in qs) {
       if (Array.isArray(qs[pname])) {
         for (let j = 0; j < qs[pname].length; j++) {
@@ -30,7 +28,9 @@ function makeUrl(uri, qs) {
         qparams.push(pname);
       }
     }
-    qstring = '?' + qparams.join('&');
+    if (qparams.length > 0) {
+        qstring = '?' + qparams.join('&');
+    }
   }
   return end_url + qstring;
 }
