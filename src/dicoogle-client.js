@@ -8,8 +8,8 @@ const dicoogle = (function DicoogleModule() {
 
   // private variables of the module
   var url_ = null;
-//  var username = null;
-  var token = null;
+  var username_ = null;
+  var token_ = null;
 
   // module
   var m = {};
@@ -206,23 +206,67 @@ const dicoogle = (function DicoogleModule() {
     serviceRequest('GET', [url_, Endpoints.VERSION], callback);
   };
 
+  /** getToken()
+   * Retrieve the authentication token. This token is ephemeral and may expire after some time.
+   * This method is synchronous.
+   * @returns {string} the user's current authentication token
+   */
+  m.getToken = function Dicoogle_getToken() {
+    return token_;
+  };
+
+  /** setToken(token)
+   * Assing the module's session token, used only for restoring previous (but recent) sessions.
+   * This method is synchronous.
+   * @param {string} token the same user's token of a previous token
+   */
+  m.setToken = function Dicoogle_setToken(token) {
+    if (typeof token === 'string') {
+        token_ = token;
+    }
+  };
+
+  /** isAuthenticated()
+   * Check whether the user is authenticated to the server. Authenticated clients will hold an
+   * authentication token.
+   * @returns {boolean} whether the user is authenticated to not.
+   */
+  m.isAuthenticated = function Dicoogle_isAuthenticated() {
+    return token_ !== null;
+  };
+
 
   /** login(username, password, callback)
    * Manually log in to Dicoogle using the given credentials.
    * @param {string} username the unique user name for the client
    * @param {password} password the user's password for authentication
-   * @param {function(error, {result:string})} callback the callback function, returns the authentication token
+   * @param {function(error, {token:string, user:string})} [callback] the callback function, returns the authentication token
    */
   m.login = function Dicoogle_login(username, password, callback) {
-    serviceRequest('POST', [url_, Endpoints.LOGIN], {username, password}, callback);
+
+    function changedCallback(error, data) {
+        if (error) {
+            if (typeof callback === 'function') {
+                callback(error);
+            }
+            return;
+        }
+        token_ = data.token;
+        username_ = data.user;
+        if (typeof callback === 'function') {
+            callback(null, data);
+        }
+    }
+
+    serviceRequest('POST', [url_, Endpoints.LOGIN], false, changedCallback, null, 'application/x-www-form-urlencoded', {username, password});
   };
 
   /** logout(callback)
-   * Logout.
+   * Log out from the server.
    * @param {function(error)} callback the callback function
    */
   m.logout = function Dicoogle_logout(callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback);
+    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback, token_);
   };
 
 
@@ -248,10 +292,11 @@ const dicoogle = (function DicoogleModule() {
       } else {
         path = [url_].concat(uri);
       }
-      serviceRequest(method, path, options, callback, token);
+      serviceRequest(method, path, options, callback, token_);
   };
 
   /** Obtain the base URL of all Dicoogle services.
+   * This method is synchronous.
    * @returns {string} the currently configured base endpoint of Dicoogle
    */
   m.getBase = function Dicoogle_getBase() {
@@ -263,7 +308,8 @@ const dicoogle = (function DicoogleModule() {
    *
    * @property {string} user - The client's user name.
    * @property {password} password - The user's password for authentication.
-   * @property {boolean} secure - whether to use HTTPS instead of HTTP, if no scheme is specified in the url
+   * @property {string} [token] - The same user's token of a previous token, used only for restoring previous (but recent) sessions.
+   * @property {boolean} [secure] - Whether to use HTTPS instead of HTTP, if no scheme is specified in the url.
    */
 
   /**
@@ -294,13 +340,8 @@ const dicoogle = (function DicoogleModule() {
       }
     }
 
-    if (typeof user === 'string' && password)
-    {
-        m.login(url_, user, password, function(data)
-        {
-            token = data.token;
-//            username = user;
-        });
+    if (typeof user === 'string' && password) {
+        m.login(user, password)
     }
 
     return m;
