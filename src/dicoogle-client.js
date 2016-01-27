@@ -54,22 +54,18 @@ const dicoogle = (function DicoogleModule() {
         query: query,
         keyword,
         provider
-        }, function(err, data) {
-          callback(err, data);
-      });
+        }, callback);
   };
 
   /** dump(uid, callback)
    * Retrieve an image's meta-data (perform an information dump)
    * @param {string} uid the SOP instance UID
-   * @param {function(error, result)} callback the callback function
+   * @param {function(error, outcome:{results:object, elapsedTime:number})} callback the callback function
    */
   m.dump = function Dicoogle_dump(uid, callback) {
     serviceRequest('GET', [url_, Endpoints.DUMP], {
         uid
-      }, function(err, data) {
-        callback(err, data ? data.results : null);
-    });
+      }, callback);
   };
 
   /** getProviders([type, ]callback)
@@ -172,13 +168,17 @@ const dicoogle = (function DicoogleModule() {
     }, callback);
   };
 
-  /** unindex(uri, callback)
+  /** unindex(uri, [provider,] callback)
    * Request that the file at the given URI is unindexed. The operation, unlike index(), is not recursive.
    * @param {string|string[]} uri a URI or array of URIs representing the files to be unindexed
-   * @param {string|string[]} provider a provider or array of provider names in which the unindexation will carry out, all by default
+   * @param {string|string[]} [provider] a provider or array of provider names in which the unindexation will carry out, all by default
    * @param {function(error)} callback the function to call on completion
    */
   m.unindex = function Dicoogle_unindex(uri, provider, callback) {
+    if (typeof provider === 'function' && !callback) {
+      callback = provider;
+      provider = undefined;
+    }
     serviceRequest('POST', [url_, Endpoints.UNINDEX], {
       uri,
       provider

@@ -46,8 +46,8 @@ describe('Dicoogle Node.js Client', function() {
   });
 
   describe('#search() keyword based', function() {
-    it("should give some MR results with no error", function(done) {
-      Dicoogle.search('Modality:MR', {keyword: true}, function(error, outcome) {
+    it("should auto-detect a keyword-based query and give some MR results with no error", function(done) {
+      Dicoogle.search('Modality:MR', {provider: 'lucene'}, function(error, outcome) {
         assert.equal(error, null);
         assert('results' in outcome, 'outcome has results');
         assert(outcome.results instanceof Array, 'results must be an array');
@@ -62,7 +62,7 @@ describe('Dicoogle Node.js Client', function() {
     });
   });
 
-  describe('#index() a provider', function() {
+  describe('#index() on one provider', function() {
     it("should say ok with no error", function (done) {
         Dicoogle.index('/opt/another-dataset', 'lucene', function(error) {
             assert.equal(error, null);
@@ -70,29 +70,95 @@ describe('Dicoogle Node.js Client', function() {
         });
     });
   });
-  
-  describe('#unindex()', function() {
-    it("should say ok with no error"); // TODO
+
+  describe('#unindex() on all providers', function() {
+    it("should say ok with no error", function (done) {
+        Dicoogle.unindex('/opt/another-dataset/1_1.dcm', function(error) {
+            assert.equal(error, null);
+            done();
+        });
+    });
   });
 
   describe('#search() free text', function() {
-    it("should auto-detect a free text query and give some results with no error"); // TODO
+    it("should auto-detect a free text query and give some results with no error", function(done) {
+      Dicoogle.search('Esquina', function(error, outcome) {
+        assert.equal(error, null);
+        assert('results' in outcome, 'outcome has results');
+        assert(outcome.results instanceof Array, 'results must be an array');
+        for (var i = 0; i < outcome.results.length; i++) {
+            assert.strictEqual(typeof outcome.results[i], 'object', 'all results must be objects');
+            assert.strictEqual(typeof outcome.results[i].fields, 'object', 'all results must have a fields object');
+        }
+        assert.strictEqual(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
+        done();
+      });
+    });
   });
-  
+
   describe('#dump()', function() {
-    it("should give one result with no error"); // TODO
+    it("should give one result with no error", function(done) {
+      Dicoogle.dump('1.2.3.4.5.6.7777777.4444.1', function(error, outcome) {
+        assert.equal(error, null);
+        assert('results' in outcome, 'outcome has results');
+        assert.strictEqual(typeof outcome.results, 'object', 'results must be an object');
+        assert.strictEqual(typeof outcome.results.fields, 'object', 'must have a fields object');
+        assert.strictEqual(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
+        done();
+      });
+    });
   });
 
   describe('#getRunningTasks()', function() {
-    it("should give a list of task information with no error"); // TODO
-  });
-  
-  describe('#getQueryServiceStatus()', function() {
-    it("should give information about the DICOM QR service with no error"); // TODO
+    it("should give a list of task information with no error", function(done) {
+        Dicoogle.getRunningTasks(function(error, outcome) {
+          assert.equal(error, null);
+          assert('tasks' in outcome, 'outcome has tasks');
+          var tasks = outcome.tasks;
+          assert(tasks instanceof Array, 'tasks must be an array');
+          for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            assert.strictEqual(typeof task, 'object', 'task must be an object');
+            assert.strictEqual(typeof task.taskUid, 'string', 'taskUid must be a string');
+            assert.strictEqual(typeof task.taskName, 'string', 'taskName must be a string');
+            assert.strictEqual(typeof task.taskProgress, 'number', 'taskProgress must be a number');
+            assert(!('complete' in task) || typeof task.complete === 'boolean', 'complete must be a boolean');
+            if (task.complete) {
+              assert.strictEqual(typeof task.elapsedTime, 'number', 'elapsedTime must be a number');
+              assert.strictEqual(typeof task.nIndexed, 'number', 'nIndexed must be a number');
+              assert.strictEqual(typeof task.nErrors, 'number', 'nErrors must be a number');
+            }
+          }
+          assert.strictEqual(typeof outcome.count, 'number', 'outcome has count');
+          done();
+        });
+    }); // TODO
   });
 
-  describe('#getStorageServiceStatus()', function() {
-    it("should give information about the DICOM storage service with no error"); // TODO
+
+  function checkServiceInfo(error, data) {
+    assert.equal(error, null);
+    assert.strictEqual(typeof data.isRunning, 'boolean', 'isRunning must be a boolean');
+    assert.strictEqual(typeof data.autostart, 'boolean', 'autostart must be a boolean');
+    assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
+  }
+
+  describe('#getQueryServiceStatus()', function() {
+    it("should inform of DICOM QR service status with no error", function(done) {
+        Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+            checkServiceInfo(error, data);
+            done();
+        })
+    });
+  });
+
+  describe('#getQueryServiceStatus()', function() {
+    it("should inform of DICOM Storage service status with no error", function(done) {
+        Dicoogle.getStorageServiceStatus(function (error, data) {
+            checkServiceInfo(error, data);
+            done();
+        })
+    });
   });
 });
 
