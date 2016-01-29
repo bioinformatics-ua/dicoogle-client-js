@@ -116,7 +116,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {function(error, {running, autostart, port})} callback the callback function
    */
   DicoogleAccess.prototype.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
-    serviceRequest('GET', [url_, Endpoints.STORAGE_SERVICE], function(err, data) {
+    serviceRequest('GET', [url_, Endpoints.STORAGE_SERVICE], {}, function(err, data) {
         callback(err, err ? null : data);
     }, token_);
   };
@@ -126,7 +126,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {function(error, {running, autostart, port})} callback the callback function
    */
   DicoogleAccess.prototype.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
-    serviceRequest('GET', [url_, Endpoints.QR_SERVICE], function(err, data) {
+    serviceRequest('GET', [url_, Endpoints.QR_SERVICE], {}, function(err, data) {
         callback(err, err ? null : data);
     }, token_);
   };
@@ -146,7 +146,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {function(error, {tasks:TaskInfo[], count:number})} callback the callback function
    */
   DicoogleAccess.prototype.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
-    serviceRequest('GET', [url_, Endpoints.RUNNING_TASKS], function(err, data) {
+    serviceRequest('GET', [url_, Endpoints.RUNNING_TASKS], {}, function(err, data) {
         callback(err, data ? {
             tasks: data.results,
             count: data.count
@@ -206,7 +206,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {function(error, {version:string})} callback the callback function
    */
   DicoogleAccess.prototype.getVersion = function Dicoogle_getVersion(callback) {
-    serviceRequest('GET', [url_, Endpoints.VERSION], callback, token_);
+    serviceRequest('GET', [url_, Endpoints.VERSION], {}, callback, token_);
   };
 
   /** getToken()

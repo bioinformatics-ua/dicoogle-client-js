@@ -6,10 +6,8 @@ function makeUrl(uri, qs) {
   } else {
     end_url += uri;
   }
-  let qstring;
-  if (!qs) {
-    qstring = '';
-  } if (typeof qs === 'string') {
+  let qstring = '';
+  if (typeof qs === 'string' && qs.length > 0) {
     qstring = '?' + qs;
   } else {
     let qparams = [];
@@ -24,7 +22,9 @@ function makeUrl(uri, qs) {
         qparams.push(pname);
       }
     }
-    qstring = '?' + qparams.join('&');
+    if (qparams.length > 0) {
+      qstring = '?' + qparams.join('&');
+    }
   }
   return end_url + qstring;
 }
@@ -41,11 +41,6 @@ function makeUrl(uri, qs) {
   * @param {string} [formContent] used if it is a form post.
   */
 export default function service_request(method, uri, qs, callback, token, mimeType, formContent) {
-
-  if (typeof qs === 'function' && !callback) {
-    callback = qs;
-    qs = {};
-  }
 
   let end_url = makeUrl(uri, qs);
 

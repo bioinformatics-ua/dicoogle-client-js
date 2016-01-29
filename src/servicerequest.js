@@ -41,17 +41,13 @@ function makeUrl(uri, qs) {
  *
  * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
  * @param {string|string[]} uri the request URI as a string or array of URI resources
- * @param {string|object} [qs] the query string parameters
+ * @param {string|object} qs the query string parameters
  * @param {function(error,outcome)} callback the callback function
  * @param {string} [token] the sessions' authentication token
  * @param {string} [mimeType] the MIME type
  * @param {string} [formData] the form data
  */
 export default function service_request(method, uri, qs, callback, token, mimeType, formData) {
-  if (typeof qs === 'function' && !callback) {
-    callback = qs;
-    qs = {};
-  }
 
   let end_url = makeUrl(uri, qs);
   let options = URL.parse(end_url);
