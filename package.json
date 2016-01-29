@@ -5,7 +5,8 @@
     "Eduardo Pinho <eduardopinho@ua.pt>"
   ],
   "contributors": [
-    "Eduardo Pinho <eduardopinho@ua.pt>"
+    "Eduardo Pinho <eduardopinho@ua.pt>",
+    "Luís Bastião Silva <bastiao@bmd-software.com>"
   ],
   "description": "Dicoogle web service client for JavaScript applications",
   "keywords": [
