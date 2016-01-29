@@ -10,9 +10,13 @@ const dicoogle = (function DicoogleModule() {
   var url_ = null;
   var username_ = null;
   var token_ = null;
+  var roles_ = null;
 
-  // module
-  var m = {};
+  // module definition
+  function DicoogleAccess() {}
+
+  // singleton module
+  var m = new DicoogleAccess();
 
   const Endpoints = Object.freeze({
     SEARCH: "search",
@@ -30,8 +34,7 @@ const dicoogle = (function DicoogleModule() {
     LOGIN: 'login',
     LOGOUT: 'logout'
   });
-
-  m.Endpoints = Endpoints;
+  DicoogleAccess.prototype.Endpoints = Endpoints;
 
   /** search(query[, options], callback)
    * Perform a text query.
@@ -41,7 +44,7 @@ const dicoogle = (function DicoogleModule() {
    *   - {string|string[]} [provider] : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
    * @param {function(error, {results:object[], elapsedTime:number})} callback the callback function providing the outcome
    */
-  m.search = function Dicoogle_search(query, options, callback) {
+  DicoogleAccess.prototype.search = function Dicoogle_search(query, options, callback) {
       if (!options) {
         options = {};
       } else if (!callback && typeof options === 'function') {
@@ -54,7 +57,7 @@ const dicoogle = (function DicoogleModule() {
         query: query,
         keyword,
         provider
-        }, callback);
+        }, callback, token_);
   };
 
   /** dump(uid, callback)
@@ -62,10 +65,10 @@ const dicoogle = (function DicoogleModule() {
    * @param {string} uid the SOP instance UID
    * @param {function(error, outcome:{results:object, elapsedTime:number})} callback the callback function
    */
-  m.dump = function Dicoogle_dump(uid, callback) {
+  DicoogleAccess.prototype.dump = function Dicoogle_dump(uid, callback) {
     serviceRequest('GET', [url_, Endpoints.DUMP], {
         uid
-      }, callback);
+      }, callback, token_);
   };
 
   /** getProviders([type, ]callback)
@@ -73,59 +76,59 @@ const dicoogle = (function DicoogleModule() {
    * @param {string} [type] the type of provider ("query", "index", ...) - defaults to "query"
    * @param {function(error, result:string)} callback the callback function
    */
-  m.getProviders = function Dicoogle_getProviders(type, callback) {
+  DicoogleAccess.prototype.getProviders = function Dicoogle_getProviders(type, callback) {
     if (typeof type === 'function' && !callback) {
       callback = type;
       type = 'query';
     }
     let options = { type: typeof type === 'string' ? type : 'query' };
     serviceRequest('GET', [url_, Endpoints.PROVIDERS], options, (err, data) => {
-        callback(err, data || null);
-    });
+        callback(err, err ? null : data);
+    }, token_);
   };
 
   /** getQueryProviders(callback)
    * Retrieve a list of query provider plugins
    * @param {function(error, result:string[])} callback the callback function
    */
-  m.getQueryProviders = function Dicoogle_getQueryProviders(callback) {
-    m.getProviders('query', callback);
+  DicoogleAccess.prototype.getQueryProviders = function Dicoogle_getQueryProviders(callback) {
+    this.getProviders('query', callback);
   };
 
   /** getIndexProviders(callback)
    * Retrieve a list of index provider plugins
    * @param {function(error, result:string[])} callback the callback function
    */
-  m.getIndexProviders = function Dicoogle_getIndexProviders(callback) {
-    m.getProviders('index', callback);
+  DicoogleAccess.prototype.getIndexProviders = function Dicoogle_getIndexProviders(callback) {
+    this.getProviders('index', callback);
   };
 
   /** getStorageProviders(callback)
    * Retrieve a list of storage interface plugins
    * @param {function(error, result:string[])} callback the callback function
    */
-  m.getStorageProviders = function Dicoogle_getStorageProviders(callback) {
-    m.getProviders('storage', callback);
+  DicoogleAccess.prototype.getStorageProviders = function Dicoogle_getStorageProviders(callback) {
+    this.getProviders('storage', callback);
   };
 
   /** getStorageServiceStatus(callback)
    * Obtain information about the DICOM Storage service.
    * @param {function(error, {running, autostart, port})} callback the callback function
    */
-  m.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
+  DicoogleAccess.prototype.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
     serviceRequest('GET', [url_, Endpoints.STORAGE_SERVICE], function(err, data) {
-        callback(err, data || null);
-    });
+        callback(err, err ? null : data);
+    }, token_);
   };
 
   /** getQueryRetrieveServiceStatus(callback)
    * Obtain information about the DICOM Query Retrieve service.
    * @param {function(error, {running, autostart, port})} callback the callback function
    */
-  m.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
+  DicoogleAccess.prototype.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
     serviceRequest('GET', [url_, Endpoints.QR_SERVICE], function(err, data) {
-        callback(err, data || null);
-    });
+        callback(err, err ? null : data);
+    }, token_);
   };
 
   /** @typedef {Object} TaskInfo
@@ -142,13 +145,13 @@ const dicoogle = (function DicoogleModule() {
    * Obtain information about Dicoogle's running (or terminated) tasks.
    * @param {function(error, {tasks:TaskInfo[], count:number})} callback the callback function
    */
-  m.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
+  DicoogleAccess.prototype.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
     serviceRequest('GET', [url_, Endpoints.RUNNING_TASKS], function(err, data) {
         callback(err, data ? {
             tasks: data.results,
             count: data.count
         } : null);
-    });
+    }, token_);
   };
 
   /** index(uri, [provider,] callback)
@@ -157,7 +160,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {string|string[]} [provider] a provider or array of provider names in which the indexation will carry out, all by default
    * @param {function(error)} callback the function to call when the task is successfully issued
    */
-  m.index = function Dicoogle_index(uri, provider, callback) {
+  DicoogleAccess.prototype.index = function Dicoogle_index(uri, provider, callback) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
@@ -165,7 +168,7 @@ const dicoogle = (function DicoogleModule() {
     serviceRequest('POST', [url_, Endpoints.INDEX], {
       uri,
       plugin: provider
-    }, callback);
+    }, callback, token_);
   };
 
   /** unindex(uri, [provider,] callback)
@@ -174,7 +177,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {string|string[]} [provider] a provider or array of provider names in which the unindexation will carry out, all by default
    * @param {function(error)} callback the function to call on completion
    */
-  m.unindex = function Dicoogle_unindex(uri, provider, callback) {
+  DicoogleAccess.prototype.unindex = function Dicoogle_unindex(uri, provider, callback) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
@@ -182,7 +185,7 @@ const dicoogle = (function DicoogleModule() {
     serviceRequest('POST', [url_, Endpoints.UNINDEX], {
       uri,
       provider
-    }, callback);
+    }, callback, token_);
   };
 
   /** remove(uri, callback)
@@ -191,10 +194,10 @@ const dicoogle = (function DicoogleModule() {
    * @param {string|string[]} uri a URI or array of URIs representing the files to be removed
    * @param {function(error)} callback the function to call on completion
    */
-  m.remove = function Dicoogle_remove(uri, callback) {
+  DicoogleAccess.prototype.remove = function Dicoogle_remove(uri, callback) {
     serviceRequest('POST', [url_, Endpoints.REMOVE], {
       uri
-    }, callback);
+    }, callback, token_);
   };
 
   /** getVersion(callback)
@@ -202,8 +205,8 @@ const dicoogle = (function DicoogleModule() {
    * Indices will not be updated, hence the files should be unindexed manually if so is intended.
    * @param {function(error, {version:string})} callback the callback function
    */
-  m.getVersion = function Dicoogle_getVersion(callback) {
-    serviceRequest('GET', [url_, Endpoints.VERSION], callback);
+  DicoogleAccess.prototype.getVersion = function Dicoogle_getVersion(callback) {
+    serviceRequest('GET', [url_, Endpoints.VERSION], callback, token_);
   };
 
   /** getToken()
@@ -211,7 +214,7 @@ const dicoogle = (function DicoogleModule() {
    * This method is synchronous.
    * @returns {string} the user's current authentication token
    */
-  m.getToken = function Dicoogle_getToken() {
+  DicoogleAccess.prototype.getToken = function Dicoogle_getToken() {
     return token_;
   };
 
@@ -220,7 +223,7 @@ const dicoogle = (function DicoogleModule() {
    * This method is synchronous.
    * @param {string} token the same user's token of a previous token
    */
-  m.setToken = function Dicoogle_setToken(token) {
+  DicoogleAccess.prototype.setToken = function Dicoogle_setToken(token) {
     if (typeof token === 'string') {
         token_ = token;
     }
@@ -231,7 +234,7 @@ const dicoogle = (function DicoogleModule() {
    * authentication token.
    * @returns {boolean} whether the user is authenticated to not.
    */
-  m.isAuthenticated = function Dicoogle_isAuthenticated() {
+  DicoogleAccess.prototype.isAuthenticated = function Dicoogle_isAuthenticated() {
     return token_ !== null;
   };
 
@@ -239,17 +242,25 @@ const dicoogle = (function DicoogleModule() {
    * Get the user name of the currently authenticated user.
    * @returns {string} the unique user name
    */
-  m.getUsername = function Dicoogle_getUsername() {
+  DicoogleAccess.prototype.getUsername = function Dicoogle_getUsername() {
     return username_;
+  };
+
+  /** getRoles()
+   * Get the names of the roles assigned to this user.
+   * @returns {string[]} an array of role names, null if the user is not authenticated
+   */
+  DicoogleAccess.prototype.getRoles = function Dicoogle_getRoles() {
+    return roles_ ? [].concat(roles_) : null;
   };
 
   /** login(username, password, callback)
    * Manually log in to Dicoogle using the given credentials.
    * @param {string} username the unique user name for the client
    * @param {password} password the user's password for authentication
-   * @param {function(error, {token:string, user:string})} [callback] the callback function, returns the authentication token
+   * @param {function(error, {token:string, user:string, roles:string[], admin:boolean})} [callback] the callback function, returns the authentication token
    */
-  m.login = function Dicoogle_login(username, password, callback) {
+  DicoogleAccess.prototype.login = function Dicoogle_login(username, password, callback) {
 
     function changedCallback(error, data) {
         if (error) {
@@ -260,20 +271,29 @@ const dicoogle = (function DicoogleModule() {
         }
         token_ = data.token;
         username_ = data.user;
+        roles_ = data.roles;
         if (typeof callback === 'function') {
             callback(null, data);
         }
     }
 
-    serviceRequest('POST', [url_, Endpoints.LOGIN], false, changedCallback, null, 'application/x-www-form-urlencoded', {username, password});
+    serviceRequest('POST', [url_, Endpoints.LOGIN], false, changedCallback, null,
+            'application/x-www-form-urlencoded', {username, password});
   };
 
   /** logout(callback)
    * Log out from the server.
    * @param {function(error)} callback the callback function
    */
-  m.logout = function Dicoogle_logout(callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGOUT], false, callback, token_);
+  DicoogleAccess.prototype.logout = function Dicoogle_logout(callback) {
+    serviceRequest('POST', [url_, Endpoints.LOGOUT], false, function(error) {
+        if (!error) {
+            username_ = null;
+            token_ = null;
+            roles_ = null;
+        }
+        callback(error);
+    }, token_);
   };
 
 
@@ -285,7 +305,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {object} [options] an object of options to be passed as query strings
    * @param {function(error, result)} callback the callback function
    */
-  m.request = function Dicoogle_request(method, uri, options, callback) {
+  DicoogleAccess.prototype.request = function Dicoogle_request(method, uri, options, callback) {
       method = method || 'GET';
       if (!options) {
         options = {};
@@ -306,7 +326,7 @@ const dicoogle = (function DicoogleModule() {
    * This method is synchronous.
    * @returns {string} the currently configured base endpoint of Dicoogle
    */
-  m.getBase = function Dicoogle_getBase() {
+  DicoogleAccess.prototype.getBase = function Dicoogle_getBase() {
     return url_;
   }
 
@@ -327,7 +347,15 @@ const dicoogle = (function DicoogleModule() {
    * @returns {Object} a singleton dicoogle service access object
    */
   return function(url, options = {}) {
-    url_ = url || url_;
+    if (typeof url === 'string') {
+        if (url !== url_) {
+            // new address, discard user info
+            username_ = null;
+            token_ = null;
+            roles_ = null;
+            url_ = url;
+        }
+    }
     if (typeof url_ !== 'string') {
       if (typeof window === 'object') {
         url_ = window.location.protocol + "//" + window.location.host;
@@ -348,7 +376,7 @@ const dicoogle = (function DicoogleModule() {
     }
 
     if (typeof user === 'string' && password) {
-        m.login(user, password)
+        m.login(user, password);
     }
 
     return m;

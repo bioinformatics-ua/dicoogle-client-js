@@ -2,6 +2,7 @@
 var URL = require('url');
 var http = require('http');
 var https = require('https');
+var querystring = require('querystring');
 
 function makeUrl(uri, qs) {
   // create full query string
@@ -36,16 +37,17 @@ function makeUrl(uri, qs) {
 }
 
 /**
-  * send a REST request to the service
-  *
-  * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
-  * @param {string|string[]} uri the request URI as a string or array of URI resources
-  * @param {string|object} [qs] the query string parameters
-  * @param {function(error,outcome)} callback the callback function
-  * @param {string} [token] the sessions' authentication token
-  * @param {string} [mimeType] the MIME type
-  */
-export default function service_request(method, uri, qs, callback, token, mimeType) {
+ * send a REST request to the service
+ *
+ * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
+ * @param {string|string[]} uri the request URI as a string or array of URI resources
+ * @param {string|object} [qs] the query string parameters
+ * @param {function(error,outcome)} callback the callback function
+ * @param {string} [token] the sessions' authentication token
+ * @param {string} [mimeType] the MIME type
+ * @param {string} [formData] the form data
+ */
+export default function service_request(method, uri, qs, callback, token, mimeType, formData) {
   if (typeof qs === 'function' && !callback) {
     callback = qs;
     qs = {};
@@ -58,13 +60,12 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
   if (token) {
     options.headers['Authorization'] = token;
   }
-  if (mimeType)
-  {
-      options.headers['Content-Type'] = mimeType;
-      options.headers['Content-Length'] = JSON.stringify(qs).length;
-      if (mimeType === 'application/x-www-form-urlencoded'){
-          options.form = qs;
-      }
+  options.headers['Content-Type'] = mimeType ? mimeType : 'application/json';
+
+  if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded'){
+    options.headers['Content-Length'] = querystring.stringify(qs).length;
+  } else {
+    options.headers['Content-Length'] = JSON.stringify(qs).length;
   }
   let req = (options.protocol === 'https:' ? https : http).request(options, function(res) {
     let error = null;
@@ -103,7 +104,9 @@ export default function service_request(method, uri, qs, callback, token, mimeTy
     callback({code: 'EXCEPT', exception});
   });
   if (mimeType === 'application/x-www-form-urlencoded') {
-    req.write(qs);
+    req.write(querystring.stringify(formData));
+  } else if (formData) {
+    req.write(formData);
   }
   req.end();
 }

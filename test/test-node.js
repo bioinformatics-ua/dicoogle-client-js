@@ -2,7 +2,8 @@ var assert = require('assert');
 var mocha = require('mocha');
 var describe = mocha.describe;
 var it = mocha.it;
-var Dicoogle = require('./service-mock')();
+var beforeEach = mocha.beforeEach;
+var createMockedDicoogle = require('./mock/service-mock');
 
 var DICOOGLE_VERSION = '2.4.0-TEST';
 
@@ -13,7 +14,14 @@ function assertSameContent(a, b) {
   assert.deepStrictEqual(diff2, [], 'array contents should be the same');
 }
 
+
 describe('Dicoogle Node.js Client', function() {
+  var Dicoogle;
+  function initBaseURL() {
+    Dicoogle = createMockedDicoogle();
+    assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
+  }
+  beforeEach(initBaseURL);
 
   describe('#getVersion()', function() {
     it("should give Dicoogle's version with no error", function(done) {

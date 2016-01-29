@@ -22,7 +22,6 @@
     "no-unused-vars": 1,
     "comma-spacing": 1,
     "space-infix-ops": 1,
-    "no-trailing-spaces": 1,
     "no-mixed-spaces-and-tabs": 1,
     "no-multi-spaces": 1,
     "no-extra-semi": 1,
