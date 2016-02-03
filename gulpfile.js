@@ -54,7 +54,7 @@ gulp.task('lint', ['lint:browser', 'lint:node', 'lint:bin'], function () {
 
 gulp.task('main', ['lint'], function () {
   return gulp.src('src/*.js')
-    .pipe(babel({ presets: ['es2015'] }))
+    .pipe(babel({ presets: ['es2015'], plugins: ['add-module-exports'] }))
     .pipe(header(licenseText()))
     .pipe(gulp.dest('lib'));
 });

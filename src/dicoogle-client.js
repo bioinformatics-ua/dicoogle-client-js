@@ -3,21 +3,29 @@
  */
 import serviceRequest from './servicerequest';
 
-/** @namespace */
-const dicoogle = (function DicoogleModule() {
-
   // private variables of the module
+  /**@private
+   * @define {string?} */
   var url_ = null;
+  /**@private
+   * @define {string?} */
   var username_ = null;
+  /**@private
+   * @define {string?} */
   var token_ = null;
+  /**@private
+   * @define {string[]?} */
   var roles_ = null;
 
-  // module definition
+  /** @constructor */
   function DicoogleAccess() {}
 
-  // singleton module
+  // singleton module */
   var m = new DicoogleAccess();
 
+  /** Web service endpoints
+   * @enum {string}
+   */
   const Endpoints = Object.freeze({
     SEARCH: "search",
     PROVIDERS: "providers",
@@ -60,14 +68,19 @@ const dicoogle = (function DicoogleModule() {
         }, callback, token_);
   };
 
-  /** dump(uid, callback)
+  /**
    * Retrieve an image's meta-data (perform an information dump)
    * @param {string} uid the SOP instance UID
-   * @param {function(error, outcome:{results:object, elapsedTime:number})} callback the callback function
+   * @param {string[]} [provider] a list of provider plugins
+   * @param {function(error, {results:object, elapsedTime:number})} callback the callback function
    */
-  DicoogleAccess.prototype.dump = function Dicoogle_dump(uid, callback) {
+  DicoogleAccess.prototype.dump = function Dicoogle_dump(uid, provider, callback) {
+    if (typeof provider === 'function' && !callback) {
+        callback = provider;
+        provider = undefined;
+    }
     serviceRequest('GET', [url_, Endpoints.DUMP], {
-        uid
+        uid, provider
       }, callback, token_);
   };
 
@@ -87,7 +100,7 @@ const dicoogle = (function DicoogleModule() {
     }, token_);
   };
 
-  /** getQueryProviders(callback)
+  /**
    * Retrieve a list of query provider plugins
    * @param {function(error, result:string[])} callback the callback function
    */
@@ -95,7 +108,7 @@ const dicoogle = (function DicoogleModule() {
     this.getProviders('query', callback);
   };
 
-  /** getIndexProviders(callback)
+  /**
    * Retrieve a list of index provider plugins
    * @param {function(error, result:string[])} callback the callback function
    */
@@ -103,17 +116,16 @@ const dicoogle = (function DicoogleModule() {
     this.getProviders('index', callback);
   };
 
-  /** getStorageProviders(callback)
-   * Retrieve a list of storage interface plugins
+  /** Retrieve a list of storage interface plugins
    * @param {function(error, result:string[])} callback the callback function
    */
   DicoogleAccess.prototype.getStorageProviders = function Dicoogle_getStorageProviders(callback) {
     this.getProviders('storage', callback);
   };
 
-  /** getStorageServiceStatus(callback)
+  /**
    * Obtain information about the DICOM Storage service.
-   * @param {function(error, {running, autostart, port})} callback the callback function
+   * @param {function(error, {running:boolean, autostart:boolean, port:number})} callback the callback function
    */
   DicoogleAccess.prototype.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
     serviceRequest('GET', [url_, Endpoints.STORAGE_SERVICE], {}, function(err, data) {
@@ -121,9 +133,9 @@ const dicoogle = (function DicoogleModule() {
     }, token_);
   };
 
-  /** getQueryRetrieveServiceStatus(callback)
+  /**
    * Obtain information about the DICOM Query Retrieve service.
-   * @param {function(error, {running, autostart, port})} callback the callback function
+   * @param {function(error, {running:boolean, autostart:boolean, port:number})} callback the callback function
    */
   DicoogleAccess.prototype.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
     serviceRequest('GET', [url_, Endpoints.QR_SERVICE], {}, function(err, data) {
@@ -141,7 +153,7 @@ const dicoogle = (function DicoogleModule() {
    * @property {number} [nErrors] - only if complete; the number of indexation errors
    */
 
-  /** getRunningTasks(callback)
+  /**
    * Obtain information about Dicoogle's running (or terminated) tasks.
    * @param {function(error, {tasks:TaskInfo[], count:number})} callback the callback function
    */
@@ -346,7 +358,7 @@ const dicoogle = (function DicoogleModule() {
    * @param {DicoogleClientOptions} options a set of options regarding service access and user authentication
    * @returns {Object} a singleton dicoogle service access object
    */
-  return function(url, options = {}) {
+  function dicoogleClient(url, options = {}) {
     if (typeof url === 'string') {
         if (url !== url_) {
             // new address, discard user info
@@ -380,7 +392,6 @@ const dicoogle = (function DicoogleModule() {
     }
 
     return m;
-  };
-})();
+  }
 
-module.exports = dicoogle;
+export default dicoogleClient;
