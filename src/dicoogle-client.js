@@ -28,6 +28,7 @@ import serviceRequest from './servicerequest';
    */
   const Endpoints = Object.freeze({
     SEARCH: "search",
+    SEARCH_DIM: "searchDIM",
     PROVIDERS: "providers",
     DUMP: "dump",
     DIC2PNG: "dic2png",
@@ -44,12 +45,16 @@ import serviceRequest from './servicerequest';
   });
   DicoogleAccess.prototype.Endpoints = Endpoints;
 
+  /** @typedef {Object} SearchOptions
+   * @param {boolean} [keyword] - force whether the query is keyword-based. Defaults to automatic detection.
+   * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @param {boolean} [dim] - return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
+   */
+
   /** search(query[, options], callback)
    * Perform a text query.
    * @param {string} query text query
-   * @param {object} [options] a hash of options (none are required):
-   *   - {boolean} keyword: force whether the query is keyword-based. Defaults to automatic detection.
-   *   - {string|string[]} [provider] : an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @param {SearchOptions} [options] a hash of options related to the search
    * @param {function(error, {results:object[], elapsedTime:number})} callback the callback function providing the outcome
    */
   DicoogleAccess.prototype.search = function Dicoogle_search(query, options, callback) {
@@ -59,10 +64,11 @@ import serviceRequest from './servicerequest';
         callback = options;
         options = {};
       }
+      const endpoint = options.dim ? Endpoints.SEARCH_DIM : Endpoints.SEARCH;
       let provider = options.provider || options.providers;
       let keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
-      serviceRequest('GET', [url_, Endpoints.SEARCH], {
-        query: query,
+      serviceRequest('GET', [url_, endpoint], {
+        query,
         keyword,
         provider
         }, callback, token_);

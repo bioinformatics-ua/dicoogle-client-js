@@ -14,6 +14,11 @@ function assertSameContent(a, b) {
   assert.deepStrictEqual(diff2, [], 'array contents should be the same');
 }
 
+function assertDicomUUID(uid) {
+    assert.strictEqual(typeof uid, 'string', "UUID must be a string");
+    assert(uid.match(/(\d+\.?)*/), "'" + uid + "' must be a valid DICOM UUID");
+}
+
 
 describe('Dicoogle Node.js Client', function() {
   var Dicoogle;
@@ -63,8 +68,50 @@ describe('Dicoogle Node.js Client', function() {
             assert.equal(typeof outcome.results[i], 'object', 'all results must be objects');
             assert.equal(typeof outcome.results[i].fields, 'object', 'all results must have a fields object');
             assert.equal(outcome.results[i].fields.Modality, 'MR', 'all results must be MR');
+            assertDicomUUID(outcome.results[i].fields.SOPInstanceUID);
         }
         assert(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
+        done();
+      });
+    });
+  });
+
+  describe('#search() DIM, keyword based', function() {
+    it("should give some results in the DIM format successfully", function(done) {
+      Dicoogle.search('Modality:MR', {provider: 'lucene', dim: true, keyword: true}, function(error, outcome) {
+        assert.equal(error, null);
+        assert('results' in outcome, 'outcome has results');
+        assert(outcome.results instanceof Array, 'results must be an array');
+        for (var i = 0; i < outcome.results.length; i++) {
+            var patient = outcome.results[i];
+            assert.strictEqual(typeof patient, 'object', 'all patients must be objects');
+            assert(patient.studies instanceof Array, 'all patients must have a studies array');
+            for (var j = 0; j < patient.studies.length; j++) {
+                var study = patient.studies[i];
+                assert.strictEqual(typeof study, 'object', 'all studies must be objects');
+                assertDicomUUID(study.studyInstanceUID);
+                assert(study.series instanceof Array, 'all studies must have a series array');
+            }
+            // no need to go deeper
+        }
+        assert(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
+        done();
+      });
+    });
+  });
+
+  describe('#search() free text', function() {
+    it("should auto-detect a free text query and give some results with no error", function(done) {
+      Dicoogle.search('Esquina', function(error, outcome) {
+        assert.equal(error, null);
+        assert('results' in outcome, 'outcome has results');
+        assert(outcome.results instanceof Array, 'results must be an array');
+        for (var i = 0; i < outcome.results.length; i++) {
+            assert.strictEqual(typeof outcome.results[i], 'object', 'all results must be objects');
+            assert.strictEqual(typeof outcome.results[i].fields, 'object', 'all results must have a fields object');
+            assertDicomUUID(outcome.results[i].fields.SOPInstanceUID);
+        }
+        assert.strictEqual(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
         done();
       });
     });
@@ -94,22 +141,6 @@ describe('Dicoogle Node.js Client', function() {
             assert.equal(error, null);
             done();
         });
-    });
-  });
-
-  describe('#search() free text', function() {
-    it("should auto-detect a free text query and give some results with no error", function(done) {
-      Dicoogle.search('Esquina', function(error, outcome) {
-        assert.equal(error, null);
-        assert('results' in outcome, 'outcome has results');
-        assert(outcome.results instanceof Array, 'results must be an array');
-        for (var i = 0; i < outcome.results.length; i++) {
-            assert.strictEqual(typeof outcome.results[i], 'object', 'all results must be objects');
-            assert.strictEqual(typeof outcome.results[i].fields, 'object', 'all results must have a fields object');
-        }
-        assert.strictEqual(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
-        done();
-      });
     });
   });
 

@@ -43,6 +43,33 @@ module.exports = function createDicoogleMock() {
             }
         ];
 
+        var SEARCH_RESULTS_DIM = [
+            {
+                id: "12345",
+                name: "Esquina^Ze",
+                gender: "M",
+                nStudies: 1,
+                studies: [{
+                    studyInstanceUID: "1.2.3.4.5.6.7777777",
+                    studyDescription: "",
+                    institutionName: "",
+                    modalities: "MR",
+                    series: [{
+                        serieInstanceUID: "1.2.3.4.5.6.7777777.4444",
+                        serieDescription: "",
+                        serieModality: "CR",
+                        images: [{
+                            uri: '/opt/dataset/file1',
+                            "sopInstanceUID": "1.2.3.4.5.6.7777777.4444.1"
+                        }, {
+                            uri: '/opt/dataset/file2',
+                            "sopInstanceUID": "1.2.3.4.5.6.7777777.4444.2"
+                        }]
+                    }]
+                }]
+            }
+        ];
+
         nock(BASE_URL)
         // mock /version
             .get('/ext/version')
@@ -86,6 +113,18 @@ module.exports = function createDicoogleMock() {
                 elapsedTime: 50
             })
 
+        // mock /searchDIM for "Modality:MR" on specific provider
+            .get('/searchDIM')
+            .query({
+                query: 'Modality:MR',
+                provider: 'lucene',
+                keyword: true
+            })
+            .reply(200, {
+                results: SEARCH_RESULTS_DIM,
+                numResults: SEARCH_RESULTS_DIM.length,
+                elapsedTime: 50
+            })
         // mock get query providers
             .get('/providers')
             .query({type: 'query'})
