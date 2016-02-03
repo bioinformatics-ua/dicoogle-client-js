@@ -316,12 +316,12 @@ import serviceRequest from './servicerequest';
         token_ = data.token;
         username_ = data.user;
         roles_ = data.roles;
-        if (typeof callback === 'function') {
+        if (callback) {
             callback(null, data);
         }
     }
 
-    serviceRequest('POST', [url_, Endpoints.LOGIN], false, changedCallback, null,
+    serviceRequest('POST', [url_, Endpoints.LOGIN], {}, changedCallback, null,
             'application/x-www-form-urlencoded', {username, password});
   };
 
@@ -330,7 +330,7 @@ import serviceRequest from './servicerequest';
    * @param {function(error)} callback the callback function
    */
   DicoogleAccess.prototype.logout = function Dicoogle_logout(callback) {
-    serviceRequest('POST', [url_, Endpoints.LOGOUT], false, function(error) {
+    serviceRequest('POST', [url_, Endpoints.LOGOUT], {}, function(error) {
         if (!error) {
             username_ = null;
             token_ = null;
