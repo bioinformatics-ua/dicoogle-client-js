@@ -88,6 +88,15 @@ describe('Dicoogle Node.js Client', function() {
     });
   });
 
+  describe('#remove() a file', function() {
+    it("should say ok with no error", function (done) {
+        Dicoogle.remove('/opt/another-dataset/1_1.dcm', function(error) {
+            assert.equal(error, null);
+            done();
+        });
+    });
+  });
+
   describe('#search() free text', function() {
     it("should auto-detect a free text query and give some results with no error", function(done) {
       Dicoogle.search('Esquina', function(error, outcome) {
