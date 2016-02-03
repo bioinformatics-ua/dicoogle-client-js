@@ -37,7 +37,7 @@ import serviceRequest from './servicerequest';
     INDEX: "management/tasks/index",
     UNINDEX: "management/tasks/unindex",
     REMOVE: "management/tasks/remove",
-    RUNNING_TASKS: "index/task",
+    TASKS: "index/task",
     VERSION: "ext/version",
     LOGIN: 'login',
     LOGOUT: 'logout'
@@ -158,12 +158,38 @@ import serviceRequest from './servicerequest';
    * @param {function(error, {tasks:TaskInfo[], count:number})} callback the callback function
    */
   DicoogleAccess.prototype.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
-    serviceRequest('GET', [url_, Endpoints.RUNNING_TASKS], {}, function(err, data) {
+    serviceRequest('GET', [url_, Endpoints.TASKS], {}, function(err, data) {
         callback(err, data ? {
             tasks: data.results,
             count: data.count
         } : null);
     }, token_);
+  };
+
+  /**
+   * Close a terminated task from the list of tasks.
+   * @param {string} uid the task's unique ID
+   * @param {function(error)} callback the callback function
+   */
+  DicoogleAccess.prototype.closeTask = function Dicoogle_closeTask(uid, callback) {
+    serviceRequest('POST', [url_, Endpoints.TASKS], {
+          uid,
+          action: 'delete',
+          type: 'close'
+        }, callback, token_);
+  };
+
+  /**
+   * Request that a task is stopped.
+   * @param {string} uid the task's unique ID
+   * @param {function(error)} callback the callback function
+   */
+  DicoogleAccess.prototype.stopTask = function Dicoogle_stopTask(uid, callback) {
+    serviceRequest('POST', [url_, Endpoints.TASKS], {
+          uid,
+          action: 'delete',
+          type: 'stop'
+        }, callback, token_);
   };
 
   /** index(uri, [provider,] callback)
