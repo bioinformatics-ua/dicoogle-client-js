@@ -1,7 +1,8 @@
+/* eslint-env node */
 var DicoogleClient = require('../..');
 var nock = require('nock');
 var nockDone = false;
-var UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
+var qs = require('querystring');
 
 /** Use nock to intercept Dicoogle client requests.
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
@@ -16,20 +17,20 @@ module.exports = function createDicoogleMock() {
                  }
             })
             .post('/login', function(data) {
-                return data.username === 'admin' &&
-                        typeof data.password === 'string' &&
-                        data.password.length > 0;
+                var parsedData = qs.parse(data);
+                return parsedData.username === 'admin' &&
+                        typeof parsedData.password === 'string' &&
+                        parsedData.password.length >= 3;
             })
             .reply(200, {
                 user: 'admin',
+                admin: true,
+                roles: ['Healthcare', 'Research'],
                 token: '9ebdff77-dffc-4904-a954-74f72ba77483'
             });
 
-        nock(BASE_URL, { // mock get query providers (with required authorization)
-              reqheaders: {
-                  'Authorization': '9ebdff77-dffc-4904-a954-74f72ba77483'
-              }
-            })
+        nock(BASE_URL) // mock get query providers (with required authorization)
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
             .get('/providers')
             .query(true)
             .reply(200, ["cbir", "lucene"]);
@@ -39,11 +40,8 @@ module.exports = function createDicoogleMock() {
             .query(true)
             .reply(401);
 
-        nock(BASE_URL, { // mock logout
-              reqheaders: {
-                  'Authorization': '9ebdff77-dffc-4904-a954-74f72ba77483'
-              }
-            })
+        nock(BASE_URL) // mock logout
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
             .post('/logout')
             .query(true)
             .reply(200);

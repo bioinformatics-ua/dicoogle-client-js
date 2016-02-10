@@ -1,3 +1,4 @@
+/* eslint-env node */
 var DicoogleClient = require('../..');
 var nock = require('nock');
 

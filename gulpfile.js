@@ -19,32 +19,8 @@ function licenseText() {
   return _licenseText;
 }
 
-gulp.task('lint:bin', function () {
-  return gulp.src('bin/*.js')
-    .pipe(eslint({
-      configFile: ".eslintrc.node"
-    }))
-    .pipe(eslint.format());
-});
-
-gulp.task('lint:browser', function () {
-  return gulp.src('src/servicerequest-browser.js')
-    .pipe(eslint({
-      configFile: ".eslintrc.browser"
-    }))
-    .pipe(eslint.format());
-});
-
-gulp.task('lint:node', function () {
-  return gulp.src('src/servicerequest.js')
-    .pipe(eslint({
-      configFile: ".eslintrc.node"
-    }))
-    .pipe(eslint.format());
-});
-
-gulp.task('lint', ['lint:browser', 'lint:node', 'lint:bin'], function () {
-  return gulp.src('src/dicoogle-client.js')
+gulp.task('lint', function () {
+  return gulp.src(['src/*.js', 'test/*.js', 'test/mock/*.js', 'bin/*.js'])
     .pipe(eslint({
       configFile: ".eslintrc"
     }))

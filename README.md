@@ -76,7 +76,7 @@ This library is compatible with versions of Dicoogle in the range `>=2.0.0 <2.4.
 
 ### License
 
-Copyright (C) 2015  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+Copyright (C) 2016  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
 
 This software is part of Dicoogle.
 

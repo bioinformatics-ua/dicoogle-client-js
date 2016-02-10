@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/*eslint-env node*/
 /** Dicoogle query request application in Node.js
  *
  * Usage:
@@ -8,7 +9,7 @@
  */
 var dicoogleClient = require("../lib/dicoogle-client");
 var util = require('util');
-var server = "localhost:8080";
+var server = "http://localhost:8080";
 var query;
 var keyword = undefined;
 var debug = false;
@@ -58,25 +59,50 @@ if (!query) {
 }
 
 if (debug) {
-  console.log('Service Endpoint: ', server + '/search');
-  console.log('Sending query: ', query);
+  console.error('Dicoogle Base Endpoint: ', server);
+  if (USER) {
+    console.error('Logging in as ' + USER + ' ...');
+  }
 }
 
 process.stdout.on('error', function() {
   // ignore problem, the user must have just closed the consumer
 });
 
-var Dicoogle = dicoogleClient(server, {user: USER, password: PASSWORD});
-Dicoogle.search(query, { keyword: keyword, providers: providers },
-  function (error, outcome) {
-    if (error) {
-      console.error(error);
-    } else {
-      var result = outcome.results;
-      if (process.stdout.isTTY || forceTTY) {
-        console.log(util.inspect(result, {colors: true, depth: 2}));
-      } else {
-        console.log(JSON.stringify(result));
-      }
+var Dicoogle = dicoogleClient(server);
+
+if (USER && PASSWORD) {
+  Dicoogle.login(USER, PASSWORD, function(err, out) {
+    if (err) {
+        console.error('Failed to log in:', err);
+        return;
     }
+    if (debug) {
+      console.error('Logged in as ' + out.user + (out.admin ? ' (admin)' : ''));
+      console.error('Session token:', out.token);
+      console.error('Roles:', out.roles);
+    }
+    doSearch();
   });
+} else {
+  doSearch();
+}
+
+function doSearch() {
+  if (debug) {
+    console.error('Sending query: ', query);
+  }
+  Dicoogle.search(query, { keyword: keyword, providers: providers },
+    function (error, outcome) {
+      if (error) {
+        console.error(error);
+      } else {
+        var result = outcome.results;
+        if (process.stdout.isTTY || forceTTY) {
+          console.log(util.inspect(result, {colors: true, depth: 2}));
+        } else {
+          console.log(JSON.stringify(result));
+        }
+      }
+    });
+}

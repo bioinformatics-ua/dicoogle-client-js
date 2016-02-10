@@ -1,3 +1,4 @@
+/* eslint-env node */
 var assert = require('assert');
 var mocha = require('mocha');
 var describe = mocha.describe;

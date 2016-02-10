@@ -16,8 +16,10 @@
   ],
   "version": "3.1.0",
   "main": "./lib/dicoogle-client",
-  "browser": {
-    "./lib/servicerequest.js": "./lib/servicerequest-browser.js"
+  "browserify": {
+    "transforms": [
+      "envify"
+    ]
   },
   "files": [
     "dist/",
@@ -28,6 +30,9 @@
     "dicoogle-query": "bin/dicoogle-query-cli.js"
   },
   "license": "GPL-3.0+",
+  "dependencies": {
+    "superagent": "^1.7.2"
+  },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.1.2",
