@@ -39,7 +39,13 @@ gulp.task('bundle', ['lint', 'main'], function () {
   // set up the browserify instance on a task basis
   var b = browserify({
     entries: './lib/dicoogle-client.js',
-    debug: false
+    debug: false,
+    transform: [
+        ['envify', {
+            _: 'purge',
+            NODE_ENV: 'production'
+        }]
+    ]
   });
 
   return b.bundle()

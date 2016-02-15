@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/dicoogle-client.svg)](https://badge.fury.io/js/dicoogle-client) [![Build Status](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js.svg?branch=master)](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js)
 
-# dicoogle-client
+# Dicoogle Client
 
 This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 This library is compatible with browser-based JavaScript and Node.js. A CLI application for searching medical images in Dicoogle is also included (`dicoogle-query`).
@@ -23,19 +23,23 @@ Afterwards, invoke the `DicoogleClient` module with the Dicoogle server's endpoi
 Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.
 
 ```JavaScript
-var Dicoogle = DicoogleClient("localhost:8080", {
-  user: 'dicoogle',
-  password: 'd1c00g1e'
-});
+var Dicoogle = DicoogleClient("localhost:8080");
 
-...
-
-Dicoogle.search("(PatientName:Pinho^Eduardo)", 'lucene', function(error, result) {
+// if required, login to the system before using
+Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
   if (error) {
-    console.log(error);
+    console.error(error);
     return;
   }
-  // use result
+
+  // Ok! Start using Dicoogle!
+  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, function(error, result) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    // use result
+  });
 });
 ```
 

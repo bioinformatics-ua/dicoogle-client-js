@@ -8,7 +8,7 @@
     "Eduardo Pinho <eduardopinho@ua.pt>",
     "Luís Bastião Silva <bastiao@bmd-software.com>"
   ],
-  "description": "Dicoogle web service client for JavaScript applications",
+  "description": "Dicoogle client API for JavaScript applications",
   "keywords": [
     "dicoogle",
     "client",
@@ -37,6 +37,7 @@
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.1.2",
     "browserify": "^13.0.0",
+    "envify": "^3.4.0",
     "estraverse": "^4.1.1",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",

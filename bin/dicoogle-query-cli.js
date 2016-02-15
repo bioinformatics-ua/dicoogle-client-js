@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 /*eslint-env node*/
+/*eslint-disable no-console */
+
 /** Dicoogle query request application in Node.js
  *
  * Usage:

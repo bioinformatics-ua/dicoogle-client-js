@@ -40,9 +40,14 @@ module.exports = function createDicoogleMock() {
             .query(true)
             .reply(401);
 
-        nock(BASE_URL) // mock logout
-            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+        nock(BASE_URL) // mock legacy behavior of POST logout
             .post('/logout')
+            .query(true)
+            .reply(405);
+
+        nock(BASE_URL) // mock logout (uses GET in the stable version, but will change in the future)
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+            .get('/logout')
             .query(true)
             .reply(200);
 

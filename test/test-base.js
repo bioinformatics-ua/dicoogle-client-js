@@ -77,9 +77,9 @@ describe('Dicoogle Node.js Client', function() {
     });
   });
 
-  describe('#search() DIM, keyword based', function() {
+  describe('#searchDIM() keyword based', function() {
     it("should give some results in the DIM format successfully", function(done) {
-      Dicoogle.search('Modality:MR', {provider: 'lucene', dim: true, keyword: true}, function(error, outcome) {
+      Dicoogle.searchDIM('Modality:MR', {provider: 'lucene', keyword: true}, function(error, outcome) {
         assert.equal(error, null);
         assert('results' in outcome, 'outcome has results');
         assert(outcome.results instanceof Array, 'results must be an array');
@@ -181,9 +181,8 @@ describe('Dicoogle Node.js Client', function() {
           assert.strictEqual(typeof outcome.count, 'number', 'outcome has count');
           done();
         });
-    }); // TODO
+    });
   });
-
 
   function checkServiceInfo(error, data) {
     assert.equal(error, null);
@@ -207,6 +206,31 @@ describe('Dicoogle Node.js Client', function() {
             checkServiceInfo(error, data);
             done();
         })
+    });
+  });
+
+  describe('#getIndexerSettings() all', function() {
+    it("should give indexer settings with no error", function(done) {
+        Dicoogle.getIndexerSettings(function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(typeof data.path, 'string', 'path must be a string');
+            assert.strictEqual(typeof data.effort, 'number', 'effort must be a number');
+            assert.strictEqual(typeof data.watcher, 'boolean', 'watcher must be a boolean');
+            assert.strictEqual(typeof data.thumbnail, 'boolean', 'thumbnail must be a boolean');
+            assert.strictEqual(typeof data.zip, 'boolean', 'zip must be a boolean');
+            assert.strictEqual(typeof data.thumbnailSize, 'number', 'thumbnailSize must be a string');
+            done();
+        });
+    });
+  });
+
+  describe('#getIndexerSettings() path only', function() {
+    it("should give a path with no error", function(done) {
+        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.PATH, function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(data, '/opt/data', 'outcome must be path "/opt/data"');
+            done();
+        });
     });
   });
 });

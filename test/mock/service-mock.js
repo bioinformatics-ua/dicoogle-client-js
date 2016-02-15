@@ -180,16 +180,60 @@ module.exports = function createDicoogleMock() {
               autostart: false
             })
 
+        // mock indexer settings
+            .get('/management/settings/index')
+            .reply(200, {
+              path: '/opt/data',
+              zip: false,
+              effort: '100',
+              thumbnail: true,
+              thumbnailSize: '128',
+              watcher: false
+            })
+            // getters
+            .get('/management/settings/index/path')
+              .reply(200, '/opt/data')
+            .get('/management/settings/index/zip')
+              .reply(200, false)
+            .get('/management/settings/index/effort')
+              .reply(200, '100')
+            .get('/management/settings/index/thumbnail')
+              .reply(200, true)
+            .get('/management/settings/index/thumbnailSize')
+              .reply(200, '128')
+            .get('/management/settings/index/watcher')
+              .reply(200, false)
+
+        // mock indexer settings setters
+            .post('/management/settings/index/path')
+              .query({path: /.*/})
+              .reply(200)
+            .post('/management/settings/index/zip')
+              .query({zip: /(|true|false)/i})
+              .reply(200)
+            .post('/management/settings/index/effort')
+              .query({effort: /.*/})
+              .reply(200)
+            .post('/management/settings/index/thumbnail')
+              .query({thumbnail: /(|true|false)/i})
+              .reply(200)
+            .post('/management/settings/index/thumbnailSize')
+              .query({thumbnailSize: /.*/})
+              .reply(200)
+            .post('/management/settings/index/watcher')
+              .query({watcher: /(|true|false)/i})
+              .reply(200)
+
         // mock get running tasks
             .get('/index/task')
             .reply(200, {
             results: [
-                {
+              {
                 taskUid: "1063922f-1823-4e43-8241-c84c1721a6c1",
                 taskName: "[cbir]index file:/opt/some-dataset/42",
                 taskProgress: 0.2
-                },
-                {
+              },
+              {
                 taskUid: "f1b6588d-92c2-458c-8c77-e30d8706b662",
                 taskName: "[lucene]index file:/opt/some-other-dataset/42",
                 taskProgress: 1,
@@ -197,7 +241,7 @@ module.exports = function createDicoogleMock() {
                 elapsedTime: 44440,
                 nIndexed: 213,
                 nErrors: 3
-                }
+              }
             ],
             count: 0
             });

@@ -8,11 +8,12 @@
     "es6": true
   },
   "globals": {
-    "process": false
+    "process": false,
+    "console": false
   },
   "rules": {
-    "no-alert": 0,
-    "no-console": 0,
+    "no-alert": 2,
+    "no-console": 1,
     "quotes": 0,
     "curly": 0,
     "global-strict": 0,
