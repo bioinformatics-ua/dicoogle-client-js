@@ -233,5 +233,14 @@ describe('Dicoogle Node.js Client', function() {
         });
     });
   });
+
+  describe('#setIndexerSettings() path only', function() {
+    it("should say ok with no error", function(done) {
+        Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.PATH, '/opt/somewhere/else', function (error) {
+            assert.equal(error, null);
+            done();
+        });
+    });
+  });
 });
 

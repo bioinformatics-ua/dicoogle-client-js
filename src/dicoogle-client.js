@@ -429,6 +429,20 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
                 /* eslint-enable no-console */
             }
         }
+        // do not use the wrapper, or else we'll lose the output
+        const uri = url.join('/');
+        let req = request.get(uri);
+        if (token_) {
+            req = req.set('Authorization', token_);
+        }
+        req.end(function (err, res) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(null, res.text);
+        });
+        return;
     }
     serviceRequest('GET', url, {}, (error, data) => {
       if (error) {
@@ -509,7 +523,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
    * @param {Object} [formData] the form data
    */
   function serviceRequest(method, uri, qs, callback, token, mimeType, formData) {
-      mimeType = mimeType || 'application/json';
+      mimeType = mimeType || (formData && 'application/json');
       if (uri instanceof Array) {
         uri = uri.join('/');
       }
