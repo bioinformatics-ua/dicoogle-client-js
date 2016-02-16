@@ -87,7 +87,15 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
         callback = options;
         options = {};
       }
-      const endpoint = options.dim ? Endpoints.SEARCH_DIM : Endpoints.SEARCH;
+      let endpoint = Endpoints.SEARCH;
+      if (options.dim) {
+          endpoint = Endpoints.SEARCH_DIM;
+          if (process.end.NODE_ENV !== 'production') {
+              /*eslint-disable no-console */
+              console.error("Warning: 'dim' flag in method search is deprecated! Please use searchDIM instead.");
+              /*eslint-enable no-console */
+          }
+      }
       let provider = options.provider || options.providers;
       let keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       serviceRequest('GET', [url_, endpoint], {
@@ -138,7 +146,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
   /**
    * Retrieve a list of provider plugins
    * @param {string} [type] the type of provider ("query", "index", ...) - defaults to "query"
-   * @param {function(error:any, result:string)} callback the callback function
+   * @param {function(error:any, result:string[])} callback the callback function
    */
   DicoogleAccess.prototype.getProviders = function Dicoogle_getProviders(type, callback) {
     if (typeof type === 'function' && !callback) {
@@ -185,7 +193,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
   };
 
   /**
-   * Obtain information about the DICOM Query Retrieve service.
+   * Obtain information about the DICOM Query/Retrieve service.
    * @param {function(error:any, {running:boolean, autostart:boolean, port:number})} callback the callback function
    */
   DicoogleAccess.prototype.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
@@ -289,7 +297,6 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
   };
 
   /** Retrieve the running Dicoogle version.
-   * Indices will not be updated, hence the files should be unindexed manually if so is intended.
    * @param {function(error:any, {version:string})} callback the callback function
    */
   DicoogleAccess.prototype.getVersion = function Dicoogle_getVersion(callback) {
@@ -319,7 +326,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
   /**
    * Check whether the user is authenticated to the server. Authenticated clients will hold an
    * authentication token.
-   * @returns {boolean} whether the user is authenticated to not.
+   * @returns {boolean} whether the user is authenticated or not.
    */
   DicoogleAccess.prototype.isAuthenticated = function Dicoogle_isAuthenticated() {
     return token_ !== null;
@@ -371,7 +378,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
 
   /**
    * Log out from the server.
-   * @param {function(error:any)} callback the callback function
+   * @param {function(error:any)} [callback] the callback function
    */
   DicoogleAccess.prototype.logout = function Dicoogle_logout(callback) {
     serviceRequest('POST', [url_, Endpoints.LOGOUT], {}, function(error) {
@@ -379,13 +386,13 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
             if (error.status === 405) {
                 Dicoogle_logout_fallback(callback);
             } else {
-                callback(error);
+                if (callback) callback(error);
             }
         } else {
             username_ = null;
             token_ = null;
             roles_ = null;
-            callback(null);
+            if (callback) callback(null);
         }
     }, token_);
   };
@@ -402,7 +409,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
             token_ = null;
             roles_ = null;
         }
-        callback(error);
+        if (callback) callback(error);
     }, token_);
   }
 
@@ -440,7 +447,11 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
                 callback(err);
                 return;
             }
-            callback(null, res.text);
+            let out = res.text;
+            if (field === 'effort' || field === 'thumbnailSize') {
+                out = +out;
+            }
+            callback(null, out);
         });
         return;
     }

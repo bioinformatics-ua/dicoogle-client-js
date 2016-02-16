@@ -15,7 +15,8 @@
     "api"
   ],
   "version": "3.2.0",
-  "main": "./lib/dicoogle-client",
+  "main": "./lib/index",
+  "typings": "./typings/dicoogle-client.d.ts",
   "browserify": {
     "transforms": [
       "envify"

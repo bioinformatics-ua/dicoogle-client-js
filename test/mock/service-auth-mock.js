@@ -1,5 +1,5 @@
 /* eslint-env node */
-var DicoogleClient = require('../..');
+var dicoogleClient = require('../..');
 var nock = require('nock');
 var nockDone = false;
 var qs = require('querystring');
@@ -54,5 +54,5 @@ module.exports = function createDicoogleMock() {
         nockDone = true;
     }
 
-    return DicoogleClient(BASE_URL);
+    return dicoogleClient(BASE_URL);
 };

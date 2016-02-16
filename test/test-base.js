@@ -20,8 +20,7 @@ function assertDicomUUID(uid) {
     assert(uid.match(/(\d+\.?)*/), "'" + uid + "' must be a valid DICOM UUID");
 }
 
-
-describe('Dicoogle Node.js Client', function() {
+describe('Dicoogle Client (under Node.js)', function() {
   var Dicoogle;
   function initBaseURL() {
     Dicoogle = createMockedDicoogle();
