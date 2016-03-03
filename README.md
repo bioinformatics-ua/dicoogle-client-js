@@ -9,7 +9,7 @@ This library is compatible with browser-based JavaScript and Node.js. A CLI appl
 
 In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
 
-```JavaScript (ES3)
+```javascript
 var DicoogleClient = require("dicoogle-client");
 ```
 
