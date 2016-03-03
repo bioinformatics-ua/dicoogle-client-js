@@ -70,6 +70,15 @@ module.exports = function createDicoogleMock() {
             }
         ];
 
+        var INDEXER_SETTINGS = {
+              path: '/opt/data',
+              zip: false,
+              effort: '100',
+              thumbnail: true,
+              thumbnailSize: '128',
+              watcher: false
+            };
+
         nock(BASE_URL)
         // mock /version
             .get('/ext/version')
@@ -180,28 +189,25 @@ module.exports = function createDicoogleMock() {
             })
 
         // mock indexer settings
-            .get('/management/settings/index')
-            .reply(200, {
-              path: '/opt/data',
-              zip: false,
-              effort: '100',
-              thumbnail: true,
-              thumbnailSize: '128',
-              watcher: false
-            })
+
+        nock(BASE_URL).get('/management/settings/index')
+            .once().reply(200, JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
+        nock(BASE_URL).get('/management/settings/index')
+            .reply(200, INDEXER_SETTINGS);                       // with patched Dicoogle
             // getters
+        nock(BASE_URL)
             .get('/management/settings/index/path')
-              .reply(200, '/opt/data')
+              .reply(200, INDEXER_SETTINGS.path)
             .get('/management/settings/index/zip')
-              .reply(200, false)
+              .reply(200, INDEXER_SETTINGS.zip)
             .get('/management/settings/index/effort')
-              .reply(200, '100')
+              .reply(200, INDEXER_SETTINGS.effort)
             .get('/management/settings/index/thumbnail')
-              .reply(200, true)
+              .reply(200, INDEXER_SETTINGS.thumbnail)
             .get('/management/settings/index/thumbnailSize')
               .reply(200, '128')
             .get('/management/settings/index/watcher')
-              .reply(200, false)
+              .reply(200, INDEXER_SETTINGS.watcher)
 
         // mock indexer settings setters
             .post('/management/settings/index/path')

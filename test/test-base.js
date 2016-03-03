@@ -209,25 +209,63 @@ describe('Dicoogle Client (under Node.js)', function() {
   });
 
   describe('#getIndexerSettings() all', function() {
-    it("should give indexer settings with no error", function(done) {
-        Dicoogle.getIndexerSettings(function (error, data) {
-            assert.equal(error, null);
-            assert.strictEqual(typeof data.path, 'string', 'path must be a string');
-            assert.strictEqual(typeof data.effort, 'number', 'effort must be a number');
-            assert.strictEqual(typeof data.watcher, 'boolean', 'watcher must be a boolean');
-            assert.strictEqual(typeof data.thumbnail, 'boolean', 'thumbnail must be a boolean');
-            assert.strictEqual(typeof data.zip, 'boolean', 'zip must be a boolean');
-            assert.strictEqual(typeof data.thumbnailSize, 'number', 'thumbnailSize must be a string');
-            done();
-        });
-    });
+    function testIndexerSettings(done) {
+            Dicoogle.getIndexerSettings(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(typeof data, 'object');
+                assert.strictEqual(typeof data.path, 'string', 'path must be a string');
+                assert.strictEqual(typeof data.effort, 'number', 'effort must be a number');
+                assert.strictEqual(typeof data.watcher, 'boolean', 'watcher must be a boolean');
+                assert.strictEqual(typeof data.thumbnail, 'boolean', 'thumbnail must be a boolean');
+                assert.strictEqual(typeof data.zip, 'boolean', 'zip must be a boolean');
+                assert.strictEqual(typeof data.thumbnailSize, 'number', 'thumbnailSize must be a string');
+                done();
+            });
+    }
+    it("give indexer settings with no error (2.3.1)", testIndexerSettings);
+    it("give indexer settings with no error (patched)", testIndexerSettings);
   });
 
-  describe('#getIndexerSettings() path only', function() {
-    it("should give a path with no error", function(done) {
+  describe('#getIndexerSettings() one by one', function() {
+    it("should give path, no error", function(done) {
         Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.PATH, function (error, data) {
             assert.equal(error, null);
             assert.strictEqual(data, '/opt/data', 'outcome must be path "/opt/data"');
+            done();
+        });
+    });
+    it("should give effort, no error", function(done) {
+        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.EFFORT, function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(typeof data, 'number');
+            done();
+        });
+    });
+    it("should give watcher = false, no error", function(done) {
+        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.WATCHER, function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(data, false);
+            done();
+        });
+    });
+    it("should give thumbnail = true, no error", function(done) {
+        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.INDEX_THUMBNAIL, function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(data, true);
+            done();
+        });
+    });
+    it("should give thumbnailSize, no error", function(done) {
+        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.THUMBNAIL_SIZE, function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(typeof data, 'number');
+            done();
+        });
+    });
+    it("should give zip, no error", function(done) {
+        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.ZIP, function (error, data) {
+            assert.equal(error, null);
+            assert.strictEqual(typeof data, 'boolean');
             done();
         });
     });

@@ -455,46 +455,49 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
       field = undefined;
     }
     const url = [url_, Endpoints.INDEXER_SETTINGS];
+    let all = true;
     if (typeof field === 'string') {
+        all = false;
         url.push(encodeURIComponent(field));
         if (process.env.NODE_ENV !== 'production') {
-            const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
+            /* eslint-disable no-console */
+            const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]); // values()
             if (values.indexOf(field) === -1) {
-                /* eslint-disable no-console */
                 console.error(`Warning: Attempting to get unrecognized indexer setting '${field}'.`);
-                /* eslint-enable no-console */
             }
+            /* eslint-enable no-console */
         }
-        // do not use the wrapper, or else we'll lose the output
-        const uri = url.join('/');
-        let req = request.get(uri);
-        if (token_) {
-            req = req.set('Authorization', token_);
+    }
+    // do not use the wrapper, or else we'll lose the output
+    let req = request.get(url.join('/'));
+    if (token_) {
+        req = req.set('Authorization', token_);
+    }
+    req.end(function (err, res) {
+        if (err) {
+            callback(err);
+            return;
         }
-        req.end(function (err, res) {
-            if (err) {
-                callback(err);
-                return;
+        let out;
+        if (all) {
+            if (Object.getOwnPropertyNames(res.body).length === 0) {
+                out = JSON.parse(res.text);
+            } else {
+                out = res.body;
             }
-            let out = res.text;
+            if ('effort' in out) out.effort = +out.effort;
+            if ('thumbnailSize' in out) out.thumbnailSize = +out.thumbnailSize;
+        } else {
+            out = res.text;
             if (field === 'effort' || field === 'thumbnailSize') {
                 out = +out;
             }
-            callback(null, out);
-        });
-        return;
-    }
-    serviceRequest('GET', url, {}, (error, data) => {
-      if (error) {
-        callback(error);
-        return;
-      }
-      if (typeof data === 'object') {
-        if ('effort' in data) data.effort = +data.effort;
-        if ('thumbnailSize' in data) data.thumbnailSize = +data.thumbnailSize;
-      }
-      callback(null, data);
-    }, token_);
+            if (field === 'watcher' || field === 'thumbnail' || field === 'zip') {
+                out = (out === 'true');
+            }
+        }
+        callback(null, out);
+    });
   };
 
   /** Set a particular Indexer setting. A valid field and value is required.
