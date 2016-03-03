@@ -65,13 +65,42 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
   /** @typedef {Object} SearchOptions
    * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
    * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @deprecated
+   * @deprecated please use searchDIM instead
    * @param {boolean} [dim] - return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
    */
 
   /** @typedef {Object} SearchOutcome
    * @param {object[]} results - The list of results
    * @param {number} elapsedTime - The time spent performing the search in the server, in milliseconds
+   */
+
+  /** @typedef {Object} SearchDIMOutcome
+   * @param {SearchStudyResult[]} results - The list of results
+   * @param {number} elapsedTime - The time spent performing the search in the server, in milliseconds
+   */
+
+  /** @typedef {Object} SearchStudyResult
+   * @param {string} studyDate
+   * @param {string} studyDescription
+   * @param {string} studyInstanceUID
+   * @param {string} institutionName
+   * @param {string|string[]} modalities
+   * @param {SearchSeriesResult[]} series
+   */
+
+  /** @typedef {Object} SearchSeriesResult
+   * @param {number} serieNumber
+   * @param {string} serieInstanceUID
+   * @param {string} serieDescription
+   * @param {string} serieModality
+   * @param {SearchImageResult[]} images
+   */
+
+  /** @typedef {Object} SearchImageResult
+   * @param {string} sopInstanceUID
+   * @param {string} uri
+   * @param {string} rawPath
+   * @param {string} filename
    */
 
   /**
@@ -109,7 +138,7 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
    * Perform a text query with DIM-formatted outcome.
    * @param {string} query text query
    * @param {SearchOptions} [options] a hash of options related to the search
-   * @param {function(error:any, outcome:SearchOutcome)} callback the callback function providing the outcome
+   * @param {function(error:any, outcome:SearchDIMOutcome)} callback the callback function providing the outcome
    */
   DicoogleAccess.prototype.searchDIM = function Dicoogle_search(query, options, callback) {
       if (!options) {

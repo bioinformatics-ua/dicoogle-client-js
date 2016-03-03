@@ -7,13 +7,13 @@ This library is compatible with browser-based JavaScript and Node.js. A CLI appl
 
 ### Using the JavaScript API
 
-In Node.js and Browserify, install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
+In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
 
-```JavaScript
+```JavaScript (ES3)
 var DicoogleClient = require("dicoogle-client");
 ```
 
-When not using Browserify, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient`.
+When not using Node.js or a bundler, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
 
 ```HTML
 <script src='/path/to/my/libs/dicoogle-client.min.js'></script>

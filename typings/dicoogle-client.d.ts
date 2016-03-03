@@ -43,6 +43,46 @@ declare module "dicoogle-client" {
         elapsedTime: number
     }
 
+    export interface SearchDIMOutcome {
+        /** The list of results */
+        results: SearchPatientResult[]
+        /** The time spent performing the search in the server, in milliseconds */
+        elapsedTime: number
+    }
+
+    export interface SearchPatientResult {
+        id: string
+        name: string
+        gender: string
+        nStudies: number
+        birthdate: string
+        studies: SearchStudyResult[]
+    }
+
+    export interface SearchStudyResult {
+        studyDate: string
+        studyDescription: string
+        studyInstanceUID: string
+        institutionName: string
+        modalities: string | string[]
+        series: SearchSeriesResult[]
+    }
+
+    export interface SearchSeriesResult {
+        serieNumber: number
+        serieInstanceUID: string
+        serieDescription: string
+        serieModality: string
+        images: SearchImageResult[]
+    }
+
+    export interface SearchImageResult {
+        sopInstanceUID: string
+        uri: string
+        rawPath: string
+        filename: string
+    }
+
     export interface DumpOutcome {
         /** The contents of the requested item */
         results: SearchResult
@@ -122,14 +162,14 @@ declare module "dicoogle-client" {
          * @param query the text query
          * @param callback the callback function providing the outcome
          */
-        searchDIM(query: string, callback: (error: Error, outcome: SearchOutcome) => any);
+        searchDIM(query: string, callback: (error: Error, outcome: SearchDIMOutcome) => any);
         /**
          * Perform a text query with DIM-formatted outcome.
          * @param query the text query
          * @param options a hash of options related to the search
          * @param callback the callback function providing the outcome
          */
-        searchDIM(query: string, options: SearchOptions, callback: (error: Error, outcome: SearchOutcome) => any);
+        searchDIM(query: string, options: SearchOptions, callback: (error: Error, outcome: SearchDIMOutcome) => any);
 
         /**
          * Retrieve an image's meta-data (perform an information dump)
