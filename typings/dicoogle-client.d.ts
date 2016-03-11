@@ -233,10 +233,34 @@ declare module "dicoogle-client" {
         getStorageServiceStatus(callback: (error: Error, outcome: ServiceStatus) => any);
 
         /**
+         * Start the DICOM Storage service.
+         * @param callback the callback function
+         */
+        startStorageService(callback: (error: Error) => any);
+
+        /**
+         * Stop the DICOM Storage service.
+         * @param callback the callback function
+         */
+        stopStorageService(callback: (error: Error) => any);
+
+        /**
          * Obtain information about the DICOM Query/Retrieve service.
          * @param callback the callback function
          */
         getQueryRetrieveServiceStatus(callback: (error: Error, outcome: ServiceStatus) => any);
+
+        /**
+         * Start the DICOM Query/Retrieve service.
+         * @param callback the callback function
+         */
+        startQueryRetrieveService(callback: (error: Error) => any);
+
+        /**
+         * Stop the DICOM Query/Retrieve service.
+         * @param callback the callback function
+         */
+        stopQueryRetrieveService(callback: (error: Error) => any);
 
         /**
          * Manually log in to Dicoogle using the given credentials.
