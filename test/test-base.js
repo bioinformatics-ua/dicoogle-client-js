@@ -185,21 +185,85 @@ describe('Dicoogle Client (under Node.js)', function() {
     assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
   }
 
-  describe('#getQueryServiceStatus()', function() {
-    it("should inform of DICOM QR service status with no error", function(done) {
-        Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
-            checkServiceInfo(error, data);
-            done();
-        })
+  describe('Query/Retrieve service', function() {
+    describe('#getQueryRetrieveServiceStatus()', function() {
+        it("should inform of DICOM QR service status with no error", function(done) {
+            Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+                checkServiceInfo(error, data);
+                done();
+            })
+        });
+    });
+    describe('#stopQueryRetrieveService()', function() {
+        it("should give no error", function(done) {
+            Dicoogle.stopQueryRetrieveService(function (error) {
+                assert.equal(error, null);
+                done();
+            })
+        });
+        it("and running = false", function(done) {
+            Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data.isRunning, false);
+                done();
+            })
+        });
+    });
+    describe('#startQueryRetrieveService()', function() {
+        it("should give no error", function(done) {
+            Dicoogle.startQueryRetrieveService(function (error) {
+                assert.equal(error, null);
+                done();
+            })
+        });
+        it("and running = true", function(done) {
+            Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data.isRunning, true);
+                done();
+            })
+        });
     });
   });
 
-  describe('#getQueryServiceStatus()', function() {
-    it("should inform of DICOM Storage service status with no error", function(done) {
-        Dicoogle.getStorageServiceStatus(function (error, data) {
-            checkServiceInfo(error, data);
-            done();
-        })
+  describe('Storage service', function() {
+    describe('#getStorageServiceStatus()', function() {
+        it("should inform of DICOM Storage service status with no error", function(done) {
+            Dicoogle.getStorageServiceStatus(function (error, data) {
+                checkServiceInfo(error, data);
+                done();
+            })
+        });
+    });
+    describe('#stopQueryService()', function() {
+        it("should give no error", function(done) {
+            Dicoogle.stopStorageService(function (error) {
+                assert.equal(error, null);
+                done();
+            })
+        });
+        it("and running = false", function(done) {
+            Dicoogle.getStorageServiceStatus(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data.isRunning, false);
+                done();
+            })
+        });
+    });
+    describe('#startStorageService()', function() {
+        it("should give no error", function(done) {
+            Dicoogle.startStorageService(function (error) {
+                assert.equal(error, null);
+                done();
+            });
+        });
+        it("and running = true", function(done) {
+            Dicoogle.getStorageServiceStatus(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data.isRunning, true);
+                done();
+            })
+        });
     });
   });
 
@@ -325,9 +389,7 @@ describe('Dicoogle Client (under Node.js)', function() {
                 done();
             });
         });
-    });
-    describe('#getAETitle() after a reset', function() {
-        it("should give the AE title previously set", function(done) {
+        it("and #getAETitle should give the AE title previously set", function(done) {
             Dicoogle.getAETitle(function(error, aetitle) {
                 assert.equal(error, null);
                 assert.strictEqual(aetitle, title);

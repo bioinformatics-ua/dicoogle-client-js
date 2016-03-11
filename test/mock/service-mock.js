@@ -84,6 +84,8 @@ module.exports = function createDicoogleMock() {
         /* eslint-enable */
 
         var AETitle = 'TESTSRV';
+        var QRRunning = true;
+        var StorageRunning = true;
 
         nock(BASE_URL)
             // mock /version
@@ -178,24 +180,51 @@ module.exports = function createDicoogleMock() {
                 elapsedTime: 80
             })
 
-            // mock QR service status
-            .get('/management/dicom/query')
-            .reply(200, {
-                isRunning: true,
-                port: 1045,
-                autostart: false
+            // mock QR service
+            .get('/management/dicom/query').times(3)
+            .reply(200, function() {
+                return {
+                    isRunning: QRRunning,
+                    port: 1045,
+                    autostart: false
+                };
+            })
+            .post('/management/dicom/query')
+            .query({ running: false })
+            .reply(200, function() {
+                QRRunning = false;
+                return "success";
+            })
+            .post('/management/dicom/query')
+            .query({ running: true })
+            .reply(200, function() {
+                QRRunning = true;
+                return "success";
             })
 
-            // mock storage service status
-            .get('/management/dicom/storage')
-            .reply(200, {
-                isRunning: true,
-                port: 6666,
-                autostart: false
+            // mock storage service
+            .get('/management/dicom/storage').times(3)
+            .reply(200, function() {
+                return {
+                    isRunning: StorageRunning,
+                    port: 6666,
+                    autostart: false
+                };
+            })
+            .post('/management/dicom/storage')
+            .query({ running: false })
+            .reply(200, function() {
+                StorageRunning = false;
+                return "success";
+            })
+            .post('/management/dicom/storage')
+            .query({ running: true })
+            .reply(200, function() {
+                StorageRunning = true;
+                return "success";
             })
 
         // mock indexer settings
-
         nock(BASE_URL).get('/management/settings/index')
             .once().reply(200, JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
         nock(BASE_URL).get('/management/settings/index')

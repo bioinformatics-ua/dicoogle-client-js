@@ -66,6 +66,17 @@ const IndexerSettings = Object.freeze({
 });
 DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
 
+/** Service settings fields
+ * @enum {string}
+ */
+const ServiceSettings = Object.freeze({
+    /** The service's port. type: number (integer) */
+    PORT: 'path',
+    /** Whether to start the service on server launch. type: boolean */
+    AUTOSTART: 'autostart'
+});
+DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
+
   /** @typedef {Object} SearchOptions
    * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
    * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
@@ -578,6 +589,38 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
             callback(null, outcome.aetitle);
         }
       }, token_);
+  };
+
+  /**
+   * Start the DICOM Storage service.
+   * @param {function(error:any)} callback the callback function
+   */
+  DicoogleAccess.prototype.startStorageService = function Dicoogle_startStorageService(callback) {
+    serviceRequest('POST', [url_, Endpoints.STORAGE_SERVICE], { running: true }, callback, token_);
+  };
+
+  /**
+   * Stop the DICOM Storage service.
+   * @param {function(error:any)} callback the callback function
+   */
+  DicoogleAccess.prototype.stopStorageService = function Dicoogle_stopStorageService(callback) {
+    serviceRequest('POST', [url_, Endpoints.STORAGE_SERVICE], { running: false }, callback, token_);
+  };
+
+  /**
+   * Start the DICOM Query/Retrieve service.
+   * @param {function(error:any)} callback the callback function
+   */
+  DicoogleAccess.prototype.startQueryRetrieveService = function Dicoogle_startQueryRetrieveService(callback) {
+    serviceRequest('POST', [url_, Endpoints.QR_SERVICE], { running: true }, callback, token_);
+  };
+
+  /**
+   * Stop the DICOM Query/Retrieve service.
+   * @param {function(error:any)} callback the callback function
+   */
+  DicoogleAccess.prototype.stopQueryRetrieveService = function Dicoogle_stopQueryRetrieveService(callback) {
+    serviceRequest('POST', [url_, Endpoints.QR_SERVICE], { running: false }, callback, token_);
   };
 
   /**
