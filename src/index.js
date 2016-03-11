@@ -33,6 +33,10 @@ const Endpoints = Object.freeze({
     QR_SERVICE: "management/dicom/query",
     STORAGE_SERVICE: "management/dicom/storage",
     INDEXER_SETTINGS: "management/settings/index",
+    TRANSFER_SETTINGS: "management/settings/transfer",
+    DICOM_QUERY_SETTINGS: "management/settings/dicom/query",
+    DICOM_STORAGE_SETTINGS: "management/settings/storage/dicom",
+    DICOM_AETITLE_SETTINGS: "management/settings/dicom",
     INDEX: "management/tasks/index",
     UNINDEX: "management/tasks/unindex",
     REMOVE: "management/tasks/remove",
@@ -519,6 +523,61 @@ DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
     const qs = {};
     qs[type] = value;
     serviceRequest('POST', url, qs, callback, token_);
+  };
+
+  /** Get the list of current transfer syntax settings available.
+   * @param {function(error:any, outcome:TransferSyntax[])} callback the callback function
+   */
+  DicoogleAccess.prototype.getTransferSyntaxSettings = function Dicoogle_getTransferSyntaxSettings(callback) {
+    const url = [url_, Endpoints.TRANSFER_SETTINGS]
+    let req = request.get(url.join('/'));
+    if (token_) {
+        req = req.set('Authorization', token_);
+    }
+    req.end(function (err, res) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        callback(null, JSON.parse(res.text));
+    });
+  }
+
+  /** Set (or reset) an option of a particular transfer syntax.
+   * @param {string} uid the unique identifier of the transfer syntax
+   * @param {string} option the name of the option to modify
+   * @param {boolean} value whether to set (true) or reset (false) the option
+   * @param {function(error:any)} callback the callback function
+   */
+  DicoogleAccess.prototype.setTransferSyntaxOption = function Dicoogle_setTransferSyntaxOption(uid, option, value, callback) {
+      serviceRequest('POST', [url_, Endpoints.TRANSFER_SETTINGS], {uid, option, value}, callback, token_);
+  }
+
+  /** Retrieve the AE title of the Dicoogle archive.
+   * @param {function(error:any, aetitle:string)} callback the callback function
+   */
+  DicoogleAccess.prototype.getAETitle = function Dicoogle_getAETitle(callback) {
+      serviceRequest('GET', [url_, Endpoints.DICOM_AETITLE_SETTINGS], {}, function(err, outcome) {
+        if (err) {
+            callback(err);
+        } else {
+            callback(null, outcome.aetitle);
+        }
+      }, token_);
+  };
+
+  /** Redefine the AE title of the Dicoogle archive.
+   * @param {string} aetitle a valid AE title for the PACS archive
+   * @param {function(error:any)} callback the callback function
+   */
+  DicoogleAccess.prototype.setAETitle = function Dicoogle_setAETitle(aetitle, callback) {
+      serviceRequest('PUT', [url_, Endpoints.DICOM_AETITLE_SETTINGS], { aetitle }, function(err, outcome) {
+        if (err) {
+            callback(err);
+        } else {
+            callback(null, outcome.aetitle);
+        }
+      }, token_);
   };
 
   /**

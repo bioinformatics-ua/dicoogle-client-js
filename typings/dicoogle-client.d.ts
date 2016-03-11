@@ -141,6 +141,17 @@ declare module "dicoogle-client" {
         watcher: boolean
     }
 
+    export interface TransferSyntax {
+        uid: string
+        sop_name: string
+        options: TransferOption[]
+    }
+
+    export interface TransferOption {
+        name: string
+        value: boolean
+    }
+
     export interface DicoogleAccess {
 
         /**
@@ -327,21 +338,31 @@ declare module "dicoogle-client" {
         /** Get all of the current Indexer settings.
          * @param callback the callback function
          */
-        getIndexerSettings(callback: (error: Error, outcome: IndexerSettings) => any)
-
-        /** Get the current Indexer settings. The type of the given outcome depends on
-         * the particular field that was chosen.
-         * @param field a particular field to retrieve
-         * @param callback the callback function
-         */
-        getIndexerSettings(field: string, callback: (error: Error, outcome: any) => any)
+        getIndexerSettings(callback: (error: Error, outcome: IndexerSettings) => any);
 
         /** Set a particular Indexer setting. A valid field and value pair is required.
          * @param field a particular field to set
          * @param value the value to assign to the field
          * @param callback the callback function
          */
-        setIndexerSettings(field: string, value: any, callback: (error: Error) => any)
+        setIndexerSettings(field: string, value: any, callback: (error: Error) => any);
+
+        /** Get the list of current transfer syntax settings available.
+         * @param callback the callback function
+         */
+        getTransferSyntaxSettings(callback: (error: Error, outcome: TransferSyntax[]) => any);
+
+        /** Set (or reset) an option of a particular transfer syntax.
+         * @param uid the unique identifier of the transfer syntax
+         * @param option the name of the option to modify
+         * @param value whether to set (true) or reset (false) the option
+         * @param callback the callback function
+         */
+        setTransferSyntaxOption(uid: string, option: string, value: boolean, callback: (error: Error) => any);
+
+        getAETitle(callback: (error: Error, aetitle: string) => any);
+
+        setAETitle(aetitle: string, callback: (error: Error) => any);
 
         /** Obtain the base URL of all Dicoogle services.
          * This method is synchronous.

@@ -1,12 +1,8 @@
-/* eslint-env node */
+/* eslint-env mocha */
 var assert = require('assert');
-var mocha = require('mocha');
-var describe = mocha.describe;
-var it = mocha.it;
-var beforeEach = mocha.beforeEach;
 var createMockedDicoogle = require('./mock/service-mock');
 
-var DICOOGLE_VERSION = '2.4.0-TEST';
+const DICOOGLE_VERSION = '2.4.0-TEST';
 
 function assertSameContent(a, b) {
   var diff1 = a.filter(function(x) { return b.indexOf(x) < 0 });
@@ -22,11 +18,10 @@ function assertDicomUUID(uid) {
 
 describe('Dicoogle Client (under Node.js)', function() {
   var Dicoogle;
-  function initBaseURL() {
+  beforeEach(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
-  }
-  beforeEach(initBaseURL);
+  });
 
   describe('#getVersion()', function() {
     it("should give Dicoogle's version with no error", function(done) {
@@ -276,6 +271,68 @@ describe('Dicoogle Client (under Node.js)', function() {
         Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.PATH, '/opt/somewhere/else', function (error) {
             assert.equal(error, null);
             done();
+        });
+    });
+  });
+
+  describe('#getTransferSettings() all', function() {
+    function testTransferSettings(done) {
+            Dicoogle.getTransferSyntaxSettings(function (error, data) {
+                assert.equal(error, null);
+                assert(data instanceof Array);
+                for (var i = 0; i < data.length; i++) {
+                    assert.strictEqual(typeof data[i].uid, 'string', 'uid must be a string');
+                    assert.strictEqual(typeof data[i].sop_name, 'string', 'sop_name must be a string');
+                    assert(data[i].options instanceof Array);
+                    for (var j = 0; j < data[i].options.length; j++) {
+                        assert.strictEqual(typeof data[i].options[j].name, 'string');
+                        assert.strictEqual(typeof data[i].options[j].value, 'boolean');
+                    }
+                }
+                done();
+            });
+    }
+    it("give transfer syntax settings with no error (2.3.1)", testTransferSettings);
+    it("give transfer syntax settings with no error (patched)", testTransferSettings);
+  });
+
+  describe('#setTransferSyntaxOption() an option', function() {
+    it("should say ok with no error", function(done) {
+        Dicoogle.setTransferSyntaxOption('1.2.840.10008.5.1.4.1.1.1', 'ExplicitVRBigEndian', true, function (error) {
+            assert.equal(error, null);
+            done();
+        });
+    });
+  });
+
+  describe('AE Title', function() {
+    var title;
+    describe('#getAETitle()', function() {
+        it("should give a valid AE title", function(done) {
+            Dicoogle.getAETitle(function(error, aetitle) {
+                assert.equal(error, null);
+                assert.strictEqual(typeof aetitle, 'string');
+                title = aetitle;
+                done();
+            });
+        });
+    });
+    describe('#setAETitle()', function() {
+        it("should give no error", function(done) {
+            title = title.split('').reverse().join('');
+            Dicoogle.setAETitle(title, function(error) {
+                assert.equal(error, null);
+                done();
+            });
+        });
+    });
+    describe('#getAETitle() after a reset', function() {
+        it("should give the AE title previously set", function(done) {
+            Dicoogle.getAETitle(function(error, aetitle) {
+                assert.equal(error, null);
+                assert.strictEqual(aetitle, title);
+                done();
+            });
         });
     });
   });

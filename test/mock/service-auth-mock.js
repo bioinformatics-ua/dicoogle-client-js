@@ -1,4 +1,3 @@
-/* eslint-env node */
 var dicoogleClient = require('../..');
 var nock = require('nock');
 var nockDone = false;

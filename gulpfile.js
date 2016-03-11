@@ -21,9 +21,7 @@ function licenseText() {
 
 gulp.task('lint', function () {
   return gulp.src(['src/*.js', 'test/*.js', 'test/mock/*.js', 'bin/*.js'])
-    .pipe(eslint({
-      configFile: ".eslintrc"
-    }))
+    .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });

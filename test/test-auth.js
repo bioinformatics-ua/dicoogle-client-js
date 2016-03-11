@@ -1,9 +1,5 @@
-/* eslint-env node */
+/* eslint-env mocha */
 var assert = require('assert');
-var mocha = require('mocha');
-var describe = mocha.describe;
-var it = mocha.it;
-var beforeEach = mocha.beforeEach;
 var createMockedDicoogle = require('./mock/service-auth-mock');
 
 var UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
