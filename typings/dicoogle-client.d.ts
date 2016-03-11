@@ -360,8 +360,15 @@ declare module "dicoogle-client" {
          */
         setTransferSyntaxOption(uid: string, option: string, value: boolean, callback: (error: Error) => any);
 
+        /** Retrieve the AE title of the Dicoogle archive.
+         * @param callback the callback function
+         */
         getAETitle(callback: (error: Error, aetitle: string) => any);
 
+        /** Redefine the AE title of the Dicoogle archive.
+         * @param aetitle a valid AE title for the PACS archive
+         * @param callback the callback function
+         */
         setAETitle(aetitle: string, callback: (error: Error) => any);
 
         /** Obtain the base URL of all Dicoogle services.

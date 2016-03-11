@@ -43,8 +43,7 @@ Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
 });
 ```
 
-At the moment, the documentation of the API can be read directly in the src/dicoogle-client.js source file's documented functions.
-A clearer documentation may become available in the future.
+At the moment, the documentation of the API can be read in the project's wiki (under [Documentation](https://github.com/bioinformatics-ua/dicoogle-client-js/wiki/Documentation)) or directly in the [source file's](src/index.js) documented functions. Typescript [typings](typings/dicoogle-client.d.ts) are also available.
 
 The repository includes two examples of dicoogle-client for simple querying:
 

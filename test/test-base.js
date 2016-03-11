@@ -2,7 +2,7 @@
 var assert = require('assert');
 var createMockedDicoogle = require('./mock/service-mock');
 
-const DICOOGLE_VERSION = '2.4.0-TEST';
+var DICOOGLE_VERSION = '2.4.0-TEST';
 
 function assertSameContent(a, b) {
   var diff1 = a.filter(function(x) { return b.indexOf(x) < 0 });

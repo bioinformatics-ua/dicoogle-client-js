@@ -1,7 +1,38 @@
 {
+  "root": true,
+  "extends": "eslint:recommended",
   "env": {
-    "commonjs": false,
     "node": true,
     "es6": false
+  },
+  "globals": {
+    "process": false,
+    "console": false
+  },
+  "rules": {
+    "no-alert": 2,
+    "no-console": 1,
+    "quotes": 0,
+    "curly": 0,
+    "global-strict": 0,
+    "new-cap": 0,
+    "camelcase": 0,
+    "comma-dangle": 1,
+    "no-unused-vars": 1,
+    "comma-spacing": 1,
+    "space-infix-ops": 1,
+    "no-mixed-spaces-and-tabs": 1,
+    "no-multi-spaces": 1,
+    "no-extra-semi": 1,
+    "key-spacing": 1,
+    "semi-spacing": 1,
+    "eol-last": 1,
+    "no-undef": 2,
+    "valid-jsdoc": [1, {
+      "requireReturn": false,
+      "prefer": {
+        "return": "returns"
+      }
+    }]
   }
 }
