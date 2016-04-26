@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-var assert = require('assert');
+var assert = require('chai').assert;
 var createMockedDicoogle = require('./mock/service-auth-mock');
 
 var UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
@@ -25,12 +25,12 @@ describe('Dicoogle Authentication', function() {
   describe('#login() as admin', function() {
     it("should give user name, roles, admin and session token", function(done) {
       Dicoogle.login('admin', 'itsasecret', function(error, data) {
-        assert.equal(error, null, 'should give no error, got: ' + error);
+        assert.equal(error, null, 'should give no error');
         assert.strictEqual(data.user, 'admin', 'username should be ok');
-        assert(data.roles instanceof Array, 'roles should be provided');
-        assert.strictEqual(typeof data.admin, 'boolean', 'admin flag expected');
-        assert.strictEqual(typeof data.token, 'string', 'session token expected');
-        assert(data.token.match(UUID_REGEXP))
+        assert.isArray(data.roles, 'roles should be provided');
+        assert.isBoolean(data.admin, 'admin flag expected');
+        assert.isString(data.token, 'session token expected');
+        assert.match(data.token, UUID_REGEXP);
         done();
       });
     });
@@ -39,8 +39,8 @@ describe('Dicoogle Authentication', function() {
   describe('#getQueryProviders() with authorization', function() {
     it("should give an array with no error", function(done) {
       Dicoogle.getQueryProviders(function(error, providers) {
-        assert.equal(error, null, 'should give no error, got: ' + error);
-        assert(providers instanceof Array);
+        assert.equal(error, null, 'should give no error');
+        assert.isArray(providers);
         done();
       });
     });
