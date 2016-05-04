@@ -86,6 +86,24 @@ module.exports = function createDicoogleMock() {
         var AETitle = 'TESTSRV';
         var QRRunning = true;
         var StorageRunning = true;
+        var TaskClosed = false;
+        var TaskStopped = false;
+        var RunningTasks = [
+            {
+                taskUid: "1063922f-1823-4e43-8241-c84c1721a6c1",
+                taskName: "[cbir]index file:/opt/some-dataset/42",
+                taskProgress: 0.2
+            },
+            {
+                taskUid: "f1b6588d-92c2-458c-8c77-e30d8706b662",
+                taskName: "[lucene]index file:/opt/some-other-dataset/42",
+                taskProgress: 1,
+                complete: true,
+                elapsedTime: 44440,
+                nIndexed: 213,
+                nErrors: 3
+            }
+        ];
 
         nock(BASE_URL)
             // mock /version
@@ -142,10 +160,15 @@ module.exports = function createDicoogleMock() {
                 numResults: SEARCH_RESULTS_DIM.length,
                 elapsedTime: 50
             })
-            // mock get query providers
+            // mock get query or index providers
             .get('/providers')
-            .query({ type: 'query' })
-            .reply(200, ["cbir", "lucene"])
+            .times(3)
+            .query(function(qs) {
+                return !('type' in qs)
+                  || qs.type === 'query'
+                  || qs.type === 'index';
+            })
+            .reply(200, ["lucene", "cbir"])
 
             // mock get storage providers
             .get('/providers')
@@ -157,12 +180,17 @@ module.exports = function createDicoogleMock() {
             .query({ uri: /[a-z0-9\-\/]+/, plugin: /.*/ })
             .reply(200)
 
-            // mock unindex
+            // mock index on all providers
+            .post('/management/tasks/index')
+            .query({ uri: /[a-z0-9\-\/]+/ })
+            .reply(200)
+
+            // mock unindex on all providers
             .post('/management/tasks/unindex')
             .query({ uri: /[a-z0-9\-\/]+/ })
             .reply(200)
 
-            // mock unindex (with provider)
+            // mock unindex on specific provider
             .post('/management/tasks/unindex')
             .query({ uri: /[a-z0-9\-\/]+/, provider: /.*/ })
             .reply(200)
@@ -240,7 +268,7 @@ module.exports = function createDicoogleMock() {
             .get('/management/settings/index/thumbnail')
             .reply(200, INDEXER_SETTINGS.thumbnail)
             .get('/management/settings/index/thumbnailSize')
-            .reply(200, '128')
+            .reply(200, INDEXER_SETTINGS.thumbnailSize)
             .get('/management/settings/index/watcher')
             .reply(200, INDEXER_SETTINGS.watcher)
 
@@ -275,24 +303,51 @@ module.exports = function createDicoogleMock() {
 
             // mock get running tasks
         nock(BASE_URL).get('/index/task')
-            .reply(200, {
-                results: [
-                    {
-                        taskUid: "1063922f-1823-4e43-8241-c84c1721a6c1",
-                        taskName: "[cbir]index file:/opt/some-dataset/42",
-                        taskProgress: 0.2
-                    },
-                    {
-                        taskUid: "f1b6588d-92c2-458c-8c77-e30d8706b662",
-                        taskName: "[lucene]index file:/opt/some-other-dataset/42",
-                        taskProgress: 1,
-                        complete: true,
-                        elapsedTime: 44440,
-                        nIndexed: 213,
-                        nErrors: 3
-                    }
-                ],
-                count: 0
+            .times(3)
+            .reply(200, function() {
+                var tasks = [];
+                if (!TaskStopped) {
+                    tasks.push(RunningTasks[0]);
+                }
+                if (!TaskClosed) {
+                    tasks.push(RunningTasks[1]);
+                }
+                return {
+                    results: tasks,
+                    count: TaskStopped ? 0 : 1
+                }
+            });
+
+            // mock close a running task
+        nock(BASE_URL).post('/index/task')
+            .query({
+                uid: 'f1b6588d-92c2-458c-8c77-e30d8706b662',
+                action: 'delete',
+                type: 'close'
+            })
+            .twice()
+            .reply(function() {
+                if (!TaskClosed) {
+                    TaskClosed = true;
+                    return [200, 'success'];
+                }
+                return [400, 'no such task!'];
+            });
+
+            // mock stop a running task
+        nock(BASE_URL).post('/index/task')
+            .query({
+                uid: '1063922f-1823-4e43-8241-c84c1721a6c1',
+                action: 'delete',
+                type: 'stop'
+            })
+            .twice()
+            .reply(function() {
+                if (!TaskStopped) {
+                    TaskStopped = true;
+                    return [200, 'success'];
+                }
+                return [400, 'no such task!'];
             });
 
         nock(BASE_URL)

@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/dicoogle-client.svg)](https://badge.fury.io/js/dicoogle-client) [![Build Status](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js.svg?branch=master)](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js)
+[![npm version](https://badge.fury.io/js/dicoogle-client.svg)](https://badge.fury.io/js/dicoogle-client) [![Build Status](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js.svg?branch=master)](https://travis-ci.org/bioinformatics-ua/dicoogle-client-js) [![Coverage Status](https://coveralls.io/repos/github/bioinformatics-ua/dicoogle-client-js/badge.svg?branch=master)](https://coveralls.io/github/bioinformatics-ua/dicoogle-client-js?branch=master)
 
 # Dicoogle Client
 

@@ -26,9 +26,30 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-  describe('#getQueryProviders()', function() {
-    it("should give 'lucene' and 'cbir' with no error", function(done) {
-      Dicoogle.getQueryProviders(function(error, providers) {
+  describe('Get Query Providers', function() {
+    describe('using #getQueryProviders()', function() {
+      it("should give 'lucene' and 'cbir' with no error", function(done) {
+        Dicoogle.getQueryProviders(function(error, providers) {
+          assert.equal(error, null);
+          assert.sameMembers(providers, ['lucene', 'cbir']);
+          done();
+        });
+      });
+    });
+    describe('using #getProviders(function)', function() {
+      it("should give 'lucene' and 'cbir' with no error", function(done) {
+        Dicoogle.getProviders(function(error, providers) {
+          assert.equal(error, null);
+          assert.sameMembers(providers, ['lucene', 'cbir']);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('Get Index Providers', function() {
+    it("#getIndexProviders()", function(done) {
+      Dicoogle.getIndexProviders(function(error, providers) {
         assert.equal(error, null);
         assert.sameMembers(providers, ['lucene', 'cbir']);
         done();
@@ -36,13 +57,74 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-  describe('#getStorageProviders()', function() {
-    it("should give 'file' and 'dropbox' with no error", function(done) {
+  describe('Get Storage Providers', function() {
+    it("#getStorageProviders()", function(done) {
       Dicoogle.getStorageProviders(function(error, providers) {
         assert.equal(error, null);
         assert.sameMembers(providers, ['file', 'dropbox']);
         done();
       });
+    });
+  });
+
+  describe('Running tasks', function() {
+
+    it("#getRunningTasks() before changes", function(done) {
+      Dicoogle.getRunningTasks(function(error, outcome) {
+        assert.equal(error, null);
+        assert.isNumber(outcome.count);
+        assert.isArray(outcome.tasks);
+        assert.strictEqual(outcome.tasks.length, 2);
+        assert(outcome.count <= outcome.tasks.length);
+        for (var i = 0; i < outcome.tasks.length; i++) {
+            var task = outcome.tasks[i];
+            assert.isObject(task);
+            assert.isString(task.taskUid);
+            assert.isString(task.taskName);
+            assert.isNumber(task.taskProgress);
+            assert(!('complete' in task)
+                || typeof task.complete === 'boolean');
+            if (task.complete) {
+                assert.isNumber(task.elapsedTime);
+                assert.isNumber(task.nIndexed);
+                assert.isNumber(task.nErrors);
+            }
+        }
+        done();
+      });
+    });
+
+    describe('Closing a completed task', function() {
+        it("#closeTask() should successfully clear the task", function(done) {
+            Dicoogle.closeTask('f1b6588d-92c2-458c-8c77-e30d8706b662', function(error) {
+                assert.equal(error, null);
+                Dicoogle.getRunningTasks(function(error, outcome) {
+                    assert.equal(error, null);
+                    assert.isArray(outcome.tasks);
+                    assert.strictEqual(outcome.tasks.length, 1);
+                    assert.strictEqual(outcome.count, 1);
+                    var task = outcome.tasks[0];
+                    assert.isObject(task);
+                    assert.isString(task.taskUid);
+                    assert.notEqual(task.taskUid, 'f1b6588d-92c2-458c-8c77-e30d8706b662');
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('Stopping a completed task', function() {
+        it("#stopTask() should successfully clear the task", function(done) {
+            Dicoogle.stopTask('1063922f-1823-4e43-8241-c84c1721a6c1', function(error) {
+                assert.equal(error, null);
+                Dicoogle.getRunningTasks(function(error, outcome) {
+                    assert.equal(error, null);
+                    assert.deepEqual(outcome.tasks, []);
+                    assert.strictEqual(outcome.count, 0);
+                    done();
+                });
+            });
+        });
     });
   });
 
@@ -58,7 +140,7 @@ describe('Dicoogle Client (under Node.js)', function() {
             assert.strictEqual(outcome.results[i].fields.Modality, 'MR', 'all results must be MR');
             assertDicomUUID(outcome.results[i].fields.SOPInstanceUID);
         }
-        assert(typeof outcome.elapsedTime, 'number', 'outcome has the elapsed time');
+        assert.isNumber(outcome.elapsedTime, 'outcome has the elapsed time');
         done();
       });
     });
@@ -105,20 +187,42 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-  describe('#index() on one provider', function() {
-    it("should say ok with no error", function (done) {
-        Dicoogle.index('/opt/another-dataset', 'lucene', function(error) {
-            assert.equal(error, null);
-            done();
+  describe('Index', function() {
+    describe('#index() on one provider', function() {
+        it("should say ok with no error", function (done) {
+            Dicoogle.index('/opt/another-dataset', 'lucene', function(error) {
+                assert.equal(error, null);
+                done();
+            });
+        });
+    });
+
+    describe('#index() on all providers', function() {
+        it("should say ok with no error", function (done) {
+            Dicoogle.index('/opt/another-dataset', function(error) {
+                assert.equal(error, null);
+                done();
+            });
         });
     });
   });
 
-  describe('#unindex() on all providers', function() {
-    it("should say ok with no error", function (done) {
-        Dicoogle.unindex('/opt/another-dataset/1_1.dcm', function(error) {
-            assert.equal(error, null);
-            done();
+  describe('Unindex', function() {
+    describe('#unindex() on one provider', function() {
+        it("should say ok with no error", function (done) {
+            Dicoogle.unindex('/opt/another-dataset/1_1.dcm', 'lucene', function(error) {
+                assert.equal(error, null);
+                done();
+            });
+        });
+    });
+
+    describe('#unindex() on all providers', function() {
+        it("should say ok with no error", function (done) {
+            Dicoogle.unindex('/opt/another-dataset/1_1.dcm', function(error) {
+                assert.equal(error, null);
+                done();
+            });
         });
     });
   });
@@ -142,32 +246,6 @@ describe('Dicoogle Client (under Node.js)', function() {
         assert.isNumber(outcome.elapsedTime, 'outcome has the elapsed time');
         done();
       });
-    });
-  });
-
-  describe('#getRunningTasks()', function() {
-    it("should give a list of task information with no error", function(done) {
-        Dicoogle.getRunningTasks(function(error, outcome) {
-          assert.equal(error, null);
-          assert.property(outcome, 'tasks', 'outcome has tasks');
-          var tasks = outcome.tasks;
-          assert.isArray(tasks, 'tasks must be an array');
-          for (var i = 0; i < tasks.length; i++) {
-            var task = tasks[i];
-            assert.isObject(task, 'task must be an object');
-            assert.isString(task.taskUid, 'taskUid must be a string');
-            assert.isString(task.taskName, 'taskName must be a string');
-            assert.isNumber(task.taskProgress, 'taskProgress must be a number');
-            assert(!('complete' in task) || typeof task.complete === 'boolean', 'complete must be a boolean');
-            if (task.complete) {
-              assert.isNumber(task.elapsedTime, 'elapsedTime must be a number');
-              assert.isNumber(task.nIndexed, 'nIndexed must be a number');
-              assert.isNumber(task.nErrors, 'nErrors must be a number');
-            }
-          }
-          assert.isNumber(outcome.count, 'outcome has count');
-          done();
-        });
     });
   });
 
@@ -260,78 +338,6 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-  describe('#getIndexerSettings() all', function() {
-    function testIndexerSettings(done) {
-            Dicoogle.getIndexerSettings(function (error, data) {
-                assert.equal(error, null);
-                assert.isObject(data);
-                assert.isString(data.path, 'path must be a string');
-                assert.isNumber(data.effort, 'effort must be a number');
-                assert.isBoolean(data.watcher, 'watcher must be a boolean');
-                assert.isBoolean(data.thumbnail, 'thumbnail must be a boolean');
-                assert.isBoolean(data.zip, 'zip must be a boolean');
-                assert.isNumber(data.thumbnailSize, 'thumbnailSize must be a string');
-                done();
-            });
-    }
-    it("give indexer settings with no error (2.3.1)", testIndexerSettings);
-    it("give indexer settings with no error (patched)", testIndexerSettings);
-  });
-
-  describe('#getIndexerSettings() one by one', function() {
-    it("should give path, no error", function(done) {
-        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.PATH, function (error, data) {
-            assert.equal(error, null);
-            assert.strictEqual(data, '/opt/data', 'outcome must be path "/opt/data"');
-            done();
-        });
-    });
-    it("should give effort, no error", function(done) {
-        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.EFFORT, function (error, data) {
-            assert.equal(error, null);
-            assert.isNumber(data);
-            done();
-        });
-    });
-    it("should give watcher = false, no error", function(done) {
-        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.WATCHER, function (error, data) {
-            assert.equal(error, null);
-            assert.strictEqual(data, false);
-            done();
-        });
-    });
-    it("should give thumbnail = true, no error", function(done) {
-        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.INDEX_THUMBNAIL, function (error, data) {
-            assert.equal(error, null);
-            assert.strictEqual(data, true);
-            done();
-        });
-    });
-    it("should give thumbnailSize, no error", function(done) {
-        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.THUMBNAIL_SIZE, function (error, data) {
-            assert.equal(error, null);
-            assert.isNumber(data);
-            done();
-        });
-    });
-    it("should give zip, no error", function(done) {
-        Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.ZIP, function (error, data) {
-            assert.equal(error, null);
-            assert.isBoolean(data);
-            done();
-        });
-    });
-  });
-
-  describe('#setIndexerSettings() path only', function() {
-    it("should say ok with no error", function(done) {
-        Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.PATH, '/opt/somewhere/else', function (error) {
-            assert.equal(error, null);
-            done();
-        });
-    });
-  });
-
   describe('#getTransferSettings() all', function() {
     function testTransferSettings(done) {
             Dicoogle.getTransferSyntaxSettings(function (error, data) {
@@ -349,8 +355,8 @@ describe('Dicoogle Client (under Node.js)', function() {
                 done();
             });
     }
-    it("give transfer syntax settings with no error (2.3.1)", testTransferSettings);
-    it("give transfer syntax settings with no error (patched)", testTransferSettings);
+    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
+    it("should give transfer syntax settings (patched)", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {
@@ -360,6 +366,40 @@ describe('Dicoogle Client (under Node.js)', function() {
             done();
         });
     });
+  });
+
+  describe('Indexer Settings', function() {
+    it("#getIndexerSettings(); should give all settings", function(done) {
+        Dicoogle.getIndexerSettings(function (error, data) {
+            assert.equal(error, null);
+            assert.deepEqual(data, {
+              path: '/opt/data',
+              zip: false,
+              effort: 100,
+              thumbnail: true,
+              thumbnailSize: 128,
+              watcher: false
+            });
+            done();
+        });
+    });
+
+    function createTest(name, value) {
+        return function(done) {
+            Dicoogle.getIndexerSettings(name, function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data, value);
+                done();
+            });
+        };
+    }
+
+    it("#getIndexerSettings('path')", createTest('path', '/opt/data'));
+    it("#getIndexerSettings('zip')", createTest('zip', false));
+    it("#getIndexerSettings('effort')", createTest('effort', 100));
+    it("#getIndexerSettings('thumbnail')", createTest('thumbnail', true));
+    it("#getIndexerSettings('thumbnailSize')", createTest('thumbnailSize', 128));
+    it("#getIndexerSettings('watcher')", createTest('watcher', false));
   });
 
   describe('AE Title', function() {

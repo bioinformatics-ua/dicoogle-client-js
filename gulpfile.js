@@ -9,6 +9,7 @@ var eslint = require('gulp-eslint');
 var rm = require('gulp-rm');
 var babel = require('gulp-babel');
 var header = require('gulp-header');
+var sourcemaps = require("gulp-sourcemaps");
 var fs = require('fs');
 
 var _licenseText = null;
@@ -28,8 +29,12 @@ gulp.task('lint', function () {
 
 gulp.task('main', ['lint'], function () {
   return gulp.src('src/*.js')
-    .pipe(babel({ presets: ['es2015'], plugins: ['add-module-exports'] }))
+    .pipe(babel({
+      presets: ['es2015'],
+      plugins: ['add-module-exports']
+    }))
     .pipe(header(licenseText()))
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest('lib'));
 });
 

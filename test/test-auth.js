@@ -12,8 +12,8 @@ describe('Dicoogle Authentication', function() {
   }
   beforeEach(initBaseURL);
 
-  describe('#getQueryProviders() without authorization', function() {
-    it("should give an error", function(done) {
+  describe('Before Authentication', function() {
+    it("#getQueryProviders() without authorization should give an error", function(done) {
       Dicoogle.getQueryProviders(function(error, providers) {
         assert(error, 'should have an error');
         assert.equal(providers, null, 'providers should be null');
@@ -22,8 +22,8 @@ describe('Dicoogle Authentication', function() {
     });
   });
 
-  describe('#login() as admin', function() {
-    it("should give user name, roles, admin and session token", function(done) {
+  describe('Authentication', function() {
+    it("#login() as admin ; should give user name, roles, admin and session token", function(done) {
       Dicoogle.login('admin', 'itsasecret', function(error, data) {
         assert.equal(error, null, 'should give no error');
         assert.strictEqual(data.user, 'admin', 'username should be ok');
@@ -36,18 +36,20 @@ describe('Dicoogle Authentication', function() {
     });
   });
 
-  describe('#getQueryProviders() with authorization', function() {
-    it("should give an array with no error", function(done) {
+  describe('After Authentication', function() {
+    it("#isAuthenticated() -> true", function() {
+        assert.strictEqual(Dicoogle.isAuthenticated(), true);
+    });
+
+    it("#getQueryProviders() with authorization ; should give an array with no error", function(done) {
       Dicoogle.getQueryProviders(function(error, providers) {
         assert.equal(error, null, 'should give no error');
         assert.isArray(providers);
         done();
       });
     });
-  });
 
-  describe('#logout()', function() {
-    it("should give no error and clear Dicoogle credentials", function(done) {
+    it("#logout() ; should give no error and clear Dicoogle credentials", function(done) {
       Dicoogle.logout(function(error) {
         assert.equal(error, null, 'should give no error');
         assert.strictEqual(Dicoogle.getToken(), null, 'internal token should be null');
@@ -55,6 +57,15 @@ describe('Dicoogle Authentication', function() {
         assert.strictEqual(Dicoogle.getRoles(), null, 'roles should be null');
         done();
       });
+    });
+  });
+
+  describe('Loading a previous session', function() {
+    var TOKEN = '00000000-0000-0000-0000-000000000001';
+    it('#setToken(string) should modify the session token', function() {
+      Dicoogle.setToken(TOKEN);
+      assert.strictEqual(Dicoogle.getToken(), TOKEN);
+
     });
   });
 

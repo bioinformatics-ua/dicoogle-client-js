@@ -134,6 +134,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       let endpoint = Endpoints.SEARCH;
       if (options.dim) {
           endpoint = Endpoints.SEARCH_DIM;
+          /* istanbul ignore next */
           if (process.end.NODE_ENV !== 'production') {
               /*eslint-disable no-console */
               console.error("Warning: 'dim' flag in method search is deprecated! Please use searchDIM instead.");
@@ -474,6 +475,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
     if (typeof field === 'string') {
         all = false;
         url.push(encodeURIComponent(field));
+        /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
             /* eslint-disable no-console */
             const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]); // values()
@@ -521,6 +523,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.setIndexerSettings = function Dicoogle_setIndexerSettings(field, value, callback) {
+    /* istanbul ignore next */
     if (process.env.NODE_ENV !== 'production') {
         const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
         if (values.indexOf(field) === -1) {
@@ -743,6 +746,7 @@ export default function dicoogleClient(url, options = {}) {
     }
 
     if (typeof user === 'string' && password) {
+        /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
             /*eslint-disable no-console */
             console.error('Warning: Use of Dicoogle client options for logging in is deprecated! Please use DicoogleAccess#login(user, password) instead.');
