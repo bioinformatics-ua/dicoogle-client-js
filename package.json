@@ -38,6 +38,7 @@
     "superagent": "^1.7.2"
   },
   "devDependencies": {
+    "babel-core": "^6.8.0",
     "babel-plugin-add-module-exports": "^0.2.0",
     "babel-preset-es2015": "^6.1.2",
     "browserify": "^13.0.0",
