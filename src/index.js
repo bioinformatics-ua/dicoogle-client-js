@@ -125,16 +125,15 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, outcome:SearchOutcome)} callback the callback function providing the outcome
    */
   DicoogleAccess.prototype.search = function Dicoogle_search(query, options, callback) {
-      if (!options) {
-        options = {};
-      } else if (!callback && typeof options === 'function') {
+      if (!callback && typeof options === 'function') {
         callback = options;
         options = {};
       }
+      options = options || {};
       let endpoint = Endpoints.SEARCH;
+      /* istanbul ignore next */
       if (options.dim) {
           endpoint = Endpoints.SEARCH_DIM;
-          /* istanbul ignore next */
           if (process.end.NODE_ENV !== 'production') {
               /*eslint-disable no-console */
               console.error("Warning: 'dim' flag in method search is deprecated! Please use searchDIM instead.");
@@ -746,8 +745,8 @@ export default function dicoogleClient(url, options = {}) {
       }
     }
 
+    /* istanbul ignore next */
     if (typeof user === 'string' && password) {
-        /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
             /*eslint-disable no-console */
             console.error('Warning: Use of Dicoogle client options for logging in is deprecated! Please use DicoogleAccess#login(user, password) instead.');

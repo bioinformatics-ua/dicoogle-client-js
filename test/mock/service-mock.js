@@ -89,6 +89,7 @@ module.exports = function createDicoogleMock() {
         let StorageRunning = true;
         let TaskClosed = false;
         let TaskStopped = false;
+        let Zip = false;
         const RunningTasks = [
             {
                 taskUid: "1063922f-1823-4e43-8241-c84c1721a6c1",
@@ -256,31 +257,41 @@ module.exports = function createDicoogleMock() {
 
         // mock indexer settings
         nock(BASE_URL).get('/management/settings/index')
-            .once().reply(200, JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
+            .once().reply(200, () => JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
         nock(BASE_URL).get('/management/settings/index')
-            .reply(200, INDEXER_SETTINGS);                       // with patched Dicoogle
+            .reply(200, () => INDEXER_SETTINGS);               // with patched Dicoogle
         // getters
         nock(BASE_URL)
             .get('/management/settings/index/path')
-            .reply(200, INDEXER_SETTINGS.path)
+            .reply(200, () => INDEXER_SETTINGS.path)
             .get('/management/settings/index/zip')
-            .reply(200, INDEXER_SETTINGS.zip)
+            .twice()
+            .reply(200, () => Zip)
             .get('/management/settings/index/effort')
-            .reply(200, INDEXER_SETTINGS.effort)
+            .reply(200, () => INDEXER_SETTINGS.effort)
             .get('/management/settings/index/thumbnail')
-            .reply(200, INDEXER_SETTINGS.thumbnail)
+            .reply(200, () => INDEXER_SETTINGS.thumbnail)
             .get('/management/settings/index/thumbnailSize')
-            .reply(200, INDEXER_SETTINGS.thumbnailSize)
+            .reply(200, () => INDEXER_SETTINGS.thumbnailSize)
             .get('/management/settings/index/watcher')
-            .reply(200, INDEXER_SETTINGS.watcher)
+            .reply(200, () => INDEXER_SETTINGS.watcher)
 
             // mock indexer settings setters
             .post('/management/settings/index/path')
             .query({ path: /.*/ })
             .reply(200)
             .post('/management/settings/index/zip')
-            .query({ zip: /(|true|false)/i })
-            .reply(200)
+            .query({ zip: 'true' })
+            .reply(function() {
+                Zip = true;
+                return [200, {}];
+            })
+            .post('/management/settings/index/zip')
+            .query({ zip: 'false' })
+            .reply(function() {
+                Zip = false;
+                return [200, {}];
+            })
             .post('/management/settings/index/effort')
             .query({ effort: /\d+(\.\d+)?/ })
             .reply(200)

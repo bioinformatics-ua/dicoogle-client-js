@@ -373,37 +373,52 @@ describe('Dicoogle Client (under Node.js)', function() {
   });
 
   describe('Indexer Settings', function() {
-    it("#getIndexerSettings(); should give all settings", function(done) {
-        Dicoogle.getIndexerSettings(function (error, data) {
-            assert.equal(error, null);
-            assert.deepEqual(data, {
-              path: '/opt/data',
-              zip: false,
-              effort: 100,
-              thumbnail: true,
-              thumbnailSize: 128,
-              watcher: false
-            });
-            done();
-        });
-    });
-
-    function createTest(name, value) {
-        return function(done) {
-            Dicoogle.getIndexerSettings(name, function (error, data) {
+      describe('Get Indexer Settings', function() {
+          it("#getIndexerSettings(); should give all settings", function(done) {
+            Dicoogle.getIndexerSettings(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data, value);
+                assert.deepEqual(data, {
+                path: '/opt/data',
+                zip: false,
+                effort: 100,
+                thumbnail: true,
+                thumbnailSize: 128,
+                watcher: false
+                });
                 done();
-            });
-        };
-    }
+              });
+          });
 
-    it("#getIndexerSettings('path')", createTest('path', '/opt/data'));
-    it("#getIndexerSettings('zip')", createTest('zip', false));
-    it("#getIndexerSettings('effort')", createTest('effort', 100));
-    it("#getIndexerSettings('thumbnail')", createTest('thumbnail', true));
-    it("#getIndexerSettings('thumbnailSize')", createTest('thumbnailSize', 128));
-    it("#getIndexerSettings('watcher')", createTest('watcher', false));
+          function createTest(name, value) {
+            return function(done) {
+                Dicoogle.getIndexerSettings(name, function (error, data) {
+                    assert.equal(error, null);
+                    assert.strictEqual(data, value);
+                    done();
+                });
+            };
+          }
+
+          it("#getIndexerSettings('path')", createTest('path', '/opt/data'));
+          it("#getIndexerSettings('zip')", createTest('zip', false));
+          it("#getIndexerSettings('effort')", createTest('effort', 100));
+          it("#getIndexerSettings('thumbnail')", createTest('thumbnail', true));
+          it("#getIndexerSettings('thumbnailSize')", createTest('thumbnailSize', 128));
+          it("#getIndexerSettings('watcher')", createTest('watcher', false));
+      });
+
+      describe('Set Indexer Settings', function() {
+          it("#setIndexerSettings('zip', true) should work ok", function(done) {
+            Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.ZIP, true, function (error) {
+              assert.equal(error, null);
+              Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.ZIP, function (error, out) {
+                assert.equal(error, null);
+                assert.strictEqual(out, true);
+                done();
+              });
+            });
+          });
+      });
   });
 
   describe('AE Title', function() {
