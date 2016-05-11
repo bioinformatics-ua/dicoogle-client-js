@@ -9,6 +9,14 @@ function assertDicomUUID(uid) {
     assert(uid.match(/(\d+\.?)*/), "'" + uid + "' must be a valid DICOM UUID");
 }
 
+function createCheckVersion(done) {
+    return function(error, outcome) {
+        assert.equal(error, null);
+        assert.propertyVal(outcome, 'version', DICOOGLE_VERSION);
+        done();
+    };
+}
+
 describe('Dicoogle Client (under Node.js)', function() {
   var Dicoogle;
   beforeEach(function initBaseURL() {
@@ -18,11 +26,7 @@ describe('Dicoogle Client (under Node.js)', function() {
 
   describe('#getVersion()', function() {
     it("should give Dicoogle's version with no error", function(done) {
-      Dicoogle.getVersion(function(error, outcome) {
-        assert.equal(error, null);
-        assert.propertyVal(outcome, 'version', DICOOGLE_VERSION);
-        done();
-      });
+      Dicoogle.getVersion(createCheckVersion(done));
     });
   });
 
@@ -431,5 +435,20 @@ describe('Dicoogle Client (under Node.js)', function() {
         });
     });
   });
+
+  describe('Dicoogle generic request', function() {
+      describe("Get Dicoogle version", function() {
+          it("#request('GET', 'ext/version', {}) should give Dicoogle's version with no error", function(done) {
+              Dicoogle.request('GET', 'ext/version', {}, createCheckVersion(done));
+          });
+          it("#request('GET', 'ext/version') should give Dicoogle's version with no error", function(done) {
+              Dicoogle.request('GET', 'ext/version', createCheckVersion(done));
+          });
+          it("#request('GET', ['ext', 'version']) should give Dicoogle's version with no error", function(done) {
+              Dicoogle.request('GET', ['ext', 'version'], createCheckVersion(done));
+          });
+      });
+  });
+
 });
 

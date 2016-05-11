@@ -1,13 +1,14 @@
-var dicoogleClient = require('../..');
-var nock = require('nock');
-var nockDone = false;
-var qs = require('querystring');
+const dicoogleClient = require('../../src');
+const nock = require('nock');
+const qs = require('querystring');
+
+let nockDone = false;
 
 /** Use nock to intercept Dicoogle client requests.
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
 module.exports = function createDicoogleMock() {
-    var BASE_URL = "http://127.0.0.1:8484";
+    const BASE_URL = "http://127.0.0.1:8484";
     if (!nockDone) {
         // prepare Dicoogle server mock
         nock(BASE_URL, { // mock /login with admin account
@@ -16,7 +17,7 @@ module.exports = function createDicoogleMock() {
                  }
             })
             .post('/login', function(data) {
-                var parsedData = qs.parse(data);
+                const parsedData = qs.parse(data);
                 return parsedData.username === 'admin' &&
                         typeof parsedData.password === 'string' &&
                         parsedData.password.length >= 3;

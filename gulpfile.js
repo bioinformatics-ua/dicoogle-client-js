@@ -29,10 +29,7 @@ gulp.task('lint', function () {
 
 gulp.task('main', ['lint'], function () {
   return gulp.src('src/*.js')
-    .pipe(babel({
-      presets: ['es2015'],
-      plugins: ['add-module-exports']
-    }))
+    .pipe(babel())
     .pipe(header(licenseText()))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest('lib'));

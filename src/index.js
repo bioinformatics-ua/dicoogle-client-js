@@ -630,7 +630,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
    * service exposed by Dicoogle, including those from plugins.
    * @param {?string} method the kind of HTTP method to make, defaults to "GET"
-   * @param {string|string[]} uri a URI or array of resource sequences to the service, relative to Dicoogle's base URL
+   * @param {string|string[]} uri a URI or array of resource sequences to the service, relative
+   *                          to Dicoogle's base URL. There should be no leading slash ('/').
    * @param {object} [options] an object of options to be passed as query strings
    * @param {function(error:any, result)} callback the callback function
    */

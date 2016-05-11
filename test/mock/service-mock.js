@@ -1,19 +1,20 @@
-var dicoogleClient = require('../..');
-var nock = require('nock');
-var nockDone = false;
-var URL = require('url');
-var qs = require('querystring');
+const dicoogleClient = require('../../src');
+const nock = require('nock');
+const URL = require('url');
+const qs = require('querystring');
+
+let nockDone = false;
 
 /** Use nock to intercept Dicoogle client requests.
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
 module.exports = function createDicoogleMock() {
-    var BASE_URL = "http://127.0.0.1:8080";
+    const BASE_URL = "http://127.0.0.1:8080";
     if (!nockDone) {
         // prepare Dicoogle server mock
-        var DICOOGLE_VERSION = '2.4.0-TEST';
+        const DICOOGLE_VERSION = '2.4.0-TEST';
 
-        var SEARCH_RESULTS = [
+        const SEARCH_RESULTS = [
             {
                 uri: '/opt/dataset/file1',
                 fields: {
@@ -44,7 +45,7 @@ module.exports = function createDicoogleMock() {
             }
         ];
 
-        var SEARCH_RESULTS_DIM = [
+        const SEARCH_RESULTS_DIM = [
             {
                 id: "12345",
                 name: "Esquina^Ze",
@@ -71,7 +72,7 @@ module.exports = function createDicoogleMock() {
             }
         ];
 
-        var INDEXER_SETTINGS = {
+        const INDEXER_SETTINGS = {
             path: '/opt/data',
             zip: false,
             effort: '100',
@@ -80,15 +81,15 @@ module.exports = function createDicoogleMock() {
             watcher: false
         };
         /* eslint-disable */
-        var TRANSFER_SETTINGS = [{"uid":"1.2.840.10008.5.1.4.1.1.1","sop_name":"ComputedRadiographyImageStorage","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]},{"uid":"1.2.840.10008.5.1.4.1.1.1.1","sop_name":"DigitalXRayImageStorageForPresentation","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]}];
+        const TRANSFER_SETTINGS = [{"uid":"1.2.840.10008.5.1.4.1.1.1","sop_name":"ComputedRadiographyImageStorage","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]},{"uid":"1.2.840.10008.5.1.4.1.1.1.1","sop_name":"DigitalXRayImageStorageForPresentation","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]}];
         /* eslint-enable */
 
-        var AETitle = 'TESTSRV';
-        var QRRunning = true;
-        var StorageRunning = true;
-        var TaskClosed = false;
-        var TaskStopped = false;
-        var RunningTasks = [
+        let AETitle = 'TESTSRV';
+        let QRRunning = true;
+        let StorageRunning = true;
+        let TaskClosed = false;
+        let TaskStopped = false;
+        const RunningTasks = [
             {
                 taskUid: "1063922f-1823-4e43-8241-c84c1721a6c1",
                 taskName: "[cbir]index file:/opt/some-dataset/42",
@@ -108,6 +109,7 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL)
             // mock /version
             .get('/ext/version')
+            .times(4)
             .reply(200, {
                 version: DICOOGLE_VERSION
             })
@@ -305,7 +307,7 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/index/task')
             .times(3)
             .reply(200, function() {
-                var tasks = [];
+                const tasks = [];
                 if (!TaskStopped) {
                     tasks.push(RunningTasks[0]);
                 }
@@ -362,7 +364,7 @@ module.exports = function createDicoogleMock() {
             .query({ aetitle: / *\S+ */ })
             .reply(200, function() {
                 // apply side-effect
-                var qstring = URL.parse(this.req.path).query;
+                const qstring = URL.parse(this.req.path).query;
                 AETitle = qs.parse(qstring).aetitle.trim();
                 return 'success';
             });

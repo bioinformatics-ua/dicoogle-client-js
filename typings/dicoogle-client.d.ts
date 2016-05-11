@@ -281,7 +281,8 @@ declare module "dicoogle-client" {
          * Perform a generic request to Dicoogle's services. Users of this method can
          * invoke any REST service exposed by Dicoogle, including those from plugins.
          * @param method the kind of HTTP method to make, defaults to "GET"
-         * @param uri a URI or array of resource sequences to the service, relative to Dicoogle's base URL
+         * @param uri a URI or array of resource sequences to the service, relative
+         *            to Dicoogle's base URL. There should be no leading slash ('/').
          * @param callback the callback function
          */
         request(method: string, uri: string | string[], callback: (error: Error, outcome: any) => any)
@@ -289,7 +290,8 @@ declare module "dicoogle-client" {
          * Perform a generic request to Dicoogle's services. Users of this method can
          * invoke any REST service exposed by Dicoogle, including those from plugins.
          * @param method the kind of HTTP method to make, defaults to "GET"
-         * @param uri a URI or array of resource sequences to the service, relative to Dicoogle's base URL
+         * @param uri a URI or array of resource sequences to the service, relative
+         *            to Dicoogle's base URL. There should be no leading slash ('/').
          * @param options an object of options to be passed as query strings
          * @param callback the callback function
          */
