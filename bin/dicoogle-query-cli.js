@@ -9,7 +9,7 @@
  *
  * @author Eduardo Pinho (eduardopinho@ua.pt)
  */
-var dicoogleClient = require("../lib/dicoogle-client");
+var dicoogleClient = require("../lib");
 var util = require('util');
 var server = "http://localhost:8080";
 var query;
