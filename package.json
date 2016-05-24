@@ -35,7 +35,7 @@
   },
   "license": "GPL-3.0+",
   "dependencies": {
-    "superagent": "^1.7.2"
+    "superagent": "^1.8.3"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",

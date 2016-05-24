@@ -30,6 +30,16 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
+  describe('Get Log', function() {
+    it("#getRawLog() should provide log text with no error", function(done) {
+      Dicoogle.getRawLog((error, text) => {
+        assert.equal(error, null);
+        assert.isString(text);
+        done();
+      });
+    });
+  });
+
   describe('Get Query Providers', function() {
     describe('using #getQueryProviders()', function() {
       it("should give 'lucene' and 'cbir' with no error", function(done) {

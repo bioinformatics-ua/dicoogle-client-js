@@ -42,8 +42,9 @@ const Endpoints = Object.freeze({
     REMOVE: "management/tasks/remove",
     TASKS: "index/task",
     VERSION: "ext/version",
-    LOGIN: 'login',
-    LOGOUT: 'logout'
+    LOGGER: "logger",
+    LOGIN: "login",
+    LOGOUT: "logout"
 });
 DicoogleAccess.prototype.Endpoints = Endpoints;
 
@@ -310,6 +311,13 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       uri,
       plugin: provider
     }, callback, token_);
+  };
+
+  /** Retrieve the Dicoogle server's log text.
+   * @param {function(error:any, text:string)} callback the callback function
+   */
+  DicoogleAccess.prototype.getRawLog = function Dicoogle_getRawLog(callback) {
+    serviceRequest('GET', [url_, Endpoints.LOGGER], {}, callback, token_, 'text/plain');
   };
 
   /**
@@ -671,7 +679,10 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {Object} [formData] the form data
    */
   function serviceRequest(method, uri, qs, callback, token, mimeType, formData) {
-      mimeType = mimeType || (formData && 'application/json');
+      if (!formData && !mimeType) {
+          mimeType = 'application/json';
+      }
+      const asText = mimeType.split('/')[0] === 'text';
       if (uri instanceof Array) {
         uri = uri.join('/');
       }
@@ -691,7 +702,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
               callback(err);
               return;
           }
-          callback(null, res ? (res.body || res.text) : null);
+          callback(null, res ? (asText ? res.text : res.body) : null);
       });
   }
 

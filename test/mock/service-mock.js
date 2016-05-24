@@ -84,6 +84,15 @@ module.exports = function createDicoogleMock() {
         const TRANSFER_SETTINGS = [{"uid":"1.2.840.10008.5.1.4.1.1.1","sop_name":"ComputedRadiographyImageStorage","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]},{"uid":"1.2.840.10008.5.1.4.1.1.1.1","sop_name":"DigitalXRayImageStorageForPresentation","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]}];
         /* eslint-enable */
 
+        const LOGGER_TEXT = `2016-05-24T15:05:42,872 | Creating plugin controller
+2016-05-24T15:05:46,383 | Loaded web plugins
+2016-05-24T15:05:46,445 | Loaded Local Plugins
+2016-05-24T15:05:51,858 | Initializing services
+2016-05-24T15:05:51,859 | Finished initializing rest interfaces
+2016-05-24T15:05:51,859 | Initializing jetty interface
+2016-05-24T15:05:51,888 | Starting Web Services in port 9001
+2016-05-24T15:05:52,808 | Plugins initialized`;
+
         let AETitle = 'TESTSRV';
         let QRRunning = true;
         let StorageRunning = true;
@@ -114,6 +123,10 @@ module.exports = function createDicoogleMock() {
             .reply(200, {
                 version: DICOOGLE_VERSION
             })
+
+            // mock /logger
+            .get('/logger')
+            .reply(200, LOGGER_TEXT)
 
             // mock /search for "Modality:MR" on specific provider
             .get('/search')
