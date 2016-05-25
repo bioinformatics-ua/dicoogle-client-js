@@ -361,6 +361,11 @@ declare module "dicoogle-client" {
          */
         getVersion(callback: (error: Error, outcome: { version: string }) => any);
 
+        /** Retrieve the Dicoogle server's log text.
+         * @param callback the callback function
+         */
+        getRawLog(callback: (error: Error, text: string) => any);
+
         /** Get all of the current Indexer settings.
          * @param callback the callback function
          */
