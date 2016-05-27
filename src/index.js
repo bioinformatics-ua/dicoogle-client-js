@@ -525,24 +525,34 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   };
 
   /** Set a particular Indexer setting. A valid field and value is required.
-   * @param {string} field a particular field to set
-   * @param {string} value the value to assign to the field
+   * @param {object|string} fields either a dictionary of settings or the name of a particular field to set
+   * @param {string} [value] the value to assign to the field, required if `fields` is a string
    * @param {function(error:any)} callback the callback function
    */
-  DicoogleAccess.prototype.setIndexerSettings = function Dicoogle_setIndexerSettings(field, value, callback) {
+  DicoogleAccess.prototype.setIndexerSettings = function Dicoogle_setIndexerSettings(fields, value, callback) {
+    if (typeof fields === 'string') {
+        const field = fields;
+        fields = {};
+        fields[field] = value;
+    } else {
+        callback = value;
+    }
     /* istanbul ignore next */
     if (process.env.NODE_ENV !== 'production') {
         const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
-        if (values.indexOf(field) === -1) {
-            /* eslint-disable no-console */
-            console.error(`Warning: Attempting to set unrecognized indexer setting '${field}'.`);
-            /* eslint-enable no-console */
+        for (let field of Object.keys(fields)) {
+            if (values.indexOf(field) === -1) {
+                /* eslint-disable no-console */
+                console.error(`Warning: Attempting to set unrecognized indexer setting '${field}'.`);
+                /* eslint-enable no-console */
+            }
         }
     }
-    const type = encodeURIComponent(field);
-    const url = [url_, Endpoints.INDEXER_SETTINGS, type];
+    const url = [url_, Endpoints.INDEXER_SETTINGS];
     const qs = {};
-    qs[type] = value;
+    for (let field of Object.keys(fields)) {
+        qs[encodeURIComponent(field)] = encodeURIComponent(fields[field]);
+    }
     serviceRequest('POST', url, qs, callback, token_);
   };
 
@@ -600,6 +610,21 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         }
       }, token_);
   };
+
+  /** Get all of the current DICOM Query-Retrieve settings.
+   * @param {function(error: Error, outcome: DicomQuerySettings)} callback the callback function
+   */
+  DicoogleAccess.prototype.getDicomQuerySettings = function Dicoogle_getDicomQuerySettings(callback) {
+      callback("NOT IMPLEMENTED YET");
+  }
+
+  /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
+   * @param {DicomQuerySettings} fields a dictionary containing the fields and values as key-value pairs.
+   * @param {function(error: Error)} callback the callback function
+   */
+  DicoogleAccess.prototype.setDicomQuerySettings = function Dicoogle_setDicomQuerySettings(fields, callback) {
+      callback("NOT IMPLEMENTED YET");
+  }
 
   /**
    * Start the DICOM Storage service.

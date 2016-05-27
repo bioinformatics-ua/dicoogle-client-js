@@ -1,6 +1,5 @@
 
 declare module "dicoogle-client" {
-    export default dicoogleClient;
 
     type password = string;
 
@@ -18,7 +17,7 @@ declare module "dicoogle-client" {
         password?: password
     }
 
-    function dicoogleClient(url?: string, options?: DicoogleClientOptions): DicoogleAccess;
+    export default function dicoogleClient(url?: string, options?: DicoogleClientOptions): DicoogleAccess;
 
     export interface SearchOptions {
         /** Force whether the query is keyword-based, defaults to automatic detection */
@@ -128,17 +127,29 @@ declare module "dicoogle-client" {
      */
     export interface IndexerSettings {
         /** The path to the directory to watch. */
-        path: string
+        path?: string
         /** Whether to index zip files. */
-        zip: boolean
+        zip?: boolean
         /** The percentage of indexation effort (from 0 to 100). */
-        effort: number
+        effort?: number
         /** Whether to index thumbnails. */
-        thumbnail: boolean
+        thumbnail?: boolean
         /** The size of generated thumbnails in pixels. */
-        thumbnailSize: number
+        thumbnailSize?: number
         /** Listen for changes in the directory for automatic indexation. */
-        watcher: boolean
+        watcher?: boolean
+    }
+
+    /** DICOM Query/Retrieve settings fields
+     */
+    export interface DicomQuerySettings {
+        acceptTimeout?: number
+        connectionTimeout?: number
+        idleTimeout?: number
+        maxAssociations?: number
+        maxPduReceive?: number
+        maxPduSend?: number
+        responseTimeout?: number
     }
 
     export interface TransferSyntax {
@@ -378,6 +389,12 @@ declare module "dicoogle-client" {
          */
         setIndexerSettings(field: string, value: any, callback: (error: Error) => any);
 
+        /** Set a group of indexer settings. The given object should contain valid field-value pairs.
+         * @param fields a dictionary containing the fields and values as key-value pairs.
+         * @param callback the callback function
+         */
+        setIndexerSettings(fields: IndexerSettings, callback: (error: Error) => any);
+
         /** Get the list of current transfer syntax settings available.
          * @param callback the callback function
          */
@@ -401,6 +418,17 @@ declare module "dicoogle-client" {
          * @param callback the callback function
          */
         setAETitle(aetitle: string, callback: (error: Error) => any);
+
+        /** Get all of the current DICOM Query-Retrieve settings.
+         * @param callback the callback function
+         */
+        getDicomQuerySettings(callback: (error: Error, outcome: DicomQuerySettings) => any);
+
+        /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
+         * @param fields a dictionary containing the fields and values as key-value pairs.
+         * @param callback the callback function
+         */
+        setDicomQuerySettings(fields: DicomQuerySettings, callback: (error: Error) => any);
 
         /** Obtain the base URL of all Dicoogle services.
          * This method is synchronous.

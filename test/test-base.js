@@ -428,6 +428,18 @@ describe('Dicoogle Client (under Node.js)', function() {
               });
             });
           });
+          it("#setIndexerSettings({'zip': false}) should work ok", function(done) {
+            const newSettings = {};
+            newSettings[Dicoogle.IndexerSettings.ZIP] = false;
+            Dicoogle.setIndexerSettings(newSettings, function (error) {
+              assert.equal(error, null);
+              Dicoogle.getIndexerSettings(Dicoogle.IndexerSettings.ZIP, function (error, out) {
+                assert.equal(error, null);
+                assert.strictEqual(out, false);
+                done();
+              });
+            });
+          });
       });
   });
 

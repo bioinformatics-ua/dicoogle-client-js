@@ -278,7 +278,7 @@ module.exports = function createDicoogleMock() {
             .get('/management/settings/index/path')
             .reply(200, () => INDEXER_SETTINGS.path)
             .get('/management/settings/index/zip')
-            .twice()
+            .thrice()
             .reply(200, () => Zip)
             .get('/management/settings/index/effort')
             .reply(200, () => INDEXER_SETTINGS.effort)
@@ -290,19 +290,27 @@ module.exports = function createDicoogleMock() {
             .reply(200, () => INDEXER_SETTINGS.watcher)
 
             // mock indexer settings setters
-            .post('/management/settings/index/path')
-            .query({ path: /.*/ })
-            .reply(200)
-            .post('/management/settings/index/zip')
-            .query({ zip: 'true' })
-            .reply(function() {
-                Zip = true;
+            .post('/management/settings/index')
+            .query(true)
+            .twice()
+            .reply((uri) => {
+                const qs = URL.parse(uri, true).query;
+                if ('zip' in qs) {
+                    Zip = !(qs.zip === 'false');
+                }
                 return [200, {}];
             })
+            .post('/management/settings/index/path')
+            .query({ path: /.*/ })
+            .reply(200, {})
             .post('/management/settings/index/zip')
-            .query({ zip: 'false' })
-            .reply(function() {
-                Zip = false;
+            .query({ zip: /.*/ })
+            .twice()
+            .reply(function(uri) {
+                const qs = URL.parse(uri, true).query;
+                if ('zip' in qs) {
+                    Zip = !(qs.zip === 'false');
+                }
                 return [200, {}];
             })
             .post('/management/settings/index/effort')
@@ -381,6 +389,18 @@ module.exports = function createDicoogleMock() {
             .reply(200, function() {
                 // AETitle must be resolved on request, hence the function
                 return { aetitle: AETitle};
+            });
+
+        nock(BASE_URL)
+            .get('/management/settings/dicom/query')
+            .reply(200, {
+                "acceptTimeout": 60,
+                "connectionTimeout": 60,
+                "idleTimeout": 60,
+                "maxAssociations": 20,
+                "maxPduReceive": 16364,
+                "maxPduSend": 16364,
+                "responseTimeout": 0
             });
 
         nock(BASE_URL)
