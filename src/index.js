@@ -540,7 +540,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
     /* istanbul ignore next */
     if (process.env.NODE_ENV !== 'production') {
         const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
-        for (let field of Object.keys(fields)) {
+        for (const field in fields) {
             if (values.indexOf(field) === -1) {
                 /* eslint-disable no-console */
                 console.error(`Warning: Attempting to set unrecognized indexer setting '${field}'.`);
@@ -549,10 +549,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         }
     }
     const url = [url_, Endpoints.INDEXER_SETTINGS];
-    const qs = {};
-    for (let field of Object.keys(fields)) {
-        qs[encodeURIComponent(field)] = encodeURIComponent(fields[field]);
-    }
+    const qs = fields;
     serviceRequest('POST', url, qs, callback, token_);
   };
 
@@ -615,7 +612,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error: Error, outcome: DicomQuerySettings)} callback the callback function
    */
   DicoogleAccess.prototype.getDicomQuerySettings = function Dicoogle_getDicomQuerySettings(callback) {
-      callback("NOT IMPLEMENTED YET");
+      serviceRequest('GET', [url_, Endpoints.DICOM_QUERY_SETTINGS], {}, callback, token_);
   }
 
   /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
@@ -623,7 +620,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error: Error)} callback the callback function
    */
   DicoogleAccess.prototype.setDicomQuerySettings = function Dicoogle_setDicomQuerySettings(fields, callback) {
-      callback("NOT IMPLEMENTED YET");
+      serviceRequest('POST', [url_, Endpoints.DICOM_QUERY_SETTINGS], fields, callback, token_);
   }
 
   /**

@@ -401,7 +401,10 @@ module.exports = function createDicoogleMock() {
                 "maxPduReceive": 16364,
                 "maxPduSend": 16364,
                 "responseTimeout": 0
-            });
+            })
+            .post('/management/settings/dicom/query')
+            .query(true)
+            .reply(200, {});
 
         nock(BASE_URL)
             .put('/management/settings/dicom')

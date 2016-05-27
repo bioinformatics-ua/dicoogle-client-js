@@ -473,6 +473,29 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
+  describe('DICOM Query/Retrieve Settings', function() {
+      describe('Get DICOM Query Settings', function() {
+          it("#getDicomQuerySettings(); should give all settings", function(done) {
+            Dicoogle.getDicomQuerySettings(function (error, data) {
+                assert.equal(error, null);
+                assert.isObject(data);
+                for (const field in data) {
+                    assert.isNumber(data[field]);
+                }
+                done();
+              });
+          });
+      });
+      describe('Get DICOM Query Settings', function() {
+          it("#setDicomQuerySettings({responseTimeout: 1000}); should work ok", function(done) {
+              Dicoogle.setDicomQuerySettings({responseTimeout: 1000}, function(error) {
+                  assert.equal(error, null);
+                  done();
+              });
+          });
+      });
+  });
+
   describe('Dicoogle generic request', function() {
       describe("Get Dicoogle version", function() {
           it("#request('GET', 'ext/version', {}) should give Dicoogle's version with no error", function(done) {
