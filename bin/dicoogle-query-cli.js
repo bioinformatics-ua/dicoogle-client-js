@@ -99,7 +99,7 @@ function doSearch() {
       if (error) {
         console.error(error);
       } else {
-        var result = outcome.results;
+        var result = outcome.results || [];
         if (process.stdout.isTTY || forceTTY) {
           console.log(util.inspect(result, {colors: true, depth: 2}));
         } else {
