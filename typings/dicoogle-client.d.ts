@@ -163,6 +163,18 @@ declare module "dicoogle-client" {
         value: boolean
     }
 
+    /** Abridged information about a web UI plugin. */
+    export interface WebUIPlugin {
+        name: string
+        version: string
+        description?: string
+        slotId: string
+        moduleFile?: string
+        caption?: string
+        roles?: string[]
+        settings?: any
+    }
+
     export interface DicoogleAccess {
 
         /**
@@ -429,6 +441,12 @@ declare module "dicoogle-client" {
          * @param callback the callback function
          */
         setDicomQuerySettings(fields: DicomQuerySettings, callback: (error: Error) => any);
+
+        /** Retrieve information about currently installed web UI plugins.
+         * @param slotId the identifiers of slots to contemplate
+         * @param callback the callback function
+         */
+        getWebUIPlugins(slotId: string|string[], callback: (error: Error, plugins: WebUIPlugin[]) => any);
 
         /** Obtain the base URL of all Dicoogle services.
          * This method is synchronous.

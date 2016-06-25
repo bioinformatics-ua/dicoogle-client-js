@@ -44,7 +44,8 @@ const Endpoints = Object.freeze({
     VERSION: "ext/version",
     LOGGER: "logger",
     LOGIN: "login",
-    LOGOUT: "logout"
+    LOGOUT: "logout",
+    WEBUI: "webui"
 });
 DicoogleAccess.prototype.Endpoints = Endpoints;
 
@@ -353,6 +354,31 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    */
   DicoogleAccess.prototype.getVersion = function Dicoogle_getVersion(callback) {
     serviceRequest('GET', [url_, Endpoints.VERSION], {}, callback, token_);
+  };
+
+  /** Retrieve information about currently installed web UI plugins.
+   * @param {string} slotId the identifiers of slots to contemplate
+   * @param {function(error:any,plugins:WebUIPlugin[])} callback the callback function
+   */
+  DicoogleAccess.prototype.getWebUIPlugins = function Dicoogle_getWebUIPlugins(slotId, callback) {
+    serviceRequest('GET', [url_, Endpoints.WEBUI], slotId ? {'slot-id': slotId} : {}, (error, outcome) => {
+        if (error) {
+            callback(error);
+            return;
+        }
+        const {plugins} = outcome;
+        callback(null, plugins.map(p => {
+            p.slotId = p['slot-id'] || p.dicoogle['slot-id'];
+            p.moduleFile = p['module-file'] || p.dicoogle['module-file'];
+            if (!p.caption) {
+                p.caption = p.dicoogle.caption;
+            }
+            if (!p.roles) {
+                p.roles = p.dicoogle.roles;
+            }
+            return p;
+        }));
+    }, token_);
   };
 
   /**

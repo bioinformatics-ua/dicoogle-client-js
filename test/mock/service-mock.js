@@ -82,6 +82,12 @@ module.exports = function createDicoogleMock() {
         };
         /* eslint-disable */
         const TRANSFER_SETTINGS = [{"uid":"1.2.840.10008.5.1.4.1.1.1","sop_name":"ComputedRadiographyImageStorage","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]},{"uid":"1.2.840.10008.5.1.4.1.1.1.1","sop_name":"DigitalXRayImageStorageForPresentation","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]}];
+        const WEBUI_PLUGINS = [
+            {"name":"dicoogle-enhance-plugin","version":"0.1.0","description":"Enhance your medical images!","dicoogle":{"slot-id":"result-options","caption":"Enhance","module-file":"module.js","roles":[]}},
+            {"name":"dicoogle-extra-ui","version":"1.0.0","description":"Extra UI for Dicoogle","dicoogle":{"caption":"Extras","slot-id":"menu","module-file":"module.js"}},
+            {"name":"dicoogle-react-todo","version":"0.1.0","description":"A TODO list for Dicoogle","dicoogle":{"caption":"TODO list","slot-id":"menu","module-file":"module.js","roles":["Healthcare"]}},
+            {"name":"dicoogle-demo-plugin","version":"0.1.0","files":["module.js"],"dicoogle":{"slot-id":"menu","caption":"Web Plugin Sample","module-file":"module.js"}}
+            ];
         /* eslint-enable */
 
         const LOGGER_TEXT = `2016-05-24T15:05:42,872 | Creating plugin controller
@@ -223,6 +229,15 @@ module.exports = function createDicoogleMock() {
                 results: SEARCH_RESULTS[0],
                 elapsedTime: 80
             })
+
+            //mock webui
+            .get('/webui')
+            .twice()
+            .query({'slot-id': 'menu'})
+            .reply(200, {plugins: WEBUI_PLUGINS.filter(p => p.slotId === 'menu')})
+            .get('/webui')
+            .query(null)
+            .reply(200, {plugins: WEBUI_PLUGINS})
 
             // mock QR service
             .get('/management/dicom/query').times(3)

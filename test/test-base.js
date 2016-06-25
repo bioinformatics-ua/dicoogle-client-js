@@ -263,6 +263,37 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
+
+  describe('Web UI Plugins', function() {
+      it("#getWebUIPlugins(); should give all plugins", function(done) {
+        Dicoogle.getWebUIPlugins(null, function (error, plugins) {
+          assert.equal(error, null);
+          assert.isArray(plugins);
+          for (const p in plugins) {
+              assert.isObject(p);
+              assert.isString(p.name);
+              assert.isString(p.version);
+              assert.isString(p.slotId);
+          }
+          done();
+        });
+      });
+      it("#getWebUIPlugins(menu); should give all menu plugins", function(done) {
+        Dicoogle.getWebUIPlugins('menu', function (error, plugins) {
+          assert.equal(error, null);
+          assert.isArray(plugins);
+          for (const p in plugins) {
+              assert.isObject(p);
+              assert.isString(p.name);
+              assert.isString(p.version);
+              assert.strictEqual(p.slotId, 'menu');
+          }
+          done();
+        });
+      });
+  });
+
+
   function checkServiceInfo(error, data) {
     assert.equal(error, null);
     assert.isBoolean(data.isRunning, 'isRunning must be a boolean');
