@@ -86,7 +86,7 @@ module.exports = function createDicoogleMock() {
             {"name":"dicoogle-enhance-plugin","version":"0.1.0","description":"Enhance your medical images!","dicoogle":{"slot-id":"result-options","caption":"Enhance","module-file":"module.js","roles":[]}},
             {"name":"dicoogle-extra-ui","version":"1.0.0","description":"Extra UI for Dicoogle","dicoogle":{"caption":"Extras","slot-id":"menu","module-file":"module.js"}},
             {"name":"dicoogle-react-todo","version":"0.1.0","description":"A TODO list for Dicoogle","dicoogle":{"caption":"TODO list","slot-id":"menu","module-file":"module.js","roles":["Healthcare"]}},
-            {"name":"dicoogle-demo-plugin","version":"0.1.0","files":["module.js"],"dicoogle":{"slot-id":"menu","caption":"Web Plugin Sample","module-file":"module.js"}}
+            {"name":"dicoogle-demo-plugin","version":"0.1.0","dicoogle":{"slot-id":"menu","caption":"Web Plugin Sample","module-file":"module.js"}}
             ];
         /* eslint-enable */
 
@@ -234,9 +234,10 @@ module.exports = function createDicoogleMock() {
             .get('/webui')
             .twice()
             .query({'slot-id': 'menu'})
-            .reply(200, {plugins: WEBUI_PLUGINS.filter(p => p.slotId === 'menu')})
+            .reply(200, {
+                plugins: WEBUI_PLUGINS.filter(p => p.dicoogle['slot-id'] === 'menu')
+            })
             .get('/webui')
-            .query(null)
             .reply(200, {plugins: WEBUI_PLUGINS})
 
             // mock QR service

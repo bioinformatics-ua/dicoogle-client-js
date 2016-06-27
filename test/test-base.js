@@ -263,17 +263,17 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-
   describe('Web UI Plugins', function() {
       it("#getWebUIPlugins(); should give all plugins", function(done) {
         Dicoogle.getWebUIPlugins(null, function (error, plugins) {
           assert.equal(error, null);
-          assert.isArray(plugins);
-          for (const p in plugins) {
-              assert.isObject(p);
-              assert.isString(p.name);
-              assert.isString(p.version);
-              assert.isString(p.slotId);
+          assert.isArray(plugins, 'plugins is an array');
+          assert(plugins.length > 0, 'list of web UI plugins not empty');
+          for (const p of plugins) {
+              assert.isObject(p, 'plugin is an object');
+              assert.isString(p.name, 'plugin name ok');
+              assert.isString(p.version, 'plugin version ok');
+              assert.isString(p.slotId, 'plugin slot-id ok');
           }
           done();
         });
@@ -281,12 +281,13 @@ describe('Dicoogle Client (under Node.js)', function() {
       it("#getWebUIPlugins(menu); should give all menu plugins", function(done) {
         Dicoogle.getWebUIPlugins('menu', function (error, plugins) {
           assert.equal(error, null);
-          assert.isArray(plugins);
-          for (const p in plugins) {
-              assert.isObject(p);
-              assert.isString(p.name);
-              assert.isString(p.version);
-              assert.strictEqual(p.slotId, 'menu');
+          assert.isArray(plugins, 'plugins is an array');
+          assert(plugins.length > 0, 'list of web UI plugins not empty');
+          for (const p of plugins) {
+              assert.isObject(p, 'plugin is an object');
+              assert.isString(p.name, 'plugin name ok');
+              assert.isString(p.version, 'plugin version ok');
+              assert.isString(p.slotId, 'plugin slot-id ok');
           }
           done();
         });

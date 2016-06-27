@@ -367,6 +367,10 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
             return;
         }
         const {plugins} = outcome;
+        if (!plugins) {
+            callback(new Error("invalid output from server"));
+            return;
+        }
         callback(null, plugins.map(p => {
             p.slotId = p['slot-id'] || p.dicoogle['slot-id'];
             p.moduleFile = p['module-file'] || p.dicoogle['module-file'];
