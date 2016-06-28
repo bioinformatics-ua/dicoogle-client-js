@@ -308,7 +308,8 @@ declare module "dicoogle-client" {
          *            to Dicoogle's base URL. There should be no leading slash ('/').
          * @param callback the callback function
          */
-        request(method: string, uri: string | string[], callback: (error: Error, outcome: any) => any)
+        request(method: string, uri: string | string[], callback: (error: Error, outcome: any) => any);
+
         /**
          * Perform a generic request to Dicoogle's services. Users of this method can
          * invoke any REST service exposed by Dicoogle, including those from plugins.
@@ -318,7 +319,7 @@ declare module "dicoogle-client" {
          * @param options an object of options to be passed as query strings
          * @param callback the callback function
          */
-        request(method: string, uri: string | string[], options: { [attribute: string]: any }, callback: (error: Error, outcome: any) => any)
+        request(method: string, uri: string | string[], options: { [attribute: string]: any }, callback: (error: Error, outcome: any) => any);
 
         /**
          * Request a new indexation task over a given URI. The operation is recursive,
