@@ -6,7 +6,7 @@ declare module "dicoogle-client" {
     /** Web service endpoints
      * @enum {string}
      */
-    export type Endpoints = { [e: string]: string };
+    export const Endpoints : { [e: string]: string };
 
     export interface DicoogleClientOptions {
         token?: string
@@ -24,10 +24,47 @@ declare module "dicoogle-client" {
         keyword?: boolean
         /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
         provider?: string | string[]
-        /** @deprecated
-         * Return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default */
+        /** A set of field names to be passed to the query providers when requesting the query.
+         * When empty, the server will provide a default set based on a few DICOM attributes.
+         */
+        field?: string | string[]
+        /** Activate pagination by defining the size of the page.
+         * _Note:_ Available since Dicoogle 2.4.0
+         */
+        psize?: number;
+        /** When paginating, define the offset of the page to retrieve.
+         * _Note:_ Available since Dicoogle 2.4.0
+         */
+        offset?: number;
+        /**
+         * Return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
+         * @deprecated use method #searchDIM instead
+         */
         dim?: boolean
     }
+
+    export interface SearchDIMOptions {
+        /** Force whether the query is keyword-based, defaults to automatic detection */
+        keyword?: boolean
+        /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
+        provider?: string | string[]
+        /** A set of field names to be passed to the query providers when requesting the query.
+         * When empty, the server will provide a default set based on a few DICOM attributes.
+         */
+        field?: string | string[]
+        /** Activate pagination by defining the size of the page (in number of patients).
+         * _Note:_ Available since Dicoogle 2.4.0
+         */
+        psize?: number;
+        /** When paginating, define the offset of the page to retrieve (in number of patients). */
+        offset?: number;
+        /** Define the depth of retrieval based on the DIM level.
+         * _Note:_ Available since Dicoogle 2.4.0
+         */
+        depth?: DIMLevel;
+    }
+
+    export type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
     export interface SearchResult {
         [attribute: string]: any
@@ -203,7 +240,7 @@ declare module "dicoogle-client" {
          * @param options a hash of options related to the search
          * @param callback the callback function providing the outcome
          */
-        searchDIM(query: string, options: SearchOptions, callback: (error: Error, outcome: SearchDIMOutcome) => any);
+        searchDIM(query: string, options: SearchDIMOptions, callback: (error: Error, outcome: SearchDIMOutcome) => any);
 
         /**
          * Retrieve an image's meta-data (perform an information dump)

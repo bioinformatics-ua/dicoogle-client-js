@@ -82,7 +82,23 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   /** @typedef {Object} SearchOptions
    * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
    * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @param {string|string[]} [field] - a set of field names to be passed to the query providers when requesting the query.
+   * When empty, the server will provide a default set based on a few DICOM attributes.
+   * @param {number} [psize] Activate pagination by defining the size of the page. _Note:_ Available since Dicoogle 2.4.0
+   * @param {number} [offset] When paginating, define the offset of the page to retrieve. _Note:_ Available since Dicoogle 2.4.0
    * @deprecated please use searchDIM instead
+   * @param {boolean} [dim] - return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
+   */
+
+  /** @typedef {Object} SearchDIMOptions
+   * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
+   * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @param {string|string[]} [field] - a set of field names to be passed to the query providers when requesting the query.
+   * When empty, the server will provide a default set based on a few DICOM attributes.
+   * @param {number} [psize] - Activate pagination by defining the size of the page (in number of patients). _Note:_ Available since Dicoogle 2.4.0
+   * @param {number} [offset] - When paginating, define the offset of the page to retrieve (in number of patients). _Note:_ Available since Dicoogle 2.4.0
+   * @param {string} [depth] - Define the depth of retrieval based on the DIM level. _Note:_ Available since Dicoogle 2.4.0
+   * @deprecated use method searchDIM instead
    * @param {boolean} [dim] - return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
    */
 
@@ -142,12 +158,16 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
               /*eslint-enable no-console */
           }
       }
-      let provider = options.provider || options.providers;
-      let keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
+      const provider = options.provider || options.providers;
+      const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
+      const {field, psize, offset} = options;
       serviceRequest('GET', [url_, endpoint], {
           query,
           keyword,
-          provider
+          field,
+          provider,
+          psize,
+          offset
         }, callback, token_);
   };
 
@@ -164,12 +184,16 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         callback = options;
         options = {};
       }
-      let provider = options.provider || options.providers;
-      let keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
+      const provider = options.provider || options.providers;
+      const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
+      const {psize, offset, depth} = options;
       serviceRequest('GET', [url_, Endpoints.SEARCH_DIM], {
           query,
           keyword,
-          provider
+          provider,
+          psize,
+          offset,
+          depth
         }, callback, token_);
   };
 
