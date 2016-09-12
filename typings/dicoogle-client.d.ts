@@ -17,6 +17,13 @@ declare module "dicoogle-client" {
         password?: password
     }
 
+   /**
+    * Initialize and provide the Dicoogle access object, which can be used multiple times.
+    *
+    * @param url the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
+    * @param options a set of options regarding service access and user authentication
+    * @returns a singleton dicoogle service access object
+    */
     export default function dicoogleClient(url?: string, options?: DicoogleClientOptions): DicoogleAccess;
 
     export interface SearchOptions {
