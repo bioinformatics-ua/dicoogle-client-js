@@ -27,6 +27,13 @@ module.exports = function createDicoogleMock() {
                 admin: true,
                 roles: ['Healthcare', 'Research'],
                 token: '9ebdff77-dffc-4904-a954-74f72ba77483'
+            })
+            .post('/login', function(data) {
+                const parsedData = qs.parse(data);
+                return parsedData.username === 'admin' && parsedData.password.length < 3;
+            })
+            .reply(403, {
+                error: 'Invalid credentials'
             });
 
         nock(BASE_URL) // mock get query providers (with required authorization)

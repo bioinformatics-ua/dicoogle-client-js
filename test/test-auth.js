@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 var assert = require('chai').assert;
 var createMockedDicoogle = require('./mock/service-auth-mock');
-
 var UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 
 describe('Dicoogle Authentication', function() {
@@ -58,6 +57,15 @@ describe('Dicoogle Authentication', function() {
         done();
       });
     });
+
+    it("#login() as admin with wrong password ; should error", function(done) {
+
+      Dicoogle.login('admin', '', function(error) {
+        assert.instanceOf(error, Error, 'should give an error');
+        assert.isObject(error.response, 'should hold response object');
+        done();
+      });
+    });
   });
 
   describe('Loading a previous session', function() {
@@ -65,7 +73,6 @@ describe('Dicoogle Authentication', function() {
     it('#setToken(string) should modify the session token', function() {
       Dicoogle.setToken(TOKEN);
       assert.strictEqual(Dicoogle.getToken(), TOKEN);
-
     });
   });
 

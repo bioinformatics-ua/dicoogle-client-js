@@ -11,10 +11,6 @@ declare module "dicoogle-client" {
     export interface DicoogleClientOptions {
         token?: string
         secure?: boolean
-        /** @deprecated */
-        user?: string
-        /** @deprecated */
-        password?: password
     }
 
    /**

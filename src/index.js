@@ -1,52 +1,18 @@
 /**
  * Dicoogle Service Wrapper
  */
-import request from 'superagent';
+import Endpoints from './endpoints';
+import Socket from './socket';
 
 // private variables of the module
 /**@private
- * @define {string?} */
-var url_ = null;
-/**@private
- * @define {string?} */
-var username_ = null;
-/**@private
- * @define {string?} */
-var token_ = null;
-/**@private
- * @define {string[]?} */
-var roles_ = null;
+ * @define {Socket}
+ */
+var socket_ = null;
 
 /** @constructor */
 function DicoogleAccess() {}
 
-/** Web service endpoints
- * @enum {string}
- */
-const Endpoints = Object.freeze({
-    SEARCH: "search",
-    SEARCH_DIM: "searchDIM",
-    PROVIDERS: "providers",
-    DUMP: "dump",
-    DIC2PNG: "dic2png",
-    DICTAGS: "dictags",
-    QR_SERVICE: "management/dicom/query",
-    STORAGE_SERVICE: "management/dicom/storage",
-    INDEXER_SETTINGS: "management/settings/index",
-    TRANSFER_SETTINGS: "management/settings/transfer",
-    DICOM_QUERY_SETTINGS: "management/settings/dicom/query",
-    DICOM_STORAGE_SETTINGS: "management/settings/storage/dicom",
-    DICOM_AETITLE_SETTINGS: "management/settings/dicom",
-    INDEX: "management/tasks/index",
-    UNINDEX: "management/tasks/unindex",
-    REMOVE: "management/tasks/remove",
-    TASKS: "index/task",
-    VERSION: "ext/version",
-    LOGGER: "logger",
-    LOGIN: "login",
-    LOGOUT: "logout",
-    WEBUI: "webui"
-});
 DicoogleAccess.prototype.Endpoints = Endpoints;
 
 /** Indexer settings fields
@@ -148,27 +114,17 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         options = {};
       }
       options = options || {};
-      let endpoint = Endpoints.SEARCH;
-      /* istanbul ignore next */
-      if (options.dim) {
-          endpoint = Endpoints.SEARCH_DIM;
-          if (process.end.NODE_ENV !== 'production') {
-              /*eslint-disable no-console */
-              console.error("Warning: 'dim' flag in method search is deprecated! Please use searchDIM instead.");
-              /*eslint-enable no-console */
-          }
-      }
       const provider = options.provider || options.providers;
       const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       const {field, psize, offset} = options;
-      serviceRequest('GET', [url_, endpoint], {
+      serviceRequest('GET', Endpoints.SEARCH, {
           query,
           keyword,
           field,
           provider,
           psize,
           offset
-        }, callback, token_);
+        }, callback);
   };
 
   /**
@@ -187,14 +143,14 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       const provider = options.provider || options.providers;
       const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       const {psize, offset, depth} = options;
-      serviceRequest('GET', [url_, Endpoints.SEARCH_DIM], {
+      serviceRequest('GET', Endpoints.SEARCH_DIM, {
           query,
           keyword,
           provider,
           psize,
           offset,
           depth
-        }, callback, token_);
+        }, callback);
   };
 
   /**
@@ -208,9 +164,9 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         callback = provider;
         provider = undefined;
     }
-    serviceRequest('GET', [url_, Endpoints.DUMP], {
+    serviceRequest('GET', Endpoints.DUMP, {
         uid, provider
-      }, callback, token_);
+      }, callback);
   };
 
   /**
@@ -224,9 +180,9 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       type = 'query';
     }
     let options = { type: typeof type === 'string' ? type : 'query' };
-    serviceRequest('GET', [url_, Endpoints.PROVIDERS], options, (err, data) => {
+    serviceRequest('GET', Endpoints.PROVIDERS, options, (err, data) => {
         callback(err, err ? null : data);
-    }, token_);
+    });
   };
 
   /**
@@ -257,9 +213,9 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, {running:boolean, autostart:boolean, port:number})} callback the callback function
    */
   DicoogleAccess.prototype.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
-    serviceRequest('GET', [url_, Endpoints.STORAGE_SERVICE], {}, function(err, data) {
+    serviceRequest('GET', Endpoints.STORAGE_SERVICE, {}, function(err, data) {
         callback(err, err ? null : data);
-    }, token_);
+    });
   };
 
   /**
@@ -267,9 +223,9 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, {running:boolean, autostart:boolean, port:number})} callback the callback function
    */
   DicoogleAccess.prototype.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
-    serviceRequest('GET', [url_, Endpoints.QR_SERVICE], {}, function(err, data) {
+    serviceRequest('GET', Endpoints.QR_SERVICE, {}, function(err, data) {
         callback(err, err ? null : data);
-    }, token_);
+    });
   };
 
   /** @typedef {Object} TaskInfo
@@ -287,12 +243,12 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
    */
   DicoogleAccess.prototype.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
-    serviceRequest('GET', [url_, Endpoints.TASKS], {}, function(err, data) {
+    serviceRequest('GET', Endpoints.TASKS, {}, function(err, data) {
         callback(err, data ? {
             tasks: data.results,
             count: data.count
         } : null);
-    }, token_);
+    });
   };
 
   /**
@@ -301,11 +257,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.closeTask = function Dicoogle_closeTask(uid, callback) {
-    serviceRequest('POST', [url_, Endpoints.TASKS], {
+    serviceRequest('POST', Endpoints.TASKS, {
           uid,
           action: 'delete',
           type: 'close'
-        }, callback, token_);
+        }, callback);
   };
 
   /**
@@ -314,11 +270,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.stopTask = function Dicoogle_stopTask(uid, callback) {
-    serviceRequest('POST', [url_, Endpoints.TASKS], {
+    serviceRequest('POST', Endpoints.TASKS, {
           uid,
           action: 'delete',
           type: 'stop'
-        }, callback, token_);
+        }, callback);
   };
 
   /**
@@ -332,17 +288,17 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       callback = provider;
       provider = undefined;
     }
-    serviceRequest('POST', [url_, Endpoints.INDEX], {
+    serviceRequest('POST', Endpoints.INDEX, {
       uri,
       plugin: provider
-    }, callback, token_);
+    }, callback);
   };
 
   /** Retrieve the Dicoogle server's log text.
    * @param {function(error:any, text:string)} callback the callback function
    */
   DicoogleAccess.prototype.getRawLog = function Dicoogle_getRawLog(callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGGER], {}, callback, token_, 'text/plain');
+    serviceRequest('GET', Endpoints.LOGGER, {}, callback, 'text/plain');
   };
 
   /**
@@ -356,10 +312,10 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       callback = provider;
       provider = undefined;
     }
-    serviceRequest('POST', [url_, Endpoints.UNINDEX], {
+    serviceRequest('POST', Endpoints.UNINDEX, {
       uri,
       provider
-    }, callback, token_);
+    }, callback);
   };
 
   /** Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
@@ -368,16 +324,16 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the function to call on completion
    */
   DicoogleAccess.prototype.remove = function Dicoogle_remove(uri, callback) {
-    serviceRequest('POST', [url_, Endpoints.REMOVE], {
+    serviceRequest('POST', Endpoints.REMOVE, {
       uri
-    }, callback, token_);
+    }, callback);
   };
 
   /** Retrieve the running Dicoogle version.
    * @param {function(error:any, {version:string})} callback the callback function
    */
   DicoogleAccess.prototype.getVersion = function Dicoogle_getVersion(callback) {
-    serviceRequest('GET', [url_, Endpoints.VERSION], {}, callback, token_);
+    serviceRequest('GET', Endpoints.VERSION, {}, callback);
   };
 
   /** Retrieve information about currently installed web UI plugins.
@@ -385,7 +341,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any,plugins:WebUIPlugin[])} callback the callback function
    */
   DicoogleAccess.prototype.getWebUIPlugins = function Dicoogle_getWebUIPlugins(slotId, callback) {
-    serviceRequest('GET', [url_, Endpoints.WEBUI], slotId ? {'slot-id': slotId} : {}, (error, outcome) => {
+    serviceRequest('GET', Endpoints.WEBUI, slotId ? {'slot-id': slotId} : {}, (error, outcome) => {
         if (error) {
             callback(error);
             return;
@@ -406,7 +362,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
             }
             return p;
         }));
-    }, token_);
+    });
   };
 
   /**
@@ -415,7 +371,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @returns {string} the user's current authentication token
    */
   DicoogleAccess.prototype.getToken = function Dicoogle_getToken() {
-    return token_;
+    return socket_.getToken();
   };
 
   /**
@@ -425,7 +381,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    */
   DicoogleAccess.prototype.setToken = function Dicoogle_setToken(token) {
     if (typeof token === 'string') {
-        token_ = token;
+        socket_.setToken(token);
     }
   };
 
@@ -435,7 +391,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @returns {boolean} whether the user is authenticated or not.
    */
   DicoogleAccess.prototype.isAuthenticated = function Dicoogle_isAuthenticated() {
-    return token_ !== null;
+    return socket_.hasToken();
   };
 
   /**
@@ -443,7 +399,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @returns {string} the unique user name
    */
   DicoogleAccess.prototype.getUsername = function Dicoogle_getUsername() {
-    return username_;
+    return socket_.getUsername();
   };
 
   /**
@@ -451,7 +407,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @returns {string[]} an array of role names, null if the user is not authenticated
    */
   DicoogleAccess.prototype.getRoles = function Dicoogle_getRoles() {
-    return roles_ ? [].concat(roles_) : null;
+    return socket_.getRoles();
   };
 
   /**
@@ -462,24 +418,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    *        providing the authentication token and other information
    */
   DicoogleAccess.prototype.login = function Dicoogle_login(username, password, callback) {
-
-    function changedCallback(error, data) {
-        if (error) {
-            if (typeof callback === 'function') {
-                callback(error);
-            }
-            return;
-        }
-        token_ = data.token;
-        username_ = data.user;
-        roles_ = data.roles;
-        if (typeof callback === 'function') {
-            callback(null, data);
-        }
-    }
-
-    serviceRequest('POST', [url_, Endpoints.LOGIN], {}, changedCallback, null,
-            'application/x-www-form-urlencoded', {username, password});
+    socket_.login(username, password, callback);
   };
 
   /**
@@ -487,38 +426,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} [callback] the callback function
    */
   DicoogleAccess.prototype.logout = function Dicoogle_logout(callback) {
-    serviceRequest('POST', [url_, Endpoints.LOGOUT], {}, function(error) {
-        if (error) {
-            if (error.status === 405) {
-                Dicoogle_logout_fallback(callback);
-            } else {
-                if (callback) callback(error);
-            }
-        } else {
-            username_ = null;
-            token_ = null;
-            roles_ = null;
-            if (callback) callback(null);
-        }
-    }, token_);
+    socket_.logout(callback);
   };
-
-  /** This is a fallback implementation of logout that uses GET instead of POST,
-   * as in the latest stable version of Dicoogle.
-   * @private
-   * @param {function(error:any)} callback the callback function
-   */
-  function Dicoogle_logout_fallback(callback) {
-    serviceRequest('GET', [url_, Endpoints.LOGOUT], {}, function(error) {
-        if (!error) {
-            username_ = null;
-            token_ = null;
-            roles_ = null;
-        }
-        if (callback) callback(error);
-    }, token_);
-  }
-
 
   /** Get the current Indexer settings. Unless a specific field is mentioned, all
    * indexer settings will be provided. The type of the given outcome depends on
@@ -531,7 +440,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       callback = field;
       field = undefined;
     }
-    const url = [url_, Endpoints.INDEXER_SETTINGS];
+    const url = [Endpoints.INDEXER_SETTINGS];
     let all = true;
     if (typeof field === 'string') {
         all = false;
@@ -547,11 +456,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         }
     }
     // do not use the wrapper, or else we'll lose the output
-    let req = request.get(url.join('/'));
-    if (token_) {
-        req = req.set('Authorization', token_);
-    }
-    req.end(function (err, res) {
+    socket_.request('GET', url).end(function (err, res) {
         if (err) {
             callback(err);
             return;
@@ -602,27 +507,21 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
             }
         }
     }
-    const url = [url_, Endpoints.INDEXER_SETTINGS];
-    const qs = fields;
-    serviceRequest('POST', url, qs, callback, token_);
+    serviceRequest('POST', Endpoints.INDEXER_SETTINGS, fields, callback);
   };
 
   /** Get the list of current transfer syntax settings available.
    * @param {function(error:any, outcome:TransferSyntax[])} callback the callback function
    */
   DicoogleAccess.prototype.getTransferSyntaxSettings = function Dicoogle_getTransferSyntaxSettings(callback) {
-    const url = [url_, Endpoints.TRANSFER_SETTINGS]
-    let req = request.get(url.join('/'));
-    if (token_) {
-        req = req.set('Authorization', token_);
-    }
-    req.end(function (err, res) {
-        if (err) {
-            callback(err);
-            return;
-        }
-        callback(null, JSON.parse(res.text));
-    });
+    socket_.request('GET', Endpoints.TRANSFER_SETTINGS)
+        .end(function (err, res) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(null, JSON.parse(res.text));
+        });
   }
 
   /** Set (or reset) an option of a particular transfer syntax.
@@ -632,20 +531,20 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.setTransferSyntaxOption = function Dicoogle_setTransferSyntaxOption(uid, option, value, callback) {
-      serviceRequest('POST', [url_, Endpoints.TRANSFER_SETTINGS], {uid, option, value}, callback, token_);
+      serviceRequest('POST', Endpoints.TRANSFER_SETTINGS, {uid, option, value}, callback);
   }
 
   /** Retrieve the AE title of the Dicoogle archive.
    * @param {function(error:any, aetitle:string)} callback the callback function
    */
   DicoogleAccess.prototype.getAETitle = function Dicoogle_getAETitle(callback) {
-      serviceRequest('GET', [url_, Endpoints.DICOM_AETITLE_SETTINGS], {}, function(err, outcome) {
+      serviceRequest('GET', Endpoints.DICOM_AETITLE_SETTINGS, {}, function(err, outcome) {
         if (err) {
             callback(err);
         } else {
             callback(null, outcome.aetitle);
         }
-      }, token_);
+      });
   };
 
   /** Redefine the AE title of the Dicoogle archive.
@@ -653,20 +552,20 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.setAETitle = function Dicoogle_setAETitle(aetitle, callback) {
-      serviceRequest('PUT', [url_, Endpoints.DICOM_AETITLE_SETTINGS], { aetitle }, function(err, outcome) {
+      serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, function(err, outcome) {
         if (err) {
             callback(err);
         } else {
             callback(null, outcome.aetitle);
         }
-      }, token_);
+      });
   };
 
   /** Get all of the current DICOM Query-Retrieve settings.
    * @param {function(error: Error, outcome: DicomQuerySettings)} callback the callback function
    */
   DicoogleAccess.prototype.getDicomQuerySettings = function Dicoogle_getDicomQuerySettings(callback) {
-      serviceRequest('GET', [url_, Endpoints.DICOM_QUERY_SETTINGS], {}, callback, token_);
+      serviceRequest('GET', Endpoints.DICOM_QUERY_SETTINGS, {}, callback);
   }
 
   /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
@@ -674,7 +573,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error: Error)} callback the callback function
    */
   DicoogleAccess.prototype.setDicomQuerySettings = function Dicoogle_setDicomQuerySettings(fields, callback) {
-      serviceRequest('POST', [url_, Endpoints.DICOM_QUERY_SETTINGS], fields, callback, token_);
+      serviceRequest('POST', Endpoints.DICOM_QUERY_SETTINGS, fields, callback);
   }
 
   /**
@@ -682,7 +581,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.startStorageService = function Dicoogle_startStorageService(callback) {
-    serviceRequest('POST', [url_, Endpoints.STORAGE_SERVICE], { running: true }, callback, token_);
+    serviceRequest('POST', Endpoints.STORAGE_SERVICE, { running: true }, callback);
   };
 
   /**
@@ -690,7 +589,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.stopStorageService = function Dicoogle_stopStorageService(callback) {
-    serviceRequest('POST', [url_, Endpoints.STORAGE_SERVICE], { running: false }, callback, token_);
+    serviceRequest('POST', Endpoints.STORAGE_SERVICE, { running: false }, callback);
   };
 
   /**
@@ -698,7 +597,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.startQueryRetrieveService = function Dicoogle_startQueryRetrieveService(callback) {
-    serviceRequest('POST', [url_, Endpoints.QR_SERVICE], { running: true }, callback, token_);
+    serviceRequest('POST', Endpoints.QR_SERVICE, { running: true }, callback);
   };
 
   /**
@@ -706,7 +605,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.stopQueryRetrieveService = function Dicoogle_stopQueryRetrieveService(callback) {
-    serviceRequest('POST', [url_, Endpoints.QR_SERVICE], { running: false }, callback, token_);
+    serviceRequest('POST', Endpoints.QR_SERVICE, { running: false }, callback);
   };
 
   /**
@@ -726,13 +625,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         callback = options;
         options = {};
       }
-      let path;
-      if (typeof uri === 'string') {
-        path = [url_, uri];
-      } else {
-        path = [url_].concat(uri);
-      }
-      serviceRequest(method, path, options, callback, token_);
+      serviceRequest(method, uri, options, callback);
   };
 
   /** Obtain the base URL of all Dicoogle services.
@@ -740,33 +633,26 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @returns {string} the currently configured base endpoint of Dicoogle
    */
   DicoogleAccess.prototype.getBase = function Dicoogle_getBase() {
-    return url_;
+    return socket_.getBase();
   }
 
-  /** Adapter to legacy service request API.
+  /** @private Adapter to legacy service request API.
    * Send a REST request to the service
    *
    * @param {string} method the http method ('GET','POST','PUT' or 'DELETE')
    * @param {string|string[]} uri the request URI as a string or array of URI resources
    * @param {string|object} qs the query string parameters
    * @param {function(error:any, outcome:any)} callback the callback function
-   * @param {string} [token] the sessions' authentication token
    * @param {string} [mimeType] the MIME type, application/json by default
    * @param {Object} [formData] the form data
    */
-  function serviceRequest(method, uri, qs, callback, token, mimeType, formData) {
+  function serviceRequest(method, uri, qs, callback, mimeType, formData) {
       if (!formData && !mimeType) {
           mimeType = 'application/json';
       }
       const asText = mimeType.split('/')[0] === 'text';
-      if (uri instanceof Array) {
-        uri = uri.join('/');
-      }
-      let req = request(method, uri)
+      let req = socket_.request(method, uri)
         .query(qs);
-      if (token) {
-          req = req.set('Authorization', token);
-      }
       if (mimeType) {
         req = req.type(mimeType);
       }
@@ -788,8 +674,6 @@ var m = new DicoogleAccess();
 /** Object type for containing Dicoogle client options.
  * @typedef {Object} DicoogleClientOptions
  *
- * @deprecated @property {string} user - The client's user name.
- * @deprecated @property {password} password - The user's password for authentication.
  * @property {string} [token] - The same user's token of a previous token, used only for restoring previous (but recent) sessions.
  * @property {boolean} [secure] - Whether to use HTTPS instead of HTTP, if no scheme is specified in the url.
  */
@@ -802,44 +686,28 @@ var m = new DicoogleAccess();
  * @returns {Object} a singleton dicoogle service access object
  */
 export default function dicoogleClient(url, options = {}) {
-    if (typeof url === 'string') {
-        if (url !== url_) {
-            // new address, discard user info
-            username_ = null;
-            token_ = null;
-            roles_ = null;
-            url_ = url;
+    if (!socket_ || url !== socket_.getBase()) {
+
+        if (url[url.length - 1] === '/') {
+            url = url.slice(-1);
         }
-    }
-    if (typeof url_ !== 'string') {
-      if (typeof window === 'object') {
-        /* eslint-disable no-undef */
-        url_ = window.location.protocol + "//" + window.location.host;
-        /* eslint-enable no-undef */
-      } else {
-        throw new Error("Missing URL to Dicoogle services");
-      }
-    }
-
-    const {user, password, secure} = options;
-
-    if (url_[url_.length - 1] === '/') {
-      url_ = url_.slice(-1);
-    }
-    if (url_ !== '') {
-      if (url_.indexOf('://') === -1) {
-        url_ = (secure ? 'https://' : 'http://') + url_;
-      }
-    }
-
-    /* istanbul ignore next */
-    if (typeof user === 'string' && password) {
-        if (process.env.NODE_ENV !== 'production') {
-            /*eslint-disable no-console */
-            console.error('Warning: Use of Dicoogle client options for logging in is deprecated! Please use DicoogleAccess#login(user, password) instead.');
-            /*eslint-enable no-console */
+        if (url !== '') {
+            if (url.indexOf('://') === -1) {
+                url = (options.secure ? 'https://' : 'http://') + url;
+            }
         }
-        m.login(user, password);
+
+        if (typeof url !== 'string') {
+            if (typeof window === 'object') {
+                /* eslint-disable no-undef */
+                url = window.location.protocol + "//" + window.location.host;
+                /* eslint-enable no-undef */
+            } else {
+                throw new Error("Missing URL to Dicoogle services");
+            }
+        }
+
+        socket_ = new Socket(url, options.token);
     }
 
     return m;
