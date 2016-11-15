@@ -8,7 +8,7 @@ import Socket from './socket';
 /**@private
  * @define {Socket}
  */
-var socket_ = null;
+var socket_;
 
 /** @constructor */
 function DicoogleAccess() {}
@@ -346,11 +346,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
             callback(error);
             return;
         }
-        const {plugins} = outcome;
-        if (!plugins) {
+        if (!outcome || !outcome.plugins) {
             callback(new Error("invalid output from server"));
             return;
         }
+        const {plugins} = outcome;
         callback(null, plugins.map(p => {
             p.slotId = p['slot-id'] || p.dicoogle['slot-id'];
             p.moduleFile = p['module-file'] || p.dicoogle['module-file'];
@@ -541,8 +541,13 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       serviceRequest('GET', Endpoints.DICOM_AETITLE_SETTINGS, {}, function(err, outcome) {
         if (err) {
             callback(err);
+            return;
+        }
+        const ae = outcome && outcome.aetitle;
+        if (!ae) {
+            callback(new Error("Missing server content"));
         } else {
-            callback(null, outcome.aetitle);
+            callback(null, ae);
         }
       });
   };
@@ -552,11 +557,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.setAETitle = function Dicoogle_setAETitle(aetitle, callback) {
-      serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, function(err, outcome) {
+      serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, function(err) {
         if (err) {
             callback(err);
         } else {
-            callback(null, outcome.aetitle);
+            callback(null);
         }
       });
   };
@@ -650,9 +655,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       if (!formData && !mimeType) {
           mimeType = 'application/json';
       }
-      const asText = mimeType.split('/')[0] === 'text';
-      let req = socket_.request(method, uri)
-        .query(qs);
+      const asText = mimeType ? mimeType.split('/')[0] === 'text' : false;
+      let req = socket_.request(method, uri).query(qs);
       if (mimeType) {
         req = req.type(mimeType);
       }
@@ -681,7 +685,7 @@ var m = new DicoogleAccess();
 /**
  * Initialize the Dicoogle access object, which can be used multiple times.
  *
- * @param {String} [url] the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
+ * @param {string} [url] the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
  * @param {DicoogleClientOptions} options a set of options regarding service access and user authentication
  * @returns {Object} a singleton dicoogle service access object
  */

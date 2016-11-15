@@ -4,6 +4,7 @@
     "ecmaVersion": 6,
     "sourceType": "module"
   },
+  "parser": "babel-eslint",
   "env": {
     "commonjs": true,
     "es6": true
@@ -17,7 +18,7 @@
     "no-console": 1,
     "quotes": 0,
     "curly": 0,
-    "global-strict": 0,
+    "strict": 1,
     "new-cap": 0,
     "camelcase": 0,
     "comma-dangle": 1,
