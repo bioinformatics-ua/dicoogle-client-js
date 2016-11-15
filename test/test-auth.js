@@ -48,7 +48,7 @@ describe('Dicoogle Authentication', function() {
       });
     });
 
-    it("#logout() ; should give no error and clear Dicoogle credentials", function(done) {
+    it("Legacy #logout() ; should give no error and clear Dicoogle credentials", function(done) {
       Dicoogle.logout(function(error) {
         assert.equal(error, null, 'should give no error');
         assert.strictEqual(Dicoogle.getToken(), null, 'internal token should be null');
@@ -76,5 +76,28 @@ describe('Dicoogle Authentication', function() {
     });
   });
 
+  describe('Stable Authentication', function() {
+    it("#login() as admin ; should give user name, roles, admin and session token", function(done) {
+        Dicoogle.login('admin', 'itsasecret', function(error, data) {
+        assert.equal(error, null, 'should give no error');
+        assert.strictEqual(data.user, 'admin', 'username should be ok');
+        assert.isArray(data.roles, 'roles should be provided');
+        assert.isBoolean(data.admin, 'admin flag expected');
+        assert.isString(data.token, 'session token expected');
+        assert.match(data.token, UUID_REGEXP);
+        done();
+      });
+    });
+
+    it("Stable #logout() ; should give no error and clear Dicoogle credentials", function(done) {
+      Dicoogle.logout(function(error) {
+        assert.equal(error, null, 'should give no error');
+        assert.strictEqual(Dicoogle.getToken(), null, 'internal token should be null');
+        assert.strictEqual(Dicoogle.getUsername(), null, 'username should be null');
+        assert.strictEqual(Dicoogle.getRoles(), null, 'roles should be null');
+        done();
+      });
+    });
+  });
 });
 

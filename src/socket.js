@@ -3,7 +3,7 @@ import Endpoints from './endpoints';
 
 export default class Socket {
 
-    constructor(url = undefined, token = undefined) {
+    constructor(url = undefined) {
         /** @private */
         this._user = null;
         /** @private */
@@ -25,10 +25,6 @@ export default class Socket {
 
         if (this._url[this._url.length - 1] === '/') {
             this._url = this._url.slice(-1);
-        }
-
-        if (typeof token === 'string') {
-            this._token = token;
         }
     }
 
@@ -82,7 +78,7 @@ export default class Socket {
                     this._reset();
                 }
                 if (typeof callback === 'function') {
-                    callback();
+                    callback(err);
                 }
             });
     }

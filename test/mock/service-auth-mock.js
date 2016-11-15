@@ -22,6 +22,7 @@ module.exports = function createDicoogleMock() {
                         typeof parsedData.password === 'string' &&
                         parsedData.password.length >= 3;
             })
+            .twice()
             .reply(200, {
                 user: 'admin',
                 admin: true,
@@ -47,16 +48,23 @@ module.exports = function createDicoogleMock() {
             .query(true)
             .reply(401);
 
-        nock(BASE_URL) // mock legacy behavior of POST logout
+        nock(BASE_URL) // mock legacy behavior of POST logout (used GET in < 2.4.0)
             .post('/logout')
             .query(true)
             .reply(405);
 
-        nock(BASE_URL) // mock logout (uses GET in the stable version, but will change in the future)
+        nock(BASE_URL) // mock legacy logout service (used GET in < 2.4.0)
             .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
             .get('/logout')
             .query(true)
             .reply(200);
+
+        nock(BASE_URL) // mock latest behavior of POST logout
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+            .post('/logout')
+            .query(true)
+            .reply(200);
+
 
         nockDone = true;
     }

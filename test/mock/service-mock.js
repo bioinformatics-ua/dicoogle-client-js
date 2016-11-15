@@ -12,7 +12,7 @@ module.exports = function createDicoogleMock() {
     const BASE_URL = "http://127.0.0.1:8080";
     if (!nockDone) {
         // prepare Dicoogle server mock
-        const DICOOGLE_VERSION = '2.4.0-TEST';
+        const DICOOGLE_VERSION = '2.4.1-TEST';
 
         const SEARCH_RESULTS = [
             {
@@ -100,8 +100,16 @@ module.exports = function createDicoogleMock() {
 2016-05-24T15:05:52,808 | Plugins initialized`;
 
         let AETitle = 'TESTSRV';
-        let QRRunning = true;
-        let StorageRunning = true;
+        let Storage = {
+            running: true,
+            autostart: false,
+            port: 6666
+        };
+        let QR = {
+            running: true,
+            autostart: false,
+            port: 1045
+        };
         let TaskClosed = false;
         let TaskStopped = false;
         let Zip = false;
@@ -122,6 +130,53 @@ module.exports = function createDicoogleMock() {
             }
         ];
 
+            // mock get running tasks
+        nock(BASE_URL).get('/index/task')
+            .times(3)
+            .reply(200, function() {
+                const tasks = [];
+                if (!TaskStopped) {
+                    tasks.push(RunningTasks[0]);
+                }
+                if (!TaskClosed) {
+                    tasks.push(RunningTasks[1]);
+                }
+                return {
+                    results: tasks,
+                    count: TaskStopped ? 0 : 1
+                }
+            })
+            // mock close a running task
+        nock(BASE_URL).post('/index/task')
+            .query({
+                uid: 'f1b6588d-92c2-458c-8c77-e30d8706b662',
+                action: 'delete',
+                type: 'close'
+            })
+            .twice()
+            .reply(function() {
+                if (!TaskClosed) {
+                    TaskClosed = true;
+                    return [200, 'success'];
+                }
+                return [400, 'no such task!'];
+            })
+            // mock stop a running task
+        nock(BASE_URL).post('/index/task')
+            .query({
+                uid: '1063922f-1823-4e43-8241-c84c1721a6c1',
+                action: 'delete',
+                type: 'stop'
+            })
+            .twice()
+            .reply(function() {
+                if (!TaskStopped) {
+                    TaskStopped = true;
+                    return [200, 'success'];
+                }
+                return [400, 'no such task!'];
+            });
+
         nock(BASE_URL)
             // mock /version
             .get('/ext/version')
@@ -136,6 +191,7 @@ module.exports = function createDicoogleMock() {
 
             // mock /search for "Modality:MR" on specific provider
             .get('/search')
+            .twice()
             .query({
                 query: 'Modality:MR',
                 provider: 'lucene',
@@ -181,6 +237,17 @@ module.exports = function createDicoogleMock() {
                 results: SEARCH_RESULTS_DIM,
                 numResults: SEARCH_RESULTS_DIM.length,
                 elapsedTime: 50
+            })
+            // mock /searchDIM for "Modality:MR", no more options
+            .get('/searchDIM')
+            .query({
+                query: 'Modality:MR',
+                keyword: true
+            })
+            .reply(200, {
+                results: SEARCH_RESULTS_DIM,
+                numResults: SEARCH_RESULTS_DIM.length,
+                elapsedTime: 36
             })
             // mock get query or index providers
             .get('/providers')
@@ -238,49 +305,68 @@ module.exports = function createDicoogleMock() {
                 plugins: WEBUI_PLUGINS.filter(p => p.dicoogle['slot-id'] === 'menu')
             })
             .get('/webui')
-            .reply(200, {plugins: WEBUI_PLUGINS})
+            .reply(200, {plugins: WEBUI_PLUGINS});
 
             // mock QR service
-            .get('/management/dicom/query').times(3)
+        nock(BASE_URL)
+            .get('/management/dicom/query').times(4)
             .reply(200, function() {
-                return {
-                    isRunning: QRRunning,
-                    port: 1045,
-                    autostart: false
-                };
+                return QR;
             })
             .post('/management/dicom/query')
-            .query({ running: false })
+            .query({ running: 'false' })
             .reply(200, function() {
-                QRRunning = false;
+                QR.running = false;
                 return "success";
             })
             .post('/management/dicom/query')
             .query({ running: true })
             .reply(200, function() {
-                QRRunning = true;
+                QR.running = true;
+                return "success";
+            });
+
+        nock(BASE_URL)
+            .post('/management/dicom/query')
+            .query(false)
+            .reply(400, {
+                error: "Incomplete configurations"
+            })
+            .post('/management/dicom/query')
+            .query({
+                autostart: true,
+                port: 7777
+            })
+            .reply(200, function() {
+                QR.autostart = true;
+                QR.port = 7777;
                 return "success";
             })
 
+
+        nock(BASE_URL)
             // mock storage service
-            .get('/management/dicom/storage').times(3)
+            .get('/management/dicom/storage').times(4)
             .reply(200, function() {
-                return {
-                    isRunning: StorageRunning,
-                    port: 6666,
-                    autostart: false
-                };
+                return Storage;
             })
             .post('/management/dicom/storage')
             .query({ running: false })
             .reply(200, function() {
-                StorageRunning = false;
+                Storage.running = false;
                 return "success";
             })
             .post('/management/dicom/storage')
             .query({ running: true })
             .reply(200, function() {
-                StorageRunning = true;
+                Storage.running = true;
+                return "success";
+            })
+            .post('/management/dicom/storage')
+            .query({ autostart: true, port: 7777 })
+            .reply(200, function() {
+                Storage.autostart = true;
+                Storage.port = 7777;
                 return "success";
             })
 
@@ -350,55 +436,6 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).post('/management/settings/transfer')
             .query({uid: /(\d\.?)+/, option: /\S*/, value: true})
             .reply(200)
-
-            // mock get running tasks
-        nock(BASE_URL).get('/index/task')
-            .times(3)
-            .reply(200, function() {
-                const tasks = [];
-                if (!TaskStopped) {
-                    tasks.push(RunningTasks[0]);
-                }
-                if (!TaskClosed) {
-                    tasks.push(RunningTasks[1]);
-                }
-                return {
-                    results: tasks,
-                    count: TaskStopped ? 0 : 1
-                }
-            });
-
-            // mock close a running task
-        nock(BASE_URL).post('/index/task')
-            .query({
-                uid: 'f1b6588d-92c2-458c-8c77-e30d8706b662',
-                action: 'delete',
-                type: 'close'
-            })
-            .twice()
-            .reply(function() {
-                if (!TaskClosed) {
-                    TaskClosed = true;
-                    return [200, 'success'];
-                }
-                return [400, 'no such task!'];
-            });
-
-            // mock stop a running task
-        nock(BASE_URL).post('/index/task')
-            .query({
-                uid: '1063922f-1823-4e43-8241-c84c1721a6c1',
-                action: 'delete',
-                type: 'stop'
-            })
-            .twice()
-            .reply(function() {
-                if (!TaskStopped) {
-                    TaskStopped = true;
-                    return [200, 'success'];
-                }
-                return [400, 'no such task!'];
-            });
 
         nock(BASE_URL)
             .get('/management/settings/dicom').twice()

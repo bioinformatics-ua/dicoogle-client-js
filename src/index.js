@@ -3,6 +3,8 @@
  */
 import Endpoints from './endpoints';
 import Socket from './socket';
+import {StorageService, QueryRetrieveService} from './service';
+import Tasks from './tasks';
 
 // private variables of the module
 /**@private
@@ -108,12 +110,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {SearchOptions} [options] a hash of options related to the search
    * @param {function(error:any, outcome:SearchOutcome)} callback the callback function providing the outcome
    */
-  DicoogleAccess.prototype.search = function Dicoogle_search(query, options, callback) {
+  DicoogleAccess.prototype.search = function Dicoogle_search(query, options = {}, callback) {
       if (!callback && typeof options === 'function') {
         callback = options;
         options = {};
       }
-      options = options || {};
       const provider = options.provider || options.providers;
       const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       const {field, psize, offset} = options;
@@ -133,10 +134,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {SearchOptions} [options] a hash of options related to the search
    * @param {function(error:any, outcome:SearchDIMOutcome)} callback the callback function providing the outcome
    */
-  DicoogleAccess.prototype.searchDIM = function Dicoogle_search(query, options, callback) {
-      if (!options) {
-        options = {};
-      } else if (!callback && typeof options === 'function') {
+  DicoogleAccess.prototype.searchDIM = function Dicoogle_search(query, options = {}, callback) {
+      if (!callback && typeof options === 'function') {
         callback = options;
         options = {};
       }
@@ -174,15 +173,12 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string} [type] the type of provider ("query", "index", ...) - defaults to "query"
    * @param {function(error:any, result:string[])} callback the callback function
    */
-  DicoogleAccess.prototype.getProviders = function Dicoogle_getProviders(type, callback) {
+  DicoogleAccess.prototype.getProviders = function Dicoogle_getProviders(type = 'query', callback) {
     if (typeof type === 'function' && !callback) {
       callback = type;
       type = 'query';
     }
-    let options = { type: typeof type === 'string' ? type : 'query' };
-    serviceRequest('GET', Endpoints.PROVIDERS, options, (err, data) => {
-        callback(err, err ? null : data);
-    });
+    serviceRequest('GET', Endpoints.PROVIDERS, { type }, callback);
   };
 
   /**
@@ -190,7 +186,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, result:string[])} callback the callback function
    */
   DicoogleAccess.prototype.getQueryProviders = function Dicoogle_getQueryProviders(callback) {
-    this.getProviders('query', callback);
+    this.getProviders(callback);
   };
 
   /**
@@ -206,75 +202,6 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    */
   DicoogleAccess.prototype.getStorageProviders = function Dicoogle_getStorageProviders(callback) {
     this.getProviders('storage', callback);
-  };
-
-  /**
-   * Obtain information about the DICOM Storage service.
-   * @param {function(error:any, {running:boolean, autostart:boolean, port:number})} callback the callback function
-   */
-  DicoogleAccess.prototype.getStorageServiceStatus = function Dicoogle_getStorageServiceStatus(callback) {
-    serviceRequest('GET', Endpoints.STORAGE_SERVICE, {}, function(err, data) {
-        callback(err, err ? null : data);
-    });
-  };
-
-  /**
-   * Obtain information about the DICOM Query/Retrieve service.
-   * @param {function(error:any, {running:boolean, autostart:boolean, port:number})} callback the callback function
-   */
-  DicoogleAccess.prototype.getQueryRetrieveServiceStatus = function Dicoogle_getQueryRetrieveServiceStatus(callback) {
-    serviceRequest('GET', Endpoints.QR_SERVICE, {}, function(err, data) {
-        callback(err, err ? null : data);
-    });
-  };
-
-  /** @typedef {Object} TaskInfo
-   * @property {string} taskUid - the UUID of the task
-   * @property {string} taskName - a human readable task name
-   * @property {number} taskProgress - a number between 0 and 1 representing the task's progress; any negative number means no prediction is available
-   * @property {boolean} [complete] - whether the task is complete, assume not if not available
-   * @property {number} [elapsedTime] - only if complete; the time elapsed while the task was running
-   * @property {number} [nIndexed] - the number of files successfully indexed
-   * @property {number} [nErrors] - only if complete; the number of indexation errors
-   */
-
-  /**
-   * Obtain information about Dicoogle's running (or terminated) tasks.
-   * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
-   */
-  DicoogleAccess.prototype.getRunningTasks = function Dicoogle_getRunningTasks(callback) {
-    serviceRequest('GET', Endpoints.TASKS, {}, function(err, data) {
-        callback(err, data ? {
-            tasks: data.results,
-            count: data.count
-        } : null);
-    });
-  };
-
-  /**
-   * Close a terminated task from the list of tasks.
-   * @param {string} uid the task's unique ID
-   * @param {function(error:any)} callback the callback function
-   */
-  DicoogleAccess.prototype.closeTask = function Dicoogle_closeTask(uid, callback) {
-    serviceRequest('POST', Endpoints.TASKS, {
-          uid,
-          action: 'delete',
-          type: 'close'
-        }, callback);
-  };
-
-  /**
-   * Request that a task is stopped.
-   * @param {string} uid the task's unique ID
-   * @param {function(error:any)} callback the callback function
-   */
-  DicoogleAccess.prototype.stopTask = function Dicoogle_stopTask(uid, callback) {
-    serviceRequest('POST', Endpoints.TASKS, {
-          uid,
-          action: 'delete',
-          type: 'stop'
-        }, callback);
   };
 
   /**
@@ -576,55 +503,18 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   }
 
   /**
-   * Start the DICOM Storage service.
-   * @param {function(error:any)} callback the callback function
-   */
-  DicoogleAccess.prototype.startStorageService = function Dicoogle_startStorageService(callback) {
-    serviceRequest('POST', Endpoints.STORAGE_SERVICE, { running: true }, callback);
-  };
-
-  /**
-   * Stop the DICOM Storage service.
-   * @param {function(error:any)} callback the callback function
-   */
-  DicoogleAccess.prototype.stopStorageService = function Dicoogle_stopStorageService(callback) {
-    serviceRequest('POST', Endpoints.STORAGE_SERVICE, { running: false }, callback);
-  };
-
-  /**
-   * Start the DICOM Query/Retrieve service.
-   * @param {function(error:any)} callback the callback function
-   */
-  DicoogleAccess.prototype.startQueryRetrieveService = function Dicoogle_startQueryRetrieveService(callback) {
-    serviceRequest('POST', Endpoints.QR_SERVICE, { running: true }, callback);
-  };
-
-  /**
-   * Stop the DICOM Query/Retrieve service.
-   * @param {function(error:any)} callback the callback function
-   */
-  DicoogleAccess.prototype.stopQueryRetrieveService = function Dicoogle_stopQueryRetrieveService(callback) {
-    serviceRequest('POST', Endpoints.QR_SERVICE, { running: false }, callback);
-  };
-
-  /**
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
-   * service exposed by Dicoogle, including those from plugins.
+   * service exposed by Dicoogle, including those from plugins. The resulting object is the start
+   * of a SuperAgent request.
+   *
    * @param {?string} method the kind of HTTP method to make, defaults to "GET"
    * @param {string|string[]} uri a URI or array of resource sequences to the service, relative
    *                          to Dicoogle's base URL. There should be no leading slash ('/').
    * @param {object} [options] an object of options to be passed as query strings
-   * @param {function(error:any, result)} callback the callback function
+   * @returns {SuperAgent} a superagent request object
    */
-  DicoogleAccess.prototype.request = function Dicoogle_request(method, uri, options, callback) {
-      method = method || 'GET';
-      if (!options) {
-        options = {};
-      } else if (!callback && typeof options === 'function') {
-        callback = options;
-        options = {};
-      }
-      serviceRequest(method, uri, options, callback);
+  DicoogleAccess.prototype.request = function Dicoogle_request(method = 'GET', uri) {
+      return socket_.request(method, uri);
   };
 
   /** Obtain the base URL of all Dicoogle services.
@@ -643,19 +533,12 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string|object} qs the query string parameters
    * @param {function(error:any, outcome:any)} callback the callback function
    * @param {string} [mimeType] the MIME type, application/json by default
-   * @param {Object} [formData] the form data
    */
-  function serviceRequest(method, uri, qs, callback, mimeType, formData) {
-      if (!formData && !mimeType) {
-          mimeType = 'application/json';
-      }
+  function serviceRequest(method, uri, qs, callback, mimeType = 'application/json') {
       const asText = mimeType ? mimeType.split('/')[0] === 'text' : false;
       let req = socket_.request(method, uri).query(qs);
       if (mimeType) {
         req = req.type(mimeType);
-      }
-      if (formData) {
-          req = req.send(formData);
       }
       req.end(function (err, res) {
           if (err) {
@@ -686,27 +569,21 @@ var m = new DicoogleAccess();
 export default function dicoogleClient(url, options = {}) {
     if (!socket_ || url !== socket_.getBase()) {
 
-        if (url[url.length - 1] === '/') {
-            url = url.slice(-1);
-        }
         if (url !== '') {
             if (url.indexOf('://') === -1) {
                 url = (options.secure ? 'https://' : 'http://') + url;
             }
         }
 
-        if (typeof url !== 'string') {
-            if (typeof window === 'object') {
-                /* eslint-disable no-undef */
-                url = window.location.protocol + "//" + window.location.host;
-                /* eslint-enable no-undef */
-            } else {
-                throw new Error("Missing URL to Dicoogle services");
-            }
-        }
-
         socket_ = new Socket(url, options.token);
+        if (typeof options.token === 'string') {
+            socket_.setToken(options.token);
+        }
     }
+
+    m.tasks = new Tasks(socket_);
+    m.storage = new StorageService(socket_);
+    m.queryRetrieve = new QueryRetrieveService(socket_);
 
     return m;
 }
