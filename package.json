@@ -14,9 +14,9 @@
     "client",
     "api"
   ],
-  "version": "3.8.0-rc0",
+  "version": "4.0.0-rc0",
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=4.0.0"
   },
   "main": "./lib/index",
   "typings": "./typings/dicoogle-client.d.ts",
