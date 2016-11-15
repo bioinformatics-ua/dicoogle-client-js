@@ -557,13 +557,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any)} callback the callback function
    */
   DicoogleAccess.prototype.setAETitle = function Dicoogle_setAETitle(aetitle, callback) {
-      serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, function(err) {
-        if (err) {
-            callback(err);
-        } else {
-            callback(null);
-        }
-      });
+      serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, callback);
   };
 
   /** Get all of the current DICOM Query-Retrieve settings.
