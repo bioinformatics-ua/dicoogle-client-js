@@ -80,6 +80,19 @@ module.exports = function createDicoogleMock() {
             thumbnailSize: '128',
             watcher: false
         };
+        const REMOTE_STORAGES = [{
+            AETitle: 'TEST_SERVER_1',
+            ipAddrs: '10.0.0.44',
+            description: "A test server",
+            isPublic: false,
+            port: 6460
+        }, {
+            AETitle: 'TEST_SERVER_2',
+            ipAddrs: '10.0.0.45',
+            port: 6460,
+            description: "Another test server",
+            isPublic: true
+        }];
         /* eslint-disable */
         const TRANSFER_SETTINGS = [{"uid":"1.2.840.10008.5.1.4.1.1.1","sop_name":"ComputedRadiographyImageStorage","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]},{"uid":"1.2.840.10008.5.1.4.1.1.1.1","sop_name":"DigitalXRayImageStorageForPresentation","options":[{"name":"ImplicitVRLittleEndian","value":true},{"name":"ExplicitVRLittleEndian","value":true},{"name":"DeflatedExplicitVRLittleEndian","value":false},{"name":"ExplicitVRBigEndian","value":false},{"name":"JPEGLossless","value":false},{"name":"JPEGLSLossless","value":true},{"name":"JPEGLosslessNonHierarchical14","value":false},{"name":"JPEG2000LosslessOnly","value":false},{"name":"JPEGBaseline1","value":true},{"name":"JPEGExtended24","value":false},{"name":"JPEGLSLossyNearLossless","value":false},{"name":"JPEG2000","value":false},{"name":"RLELossless","value":false},{"name":"MPEG2","value":false}]}];
         const WEBUI_PLUGINS = [
@@ -368,7 +381,51 @@ module.exports = function createDicoogleMock() {
                 Storage.autostart = true;
                 Storage.port = 7777;
                 return "success";
+            });
+
+        // mock storage servers
+        nock(BASE_URL).get('/management/settings/storage/dicom')
+            .reply(200, REMOTE_STORAGES);
+
+            // adding
+        nock(BASE_URL).post('/management/settings/storage/dicom')
+            .query({
+                type: 'add',
+                aetitle: /[A-Z0-9_ ]+/,
+                ip: /.+/,
+                port: /[0-9]+/
             })
+            .reply(200, { added: true });
+        nock(BASE_URL).get('/management/settings/storage/dicom')
+            .reply(200, REMOTE_STORAGES.concat({
+                AETitle: 'A_NEW_STORAGE',
+                ipAddrs: '10.0.0.144',
+                port: 6646,
+                description: '',
+                isPublic: false
+            }))
+
+            // removing by whole object
+            .post('/management/settings/storage/dicom')
+            .query({
+                type: 'remove',
+                aetitle: /[A-Z0-9_ ]+/,
+                ip: /.*/,
+                port: /\d+/
+            })
+            .reply(200, { removed: true });
+        nock(BASE_URL).get('/management/settings/storage/dicom')
+            .reply(200, REMOTE_STORAGES)
+
+            // removing by some other aetitle
+            .post('/management/settings/storage/dicom')
+            .query({
+                type: 'remove',
+                aetitle: /[A-Z0-9_ ]+/
+            })
+            .reply(200, { removed: false })
+            .get('/management/settings/storage/dicom')
+            .reply(200, REMOTE_STORAGES);
 
         // mock indexer settings
         nock(BASE_URL).get('/management/settings/index')
@@ -461,7 +518,7 @@ module.exports = function createDicoogleMock() {
 
         nock(BASE_URL)
             .put('/management/settings/dicom')
-            .query({ aetitle: / *\S+ */ })
+            .query({ aetitle: /[A-Z0-9_ ]+/ })
             .reply(200, function() {
                 // apply side-effect
                 const qstring = URL.parse(this.req.path).query;

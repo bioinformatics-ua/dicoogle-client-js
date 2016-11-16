@@ -487,21 +487,6 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, callback);
   };
 
-  /** Get all of the current DICOM Query-Retrieve settings.
-   * @param {function(error: Error, outcome: DicomQuerySettings)} callback the callback function
-   */
-  DicoogleAccess.prototype.getDicomQuerySettings = function Dicoogle_getDicomQuerySettings(callback) {
-      serviceRequest('GET', Endpoints.DICOM_QUERY_SETTINGS, {}, callback);
-  }
-
-  /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
-   * @param {DicomQuerySettings} fields a dictionary containing the fields and values as key-value pairs.
-   * @param {function(error: Error)} callback the callback function
-   */
-  DicoogleAccess.prototype.setDicomQuerySettings = function Dicoogle_setDicomQuerySettings(fields, callback) {
-      serviceRequest('POST', Endpoints.DICOM_QUERY_SETTINGS, fields, callback);
-  }
-
   /**
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
    * service exposed by Dicoogle, including those from plugins. The resulting object is the start

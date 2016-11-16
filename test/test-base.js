@@ -379,6 +379,29 @@ describe('Dicoogle Client (under Node.js)', function() {
             })
         });
     });
+
+    describe('Settings', function() {
+        describe('Get', function() {
+            it("queryRetrieve#getDicomQuerySettings(); should give all settings", function(done) {
+                Dicoogle.queryRetrieve.getDicomQuerySettings(function (error, data) {
+                    assert.equal(error, null);
+                    assert.isObject(data);
+                    for (const field in data) {
+                        assert.isNumber(data[field]);
+                    }
+                    done();
+                });
+            });
+        });
+        describe('Set', function() {
+            it("queryRetrieve#setDicomQuerySettings({responseTimeout: 1000}); should work ok", function(done) {
+                Dicoogle.queryRetrieve.setDicomQuerySettings({responseTimeout: 1000}, function(error) {
+                    assert.equal(error, null);
+                    done();
+                });
+            });
+        });
+    });
   });
 
   describe('Storage service', function() {
@@ -438,6 +461,67 @@ describe('Dicoogle Client (under Node.js)', function() {
                 assert.strictEqual(data.port, 7777);
                 done();
             })
+        });
+    });
+
+    describe('Remote Storage Servers', function() {
+        it("storage#getRemoteServers(); should give a list", function(done) {
+            Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                assert.equal(error, null);
+                assert.isArray(remotes);
+                for (const s of remotes) {
+                    assert.isObject(s);
+                    assert.isString(s.aetitle);
+                    assert.isString(s.ip);
+                    assert.isNumber(s.port);
+                    assert('description' in s || typeof s.description === 'string');
+                    assert('public' in s || typeof s.public === 'boolean');
+                }
+                done();
+            });
+        });
+
+        describe('Add', function() {
+            it("storage#addRemoteServer(); increases list to 3 stores", function(done) {
+                Dicoogle.storage.addRemoteServer({
+                    aetitle: 'A_NEW_STORAGE',
+                    ip: '10.0.0.144',
+                    port: 6646
+                },
+                function (error) {
+                    assert.equal(error, null);
+                    Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                        assert.equal(error, null);
+                        assert.strictEqual(remotes.length, 3);
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe('Remove', function() {
+            it("storage#removeRemoteServer(store); reduces the list back to 2", function(done) {
+                Dicoogle.storage.removeRemoteServer({
+                    aetitle: 'A_NEW_STORAGE',
+                    ip: '10.0.0.144',
+                    port: 6646
+                }, function (error, removed) {
+                    assert.equal(error, null);
+                    assert(removed);
+                    Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                        assert.equal(error, null);
+                        assert.strictEqual(remotes.length, 2);
+                        done();
+                    });
+                });
+            });
+            it("storage#removeRemoteServer(aetitle); should work", function(done) {
+                Dicoogle.storage.removeRemoteServer('STORAGE_NO_WAY', function (error, removed) {
+                    assert.equal(error, null);
+                    assert.isFalse(removed);
+                    done();
+                });
+            });
         });
     });
   });
@@ -561,29 +645,6 @@ describe('Dicoogle Client (under Node.js)', function() {
             });
         });
     });
-  });
-
-  describe('DICOM Query/Retrieve Settings', function() {
-      describe('Get DICOM Query Settings', function() {
-          it("#getDicomQuerySettings(); should give all settings", function(done) {
-            Dicoogle.getDicomQuerySettings(function (error, data) {
-                assert.equal(error, null);
-                assert.isObject(data);
-                for (const field in data) {
-                    assert.isNumber(data[field]);
-                }
-                done();
-              });
-          });
-      });
-      describe('Get DICOM Query Settings', function() {
-          it("#setDicomQuerySettings({responseTimeout: 1000}); should work ok", function(done) {
-              Dicoogle.setDicomQuerySettings({responseTimeout: 1000}, function(error) {
-                  assert.equal(error, null);
-                  done();
-              });
-          });
-      });
   });
 
   describe('Dicoogle generic request', function() {
