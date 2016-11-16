@@ -552,18 +552,19 @@ var m = new DicoogleAccess();
  * @returns {Object} a singleton dicoogle service access object
  */
 export default function dicoogleClient(url, options = {}) {
-    if (!socket_ || url !== socket_.getBase()) {
+    if (socket_ && (!url || url === socket_.getBase())) {
+        return m;
+    }
 
-        if (url !== '') {
-            if (url.indexOf('://') === -1) {
-                url = (options.secure ? 'https://' : 'http://') + url;
-            }
+    if (url && url !== '') {
+        if (url.indexOf('://') === -1) {
+            url = (options.secure ? 'https://' : 'http://') + url;
         }
+    }
 
-        socket_ = new Socket(url, options.token);
-        if (typeof options.token === 'string') {
-            socket_.setToken(options.token);
-        }
+    socket_ = new Socket(url, options.token);
+    if (typeof options.token === 'string') {
+        socket_.setToken(options.token);
     }
 
     m.tasks = new Tasks(socket_);

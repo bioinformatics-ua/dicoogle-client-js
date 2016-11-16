@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 var assert = require('chai').assert;
 var createMockedDicoogle = require('./mock/service-mock');
+var dicoogleClient = require('../src');
 
 var DICOOGLE_VERSION = '2.4.1-TEST';
 
@@ -666,6 +667,19 @@ describe('Dicoogle Client (under Node.js)', function() {
           });
       });
   });
+
+  describe('Dicoogle is a singleton', function() {
+      it('Calling dicoogleClient() after initializing should work', function(done) {
+          const D = dicoogleClient();
+
+          D.getVersion(function(err, data) {
+              assert.equal(err, null);
+              assert.isObject(data);
+              assert.propertyVal(data, 'version', DICOOGLE_VERSION);
+              done();
+          });
+      });
+  })
 
 });
 
