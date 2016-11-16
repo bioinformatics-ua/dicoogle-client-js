@@ -14,7 +14,7 @@
     "client",
     "api"
   ],
-  "version": "4.0.0-rc2",
+  "version": "4.0.0-rc3",
   "engines": {
     "node": ">=4.0.0"
   },
