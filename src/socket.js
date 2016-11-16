@@ -16,7 +16,7 @@ export default class Socket {
         if (typeof url !== 'string') {
             if (typeof window === 'object') {
                 /* eslint-disable no-undef */
-                url_ = window.location.protocol + "//" + window.location.host;
+                this._url = window.location.protocol + "//" + window.location.host;
                 /* eslint-enable no-undef */
             } else {
                 throw new Error("Missing URL to Dicoogle services");
