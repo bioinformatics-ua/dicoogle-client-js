@@ -1,9 +1,15 @@
 import Endpoints from './endpoints';
 
 /** @typedef {Object} ServiceConfiguration
- * @param {?boolean} running
- * @param {?boolean} autostart
- * @param {?number} port
+ * @param {?boolean} running whether the service is currently running
+ * @param {?boolean} autostart whether the service starts automatically
+ * @param {?number} port the TCP port that the service listens to
+ */
+
+/** @typedef {Object} ServiceStatus
+ * @param {boolean} running whether the service is currently running
+ * @param {boolean} autostart whether the service starts automatically
+ * @param {number} port the TCP port that the service listens to
  */
 
 /** @typedef {Object} RemoteStorage
@@ -24,8 +30,8 @@ class BaseService {
   }
 
   /**
-   * Obtain information about the DICOM Storage service.
-   * @param {function(error: Error, conf:ServiceConfiguration)} callback the callback function
+   * Obtain information about this DICOM service.
+   * @param {function(error: Error, conf:ServiceStatus)} callback the callback function
    */
   getStatus(callback) {
     this._socket.request('GET', this._endpoint)
@@ -36,7 +42,7 @@ class BaseService {
   }
 
   /**
-   * Define the base configurations of the DICOM Storage service.
+   * Define the base configurations of this service.
    * @param {ServiceConfiguration} config a set of properties to configure (currently `running`, `autostart` and/or `port`)
    * @param {function(error: Error)} callback the callback function
    */
@@ -48,7 +54,7 @@ class BaseService {
   }
 
   /**
-   * Start the DICOM Storage service.
+   * Start the DICOM service.
    * @param {function(error: Error)} callback the callback function
    */
   start(callback) {
@@ -58,7 +64,7 @@ class BaseService {
   }
 
   /**
-   * Stop the DICOM Storage service.
+   * Stop the DICOM service.
    * @param {function(error: Error)} callback the callback function
    */
   stop(callback) {

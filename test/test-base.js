@@ -313,7 +313,6 @@ describe('Dicoogle Client (under Node.js)', function() {
       });
   });
 
-
   function checkServiceInfo(error, data) {
     assert.equal(error, null);
     assert.isBoolean(data.running, 'running must be a boolean');

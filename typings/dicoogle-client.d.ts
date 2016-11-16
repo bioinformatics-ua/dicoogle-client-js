@@ -146,23 +146,6 @@ declare module "dicoogle-client" {
         admin: boolean
     }
 
-    export interface TaskInfo {
-        /** the UUID of the task */
-        taskUid: string
-        /** a human readable task name */
-        taskName: string
-        /** a number between 0 and 1 representing the task's progress; any negative number means that no prediction is available */
-        taskProgress: number
-        /** whether the task is complete, assume not if not provided */
-        complete?: boolean
-        /** only if complete; the time elapsed while the task was running, in milliseconds */
-        elapsedTime?: number
-        /** only if complete; the number of files successfully indexed */
-        nIndexed?: number
-        /** only if complete; the number of indexation errors */
-        nErrors?: number
-    }
-
     /** Indexer settings fields
      */
     export interface IndexerSettings {
@@ -178,18 +161,6 @@ declare module "dicoogle-client" {
         thumbnailSize?: number
         /** Listen for changes in the directory for automatic indexation. */
         watcher?: boolean
-    }
-
-    /** DICOM Query/Retrieve settings fields
-     */
-    export interface DicomQuerySettings {
-        acceptTimeout?: number
-        connectionTimeout?: number
-        idleTimeout?: number
-        maxAssociations?: number
-        maxPduReceive?: number
-        maxPduSend?: number
-        responseTimeout?: number
     }
 
     export interface TransferSyntax {
@@ -385,6 +356,7 @@ declare module "dicoogle-client" {
          * @param callback the function to call on completion
          */
         unindex(uri: string, callback: (error: Error) => any);
+
         /**
          * Request that the file at the given URI is unindexed to a specific set of indexers. The operation, unlike index(), is not recursive and will not unindex sub-entries.
          * @param uri a URI or array of URIs representing the files to be unindexed
@@ -399,26 +371,6 @@ declare module "dicoogle-client" {
          * @param  callback the function to call on completion
          */
         remove(uri: string, callback: (error: Error) => any);
-
-        /**
-         * Obtain information about Dicoogle's running (or terminated) tasks.
-         * @param callback the callback function
-         */
-        getRunningTasks(callback: (error: Error, outcome: { tasks: TaskInfo[], count: number }) => any);
-
-        /**
-         * Close a terminated task from the list of tasks.
-         * @param uid the task's unique ID
-         * @param callback the callback function
-         */
-        closeTask(uid: string, callback: (error: Error) => any);
-
-        /**
-         * Request that a task is stopped.
-         * @param uid the task's unique ID
-         * @param callback the callback function
-         */
-        stopTask(uid: string, callback: (error: Error) => any);
 
         /** Retrieve the running Dicoogle version.
          * @param {function(error:any, {version:string})} callback the callback function
@@ -527,6 +479,153 @@ declare module "dicoogle-client" {
          * @param token the same user's token of a previous session
          */
         setToken(token: string);
+
+        tasks: Tasks;
+
+        storage: StorageService;
+
+        queryRetrieve: QueryRetrieveService;
     }
-}
+
+    export interface TaskInfo {
+        /** the UUID of the task */
+        taskUid: string
+        /** a human readable task name */
+        taskName: string
+        /** a number between 0 and 1 representing the task's progress; any negative number means that no prediction is available */
+        taskProgress: number
+        /** whether the task is complete, assume not if not provided */
+        complete?: boolean
+        /** only if complete; the time elapsed while the task was running, in milliseconds */
+        elapsedTime?: number
+        /** only if complete; the number of files successfully indexed */
+        nIndexed?: number
+        /** only if complete; the number of indexation errors */
+        nErrors?: number
+    }
+
+    export interface Tasks {
+
+        /**
+         * Obtain information about Dicoogle's running (or terminated) tasks.
+         * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
+         */
+        list(callback: (Error, TaskInfo[]) => any);
+
+        /**
+         * Close a terminated task from the list of tasks.
+         * @param uid the task's unique ID
+         * @param callback the callback function
+         */
+        close(uid: string, callback: (Error) => any);
+
+        /**
+         * Request that a task is stopped.
+         * @param uid the task's unique ID
+         * @param callback the callback function
+         */
+        stop(uid: string, callback: (Error) => any);
+    }
+
+    export interface ServiceConfiguration {
+        /** Whether the service is currently running. */
+        running?: boolean;
+        /** Whether the service starts automatically. */
+        autostart?: boolean;
+        /** The TCP port that the service listens to. */
+        port?: number;
+    }
+
+    export interface ServiceStatus {
+        /** Whether the service is currently running. */
+        running: boolean;
+        /** Whether the service starts automatically. */
+        autostart: boolean;
+        /** The TCP port that the service listens to. */
+        port: number;
+    }
+
+    export interface BaseService {
+        /**
+         * Obtain information about this DICOM service.
+         * @param {function(error: Error, conf:ServiceStatus)} callback the callback function
+         */
+        getStatus(callback: (Error, ServiceStatus[]) => any);
+
+        /**
+         * Define the base configurations of this DICOM service.
+         * @param config a set of properties to configure (currently `running`, `autostart` and/or `port`)
+         * @param callback the callback function
+         */
+        configure(config: ServiceConfiguration, callback: (Error) => any);
+
+        /**
+         * Start the DICOM service.
+         * @param callback the callback function
+         */
+        start(callback: (Error) => any);
+
+        /**
+         * Start the DICOM service.
+         * @param callback the callback function
+         */
+        start(callback: (Error) => any);
+    }
+
+    export interface RemoteStorage {
+        aetitle: string;
+        ip: string;
+        port: number;
+        description?: string;
+        public?: boolean;
+    }
+
+    export interface StorageService : BaseService {
+
+        /** Retrieve a list of the currently registered remote storage servers.
+         * @param callback the callback function
+         */
+        getRemoteServers(callback: (Error, storages: RemoteStorage[]) => any);
+
+        /** Add a remote storage server.
+         * @param store the remote storage information object
+         * @param callback the callback function
+         */
+        addRemoteServer(store: RemoteStorage, callback: (Error) => any);
+
+        /** Remove a remote storage server. On success, the second callback argument will be
+         * `true` if and only if the remote storage existed before the call.
+         * @param store the storage's AE title or the storage object.
+         * @param callback the callback function
+         */
+        removeRemoteServer(store: string|RemoteStorage, callback: (Error, removed: boolean) => any);
+    }
+
+    /** DICOM Query/Retrieve settings fields
+     */
+    export interface DicomQuerySettings {
+        acceptTimeout?: number
+        connectionTimeout?: number
+        idleTimeout?: number
+        maxAssociations?: number
+        maxPduReceive?: number
+        maxPduSend?: number
+        responseTimeout?: number
+    }
+
+    export interface QueryRetrieveService : BaseService {
+
+        /** Get all of the current DICOM Query-Retrieve settings.
+         * @param callback the callback function
+         */
+        getDicomQuerySettings(callback: (Error, outcome: DicomQuerySettings) => any);
+
+        /** Set a group of DICOM Query/Retrieve settings. The given object should contain
+         * valid field-value pairs.
+         * @param fields a dictionary containing the fields and values as key-value pairs.
+         * @param callback the callback function
+         */
+        setDicomQuerySettings(fields: DicomQuerySettings, callback: (Error) => any;
+
+    }
 
