@@ -2,7 +2,7 @@
 var assert = require('chai').assert;
 var createMockedDicoogle = require('./mock/service-mock');
 
-var DICOOGLE_VERSION = '2.4.0-TEST';
+var DICOOGLE_VERSION = '2.4.1-TEST';
 
 function assertDicomUUID(uid) {
     assert.strictEqual(typeof uid, 'string', "UUID must be a string");
@@ -81,10 +81,10 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-  describe('Running tasks', function() {
+  describe('Tasks', function() {
 
-    it("#getRunningTasks() before changes", function(done) {
-      Dicoogle.getRunningTasks(function(error, outcome) {
+    it("tasks#list() before changes", function(done) {
+      Dicoogle.tasks.list(function(error, outcome) {
         assert.equal(error, null);
         assert.isNumber(outcome.count);
         assert.isArray(outcome.tasks);
@@ -108,43 +108,38 @@ describe('Dicoogle Client (under Node.js)', function() {
       });
     });
 
-    describe('Closing a completed task', function() {
-        it("#closeTask() should successfully clear the task", function(done) {
-            Dicoogle.closeTask('f1b6588d-92c2-458c-8c77-e30d8706b662', function(error) {
+    it("tasks#close() should successfully clear the task", function(done) {
+        Dicoogle.tasks.close('f1b6588d-92c2-458c-8c77-e30d8706b662', function(error) {
+            assert.equal(error, null);
+            Dicoogle.tasks.list(function(error, outcome) {
                 assert.equal(error, null);
-                Dicoogle.getRunningTasks(function(error, outcome) {
-                    assert.equal(error, null);
-                    assert.isArray(outcome.tasks);
-                    assert.strictEqual(outcome.tasks.length, 1);
-                    assert.strictEqual(outcome.count, 1);
-                    var task = outcome.tasks[0];
-                    assert.isObject(task);
-                    assert.isString(task.taskUid);
-                    assert.notEqual(task.taskUid, 'f1b6588d-92c2-458c-8c77-e30d8706b662');
-                    done();
-                });
+                assert.isArray(outcome.tasks);
+                assert.strictEqual(outcome.tasks.length, 1);
+                assert.strictEqual(outcome.count, 1);
+                var task = outcome.tasks[0];
+                assert.isObject(task);
+                assert.isString(task.taskUid);
+                assert.notEqual(task.taskUid, 'f1b6588d-92c2-458c-8c77-e30d8706b662');
+                done();
             });
         });
     });
 
-    describe('Stopping a completed task', function() {
-        it("#stopTask() should successfully clear the task", function(done) {
-            Dicoogle.stopTask('1063922f-1823-4e43-8241-c84c1721a6c1', function(error) {
+    it("tasks#stop() should successfully clear the task", function(done) {
+        Dicoogle.tasks.stop('1063922f-1823-4e43-8241-c84c1721a6c1', function(error) {
+            assert.equal(error, null);
+            Dicoogle.tasks.list(function(error, outcome) {
                 assert.equal(error, null);
-                Dicoogle.getRunningTasks(function(error, outcome) {
-                    assert.equal(error, null);
-                    assert.deepEqual(outcome.tasks, []);
-                    assert.strictEqual(outcome.count, 0);
-                    done();
-                });
+                assert.deepEqual(outcome.tasks, []);
+                assert.strictEqual(outcome.count, 0);
+                done();
             });
         });
-    });
+      });
   });
 
   describe('#search() keyword based', function() {
-    it("should auto-detect a keyword-based query and give some MR results with no error", function(done) {
-      Dicoogle.search('Modality:MR', {provider: 'lucene'}, function(error, outcome) {
+    function handleOutcome(error, outcome) {
         assert.equal(error, null);
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
@@ -155,14 +150,26 @@ describe('Dicoogle Client (under Node.js)', function() {
             assertDicomUUID(outcome.results[i].fields.SOPInstanceUID);
         }
         assert.isNumber(outcome.elapsedTime, 'outcome has the elapsed time');
+    }
+
+    it("takes a keyword-based query and gives results successfully", function(done) {
+      Dicoogle.search('Modality:MR', {provider: 'lucene', keyword: true}, function(error, outcome) {
+        handleOutcome(error, outcome);
+        done();
+      });
+    });
+
+    it("auto-detects a keyword-based query and gives results successfully", function(done) {
+      Dicoogle.search('Modality:MR', {provider: 'lucene'}, function(error, outcome) {
+        handleOutcome(error, outcome);
         done();
       });
     });
   });
 
-  describe('#searchDIM() keyword based', function() {
-    it("should give some results in the DIM format successfully", function(done) {
-      Dicoogle.searchDIM('Modality:MR', {provider: 'lucene', keyword: true}, function(error, outcome) {
+  describe('#searchDIM()', function() {
+
+    function handleResponse(error, outcome) {
         assert.equal(error, null);
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
@@ -179,6 +186,18 @@ describe('Dicoogle Client (under Node.js)', function() {
             // no need to go deeper
         }
         assert.isNumber(outcome.elapsedTime, 'outcome has the elapsed time');
+    }
+
+    it("with options, gives results successfully", function(done) {
+      Dicoogle.searchDIM('Modality:MR', {provider: 'lucene', keyword: true}, function(error, outcome) {
+        handleResponse(error, outcome);
+        done();
+      });
+    });
+
+    it("without options, gives results successfully", function(done) {
+      Dicoogle.searchDIM('Modality:MR', function(error, outcome) {
+        handleResponse(error, outcome);
         done();
       });
     });
@@ -297,89 +316,212 @@ describe('Dicoogle Client (under Node.js)', function() {
 
   function checkServiceInfo(error, data) {
     assert.equal(error, null);
-    assert.isBoolean(data.isRunning, 'isRunning must be a boolean');
+    assert.isBoolean(data.running, 'running must be a boolean');
     assert.isBoolean(data.autostart, 'autostart must be a boolean');
     assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
   }
 
   describe('Query/Retrieve service', function() {
-    describe('#getQueryRetrieveServiceStatus()', function() {
+    describe('queryRetrieve#getStatus()', function() {
         it("should inform of DICOM QR service status with no error", function(done) {
-            Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+            Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 checkServiceInfo(error, data);
                 done();
-            })
+            });
         });
     });
-    describe('#stopQueryRetrieveService()', function() {
+    describe('queryRetrieve#stop()', function() {
         it("should give no error", function(done) {
-            Dicoogle.stopQueryRetrieveService(function (error) {
+            Dicoogle.queryRetrieve.stop(function (error) {
                 assert.equal(error, null);
                 done();
-            })
+            });
         });
         it("and running = false", function(done) {
-            Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+            Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, false);
+                assert.strictEqual(data.running, false);
                 done();
-            })
+            });
         });
     });
-    describe('#startQueryRetrieveService()', function() {
+    describe('#queryRetrieve.start()', function() {
         it("should give no error", function(done) {
-            Dicoogle.startQueryRetrieveService(function (error) {
+            Dicoogle.queryRetrieve.start(function (error) {
                 assert.equal(error, null);
                 done();
             })
         });
         it("and running = true", function(done) {
-            Dicoogle.getQueryRetrieveServiceStatus(function (error, data) {
+            Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, true);
+                assert.strictEqual(data.running, true);
                 done();
             })
+        });
+    });
+    describe('queryRetrieve#configure()', function() {
+        it("should give no error", function(done) {
+            Dicoogle.queryRetrieve.configure({
+                autostart: true,
+                port: 7777
+            }, function (error) {
+                assert.equal(error, null);
+                done();
+            });
+        });
+        it("and {autostart, port} changes", function(done) {
+            Dicoogle.queryRetrieve.getStatus(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data.autostart, true);
+                assert.strictEqual(data.port, 7777);
+                done();
+            })
+        });
+    });
+
+    describe('Settings', function() {
+        describe('Get', function() {
+            it("queryRetrieve#getDicomQuerySettings(); should give all settings", function(done) {
+                Dicoogle.queryRetrieve.getDicomQuerySettings(function (error, data) {
+                    assert.equal(error, null);
+                    assert.isObject(data);
+                    for (const field in data) {
+                        assert.isNumber(data[field]);
+                    }
+                    done();
+                });
+            });
+        });
+        describe('Set', function() {
+            it("queryRetrieve#setDicomQuerySettings({responseTimeout: 1000}); should work ok", function(done) {
+                Dicoogle.queryRetrieve.setDicomQuerySettings({responseTimeout: 1000}, function(error) {
+                    assert.equal(error, null);
+                    done();
+                });
+            });
         });
     });
   });
 
   describe('Storage service', function() {
-    describe('#getStorageServiceStatus()', function() {
+    describe('#storage.getStatus()', function() {
         it("should inform of DICOM Storage service status with no error", function(done) {
-            Dicoogle.getStorageServiceStatus(function (error, data) {
+            Dicoogle.storage.getStatus(function (error, data) {
                 checkServiceInfo(error, data);
                 done();
             })
         });
     });
-    describe('#stopQueryService()', function() {
+    describe('storage#stop()', function() {
         it("should give no error", function(done) {
-            Dicoogle.stopStorageService(function (error) {
+            Dicoogle.storage.stop(function (error) {
                 assert.equal(error, null);
                 done();
             })
         });
         it("and running = false", function(done) {
-            Dicoogle.getStorageServiceStatus(function (error, data) {
+            Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, false);
+                assert.strictEqual(data.running, false);
                 done();
             })
         });
     });
-    describe('#startStorageService()', function() {
+    describe('storage#start()', function() {
         it("should give no error", function(done) {
-            Dicoogle.startStorageService(function (error) {
+            Dicoogle.storage.start(function (error) {
                 assert.equal(error, null);
                 done();
             });
         });
         it("and running = true", function(done) {
-            Dicoogle.getStorageServiceStatus(function (error, data) {
+            Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, true);
+                assert.strictEqual(data.running, true);
                 done();
             })
+        });
+    });
+
+    describe('storage#configure()', function() {
+        it("should give no error", function(done) {
+            Dicoogle.storage.configure({
+                autostart: true,
+                port: 7777
+            }, function (error) {
+                assert.equal(error, null);
+                done();
+            });
+        });
+        it("and {autostart, port} changes", function(done) {
+            Dicoogle.storage.getStatus(function (error, data) {
+                assert.equal(error, null);
+                assert.strictEqual(data.autostart, true);
+                assert.strictEqual(data.port, 7777);
+                done();
+            })
+        });
+    });
+
+    describe('Remote Storage Servers', function() {
+        it("storage#getRemoteServers(); should give a list", function(done) {
+            Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                assert.equal(error, null);
+                assert.isArray(remotes);
+                for (const s of remotes) {
+                    assert.isObject(s);
+                    assert.isString(s.aetitle);
+                    assert.isString(s.ip);
+                    assert.isNumber(s.port);
+                    assert('description' in s || typeof s.description === 'string');
+                    assert('public' in s || typeof s.public === 'boolean');
+                }
+                done();
+            });
+        });
+
+        describe('Add', function() {
+            it("storage#addRemoteServer(); increases list to 3 stores", function(done) {
+                Dicoogle.storage.addRemoteServer({
+                    aetitle: 'A_NEW_STORAGE',
+                    ip: '10.0.0.144',
+                    port: 6646
+                },
+                function (error) {
+                    assert.equal(error, null);
+                    Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                        assert.equal(error, null);
+                        assert.strictEqual(remotes.length, 3);
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe('Remove', function() {
+            it("storage#removeRemoteServer(store); reduces the list back to 2", function(done) {
+                Dicoogle.storage.removeRemoteServer({
+                    aetitle: 'A_NEW_STORAGE',
+                    ip: '10.0.0.144',
+                    port: 6646
+                }, function (error, removed) {
+                    assert.equal(error, null);
+                    assert(removed);
+                    Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                        assert.equal(error, null);
+                        assert.strictEqual(remotes.length, 2);
+                        done();
+                    });
+                });
+            });
+            it("storage#removeRemoteServer(aetitle); should work", function(done) {
+                Dicoogle.storage.removeRemoteServer('STORAGE_NO_WAY', function (error, removed) {
+                    assert.equal(error, null);
+                    assert.isFalse(removed);
+                    done();
+                });
+            });
         });
     });
   });
@@ -505,39 +647,23 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
-  describe('DICOM Query/Retrieve Settings', function() {
-      describe('Get DICOM Query Settings', function() {
-          it("#getDicomQuerySettings(); should give all settings", function(done) {
-            Dicoogle.getDicomQuerySettings(function (error, data) {
-                assert.equal(error, null);
-                assert.isObject(data);
-                for (const field in data) {
-                    assert.isNumber(data[field]);
-                }
-                done();
-              });
-          });
-      });
-      describe('Get DICOM Query Settings', function() {
-          it("#setDicomQuerySettings({responseTimeout: 1000}); should work ok", function(done) {
-              Dicoogle.setDicomQuerySettings({responseTimeout: 1000}, function(error) {
-                  assert.equal(error, null);
+  describe('Dicoogle generic request', function() {
+      describe("Get Dicoogle version", function() {
+          it("#request('GET', 'ext/version') should give Dicoogle's version with no error", function(done) {
+              Dicoogle.request('GET', 'ext/version').end(function(err, response) {
+                  assert.equal(err, null);
+                  assert.isObject(response.body);
+                  assert.propertyVal(response.body, 'version', DICOOGLE_VERSION);
                   done();
               });
           });
-      });
-  });
-
-  describe('Dicoogle generic request', function() {
-      describe("Get Dicoogle version", function() {
-          it("#request('GET', 'ext/version', {}) should give Dicoogle's version with no error", function(done) {
-              Dicoogle.request('GET', 'ext/version', {}, createCheckVersion(done));
-          });
-          it("#request('GET', 'ext/version') should give Dicoogle's version with no error", function(done) {
-              Dicoogle.request('GET', 'ext/version', createCheckVersion(done));
-          });
           it("#request('GET', ['ext', 'version']) should give Dicoogle's version with no error", function(done) {
-              Dicoogle.request('GET', ['ext', 'version'], createCheckVersion(done));
+              Dicoogle.request('GET', ['ext', 'version']).end(function(err, response) {
+                  assert.equal(err, null);
+                  assert.isObject(response.body);
+                  assert.propertyVal(response.body, 'version', DICOOGLE_VERSION);
+                  done();
+              });
           });
       });
   });
