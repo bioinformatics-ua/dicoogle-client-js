@@ -283,6 +283,31 @@ describe('Dicoogle Client (under Node.js)', function() {
     });
   });
 
+  describe('#issueExport()', function() {
+    it("array of fields + options - should give a UID", function(done) {
+      Dicoogle.issueExport('Modality:MR', ['Modality', 'PatientName'], {keyword: true}, function(error, uid) {
+        assert.equal(error, null);
+        assert.isString(uid, 'uid must be a string');
+        done();
+      });
+    });
+    it("array of fields - should give a UID", function(done) {
+      Dicoogle.issueExport('Modality:MR', ['Modality', 'PatientName'], function(error, uid) {
+        assert.equal(error, null);
+        assert.isString(uid, 'uid must be a string');
+        done();
+      });
+    });
+    it("one field - should give a UID", function(done) {
+      Dicoogle.issueExport('Modality:MR', 'SOPInstanceUID', function(error, uid) {
+        assert.equal(error, null);
+        assert.isString(uid, 'uid must be a string');
+        done();
+      });
+    });
+  });
+
+
   describe('Web UI Plugins', function() {
       it("#getWebUIPlugins(); should give all plugins", function(done) {
         Dicoogle.getWebUIPlugins(null, function (error, plugins) {

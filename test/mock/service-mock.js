@@ -310,6 +310,30 @@ module.exports = function createDicoogleMock() {
                 elapsedTime: 80
             })
 
+            // mock issue export
+            .post('/exportFile')
+            .query({
+                query: 'Modality:MR',
+                fields: JSON.stringify(['Modality', 'PatientName']),
+                keyword: true
+            })
+            .reply(200, {
+                uid: "111111-132456-1234567"
+            })
+            .post('/exportFile')
+            .query({
+                query: 'Modality:MR',
+                fields: JSON.stringify(['Modality', 'PatientName'])
+            })
+            .reply(200, {
+                uid: "123456-132456-1234567"
+            })
+            .post('/exportFile')
+            .query({ query: 'Modality:MR', fields: "[\"SOPInstanceUID\"]" })
+            .reply(200, {
+                uid: "654321-654321-7654321"
+            })
+
             //mock webui
             .get('/webui')
             .twice()

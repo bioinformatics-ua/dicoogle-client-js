@@ -70,6 +70,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {boolean} [dim] - return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
    */
 
+  /** @typedef {Object} ExportOptions
+   * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
+   * @param {string|string[]} [provider] - one or more query provider names, defaults to the server's default query provider(s)
+   */
+
   /** @typedef {Object} SearchOutcome
    * @param {object[]} results - The list of results
    * @param {number} elapsedTime - The time spent performing the search in the server, in milliseconds
@@ -167,6 +172,44 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         uid, provider
       }, callback);
   };
+
+  /** Request a CSV file export of the results.
+   * @param {string} query the query to perform
+   * @param {string|string[]} fields - a set of field names to be passed to the query providers when requesting
+   * the query. The same fields will be provided in the resulting CSV file, in the given order.
+   * @param {ExportOptions} [options] additional options
+   * @param {function(error:any, uid:string)} callback the callback function providing the UID of the file
+   */
+  DicoogleAccess.prototype.issueExport = function Dicoogle_issueExport(query, fields, options, callback) {
+    if (typeof options === 'function' && !callback) {
+        callback = options;
+        options = {};
+    }
+    fields = [].concat(fields);
+    let qs = {
+        query, fields: JSON.stringify(fields)
+    };
+    if (typeof options.keyword === 'boolean') {
+        qs.keyword = options.keyword;
+    }
+    if (options.provider) {
+        qs.providers = options.provider;
+    }
+    socket_.post(Endpoints.EXPORT)
+        .query(qs)
+        .end((error, resp) => {
+            if (error) {
+                callback(error);
+                return;
+            }
+            const outcome = resp.body;
+            if (!outcome || typeof outcome.uid !== 'string') {
+                callback(new Error("invalid output from server"));
+            } else {
+                callback(null, outcome.uid);
+            }
+        })
+  }
 
   /**
    * Retrieve a list of provider plugins
@@ -383,7 +426,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
         }
     }
     // do not use the wrapper, or else we'll lose the output
-    socket_.request('GET', url).end(function (err, res) {
+    socket_.get(url).end((err, res) => {
         if (err) {
             callback(err);
             return;

@@ -237,6 +237,22 @@ declare module "dicoogle-client" {
          */
         dump(uid: string, callback: (error: Error, outcome: SearchOutcome) => void);
 
+        /** Request a CSV file export of the results.
+         * @param query the query to perform
+         * @param fields - a set of field names to be passed to the query providers when requesting
+         * the query. The same fields will be provided in the resulting CSV file, in the given order.
+         * @param options additional options
+         * @param callback the callback function providing the UID of the file
+         */
+        issueExport(query: string, fields: string | string[], options: ExportOptions, callback: (error: Error, uid: string) => void);
+        /** Request a CSV file export of the results.
+         * @param query the query to perform
+         * @param fields - a set of field names to be passed to the query providers when requesting
+         * the query. The same fields will be provided in the resulting CSV file, in the given order.
+         * @param callback the callback function providing the UID of the file
+         */
+        issueExport(query: string, fields: string | string[], callback: (error: Error, uid: string) => void);
+
         /**
          * Retrieve a list of provider plugins
          * @param type the type of provider ("query", "index", ...) - defaults to "query"

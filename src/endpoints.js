@@ -6,6 +6,7 @@ const Endpoints = Object.freeze({
     SEARCH_DIM: "searchDIM",
     PROVIDERS: "providers",
     DUMP: "dump",
+    EXPORT: "exportFile",
     DIC2PNG: "dic2png",
     DICTAGS: "dictags",
     QR_SERVICE: "management/dicom/query",

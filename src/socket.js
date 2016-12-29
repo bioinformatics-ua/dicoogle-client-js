@@ -93,6 +93,22 @@ export default class Socket {
                    .set('Authorization', this._token);
     }
 
+    /** Create a GET request to Dicoogle.
+     * @param {string|string[]} uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns {SuperAgent} a superagent object for a new request to this service
+     */
+    get(uri) {
+        return this.request('GET', uri);
+    }
+
+    /** Create a POST request to Dicoogle.
+     * @param {string|string[]} uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns {SuperAgent} a superagent object for a new request to this service
+     */
+    post(uri) {
+        return this.request('POST', uri);
+    }
+
     getToken() {
         return this._token;
     }
