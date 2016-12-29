@@ -46,6 +46,13 @@ declare module "dicoogle-client" {
         dim?: boolean
     }
 
+    export interface ExportOptions {
+        /** Force whether the query is keyword-based, defaults to automatic detection */
+        keyword?: boolean
+        /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
+        provider?: string | string[]
+    }
+
     export interface SearchDIMOptions {
         /** Force whether the query is keyword-based, defaults to automatic detection */
         keyword?: boolean
@@ -193,108 +200,72 @@ declare module "dicoogle-client" {
          * @param query the text query
          * @param callback the callback function providing the outcome
          */
-        search(query: string, callback: (error: Error, outcome: SearchOutcome) => any);
+        search(query: string, callback: (error: Error, outcome: SearchOutcome) => void);
         /**
          * Perform a text query.
          * @param query the text query
          * @param options a hash of options related to the search
          * @param callback the callback function providing the outcome
          */
-        search(query: string, options: SearchOptions, callback: (error: Error, outcome: SearchOutcome) => any);
+        search(query: string, options: SearchOptions, callback: (error: Error, outcome: SearchOutcome) => void);
 
         /**
          * Perform a text query with DIM-formatted outcome.
          * @param query the text query
          * @param callback the callback function providing the outcome
          */
-        searchDIM(query: string, callback: (error: Error, outcome: SearchDIMOutcome) => any);
+        searchDIM(query: string, callback: (error: Error, outcome: SearchDIMOutcome) => void);
         /**
          * Perform a text query with DIM-formatted outcome.
          * @param query the text query
          * @param options a hash of options related to the search
          * @param callback the callback function providing the outcome
          */
-        searchDIM(query: string, options: SearchDIMOptions, callback: (error: Error, outcome: SearchDIMOutcome) => any);
+        searchDIM(query: string, options: SearchDIMOptions, callback: (error: Error, outcome: SearchDIMOutcome) => void);
 
-        /**
-         * Retrieve an image's meta-data (perform an information dump)
-         * @param uid the SOP instance UID
-         * @param callback the callback function
-         */
-        dump(uid: string, callback: (error: Error, outcome: SearchOutcome) => any);
         /**
          * Retrieve an image's meta-data (perform an information dump)
          * @param uid the SOP instance UID
          * @param provider a list of provider plugins
          * @param callback the callback function
          */
-        dump(uid: string, provider: string | string[], callback: (error: Error, outcome: SearchOutcome) => any);
+        dump(uid: string, provider: string | string[], callback: (error: Error, outcome: SearchOutcome) => void);
+        /**
+         * Retrieve an image's meta-data (perform an information dump)
+         * @param uid the SOP instance UID
+         * @param callback the callback function
+         */
+        dump(uid: string, callback: (error: Error, outcome: SearchOutcome) => void);
 
         /**
          * Retrieve a list of provider plugins
          * @param type the type of provider ("query", "index", ...) - defaults to "query"
          * @param callback the callback function
          */
-        getProviders(type: string, callback: (error: Error, outcome: string[]) => any);
+        getProviders(type: string, callback: (error: Error, outcome: string[]) => void);
         /**
          * Retrieve a list of query provider plugins
          * @param callback the callback function
          */
-        getProviders(callback: (error: Error, outcome: string[]) => any);
+        getProviders(callback: (error: Error, outcome: string[]) => void);
 
         /**
          * Retrieve a list of query provider plugins
          * @param callback the callback function
          */
-        getQueryProviders(callback: (error: Error, outcome: string[]) => any);
+        getQueryProviders(callback: (error: Error, outcome: string[]) => void);
 
         /**
          * Retrieve a list of index provider plugins
          * @param callback the callback function
          */
-        getIndexProviders(callback: (error: Error, outcome: string[]) => any);
+        getIndexProviders(callback: (error: Error, outcome: string[]) => void);
 
         /**
          * Retrieve a list of storage provider plugins
          * @param callback the callback function
          */
-        getStorageProviders(callback: (error: Error, outcome: string[]) => any);
-
-        /**
-         * Obtain information about the DICOM Storage service.
-         * @param callback the callback function
-         */
-        getStorageServiceStatus(callback: (error: Error, outcome: ServiceStatus) => any);
-
-        /**
-         * Start the DICOM Storage service.
-         * @param callback the callback function
-         */
-        startStorageService(callback: (error: Error) => any);
-
-        /**
-         * Stop the DICOM Storage service.
-         * @param callback the callback function
-         */
-        stopStorageService(callback: (error: Error) => any);
-
-        /**
-         * Obtain information about the DICOM Query/Retrieve service.
-         * @param callback the callback function
-         */
-        getQueryRetrieveServiceStatus(callback: (error: Error, outcome: ServiceStatus) => any);
-
-        /**
-         * Start the DICOM Query/Retrieve service.
-         * @param callback the callback function
-         */
-        startQueryRetrieveService(callback: (error: Error) => any);
-
-        /**
-         * Stop the DICOM Query/Retrieve service.
-         * @param callback the callback function
-         */
-        stopQueryRetrieveService(callback: (error: Error) => any);
+        getStorageProviders(callback: (error: Error, outcome: string[]) => void);
 
         /**
          * Manually log in to Dicoogle using the given credentials.
@@ -303,13 +274,13 @@ declare module "dicoogle-client" {
          * @param callback the callback function,
          *        providing the authentication token and other information
          */
-        login(username: string, password: password, callback?: (error: Error, outcome: LoginOutcome) => any);
+        login(username: string, password: password, callback?: (error: Error, outcome: LoginOutcome) => void);
 
         /**
          * Log out from the server.
          * @param callback the callback function
          */
-        logout(callback?: (error: Error) => any);
+        logout(callback?: (error: Error) => void);
 
         /**
          * Perform a generic request to Dicoogle's services. Users of this method can
@@ -319,7 +290,7 @@ declare module "dicoogle-client" {
          *            to Dicoogle's base URL. There should be no leading slash ('/').
          * @param callback the callback function
          */
-        request(method: string, uri: string | string[], callback: (error: Error, outcome: any) => any);
+        request(method: string, uri: string | string[], callback: (error: Error, outcome: any) => void);
 
         /**
          * Perform a generic request to Dicoogle's services. Users of this method can
@@ -330,7 +301,7 @@ declare module "dicoogle-client" {
          * @param options an object of options to be passed as query strings
          * @param callback the callback function
          */
-        request(method: string, uri: string | string[], options: { [attribute: string]: any }, callback: (error: Error, outcome: any) => any);
+        request(method: string, uri: string | string[], options: { [attribute: string]: any }, callback: (error: Error, outcome: any) => void);
 
         /**
          * Request a new indexation task over a given URI. The operation is recursive,
@@ -339,7 +310,7 @@ declare module "dicoogle-client" {
          * @param uri a URI or array of URIs representing the root resource of the files to be indexed
          * @param callback the function to call when the task is successfully issued
          */
-        index(uri: string, callback: (error: Error) => any);
+        index(uri: string, callback: (error: Error) => void);
         /**
          * Request a new indexation task over a given URI. The operation is recursive,
          * indexing anything in the URI's endpoint. The callback will be called after
@@ -348,14 +319,14 @@ declare module "dicoogle-client" {
          * @param provider a provider or array of provider names in which the indexation will carry out, all by default
          * @param callback the function to call when the task is successfully issued
          */
-        index(uri: string, provider: string | string[], callback: (error: Error) => any);
+        index(uri: string, provider: string | string[], callback: (error: Error) => void);
 
         /**
          * Request that the file at the given URI is unindexed in all indexers. The operation, unlike index(), is not recursive and will not unindex sub-entries.
          * @param uri a URI or array of URIs representing the files to be unindexed
          * @param callback the function to call on completion
          */
-        unindex(uri: string, callback: (error: Error) => any);
+        unindex(uri: string, callback: (error: Error) => void);
 
         /**
          * Request that the file at the given URI is unindexed to a specific set of indexers. The operation, unlike index(), is not recursive and will not unindex sub-entries.
@@ -363,47 +334,47 @@ declare module "dicoogle-client" {
          * @param provider a provider or array of provider names in which the unindexation will carry out, all by default
          * @param callback the function to call on completion
          */
-        unindex(uri: string, provider: string | string[], callback: (error: Error) => any);
+        unindex(uri: string, provider: string | string[], callback: (error: Error) => void);
 
         /** Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
          * Indices will not be updated, hence the files should be unindexed manually if so is intended.
          * @param uri a URI or array of URIs representing the files to be removed
          * @param  callback the function to call on completion
          */
-        remove(uri: string, callback: (error: Error) => any);
+        remove(uri: string, callback: (error: Error) => void);
 
         /** Retrieve the running Dicoogle version.
          * @param {function(error:any, {version:string})} callback the callback function
          */
-        getVersion(callback: (error: Error, outcome: { version: string }) => any);
+        getVersion(callback: (error: Error, outcome: { version: string }) => void);
 
         /** Retrieve the Dicoogle server's log text.
          * @param callback the callback function
          */
-        getRawLog(callback: (error: Error, text: string) => any);
+        getRawLog(callback: (error: Error, text: string) => void);
 
         /** Get all of the current Indexer settings.
          * @param callback the callback function
          */
-        getIndexerSettings(callback: (error: Error, outcome: IndexerSettings) => any);
+        getIndexerSettings(callback: (error: Error, outcome: IndexerSettings) => void);
 
         /** Set a particular Indexer setting. A valid field and value pair is required.
          * @param field a particular field to set
          * @param value the value to assign to the field
          * @param callback the callback function
          */
-        setIndexerSettings(field: string, value: any, callback: (error: Error) => any);
+        setIndexerSettings(field: string, value: any, callback: (error: Error) => void);
 
         /** Set a group of indexer settings. The given object should contain valid field-value pairs.
          * @param fields a dictionary containing the fields and values as key-value pairs.
          * @param callback the callback function
          */
-        setIndexerSettings(fields: IndexerSettings, callback: (error: Error) => any);
+        setIndexerSettings(fields: IndexerSettings, callback: (error: Error) => void);
 
         /** Get the list of current transfer syntax settings available.
          * @param callback the callback function
          */
-        getTransferSyntaxSettings(callback: (error: Error, outcome: TransferSyntax[]) => any);
+        getTransferSyntaxSettings(callback: (error: Error, outcome: TransferSyntax[]) => void);
 
         /** Set (or reset) an option of a particular transfer syntax.
          * @param uid the unique identifier of the transfer syntax
@@ -411,35 +382,35 @@ declare module "dicoogle-client" {
          * @param value whether to set (true) or reset (false) the option
          * @param callback the callback function
          */
-        setTransferSyntaxOption(uid: string, option: string, value: boolean, callback: (error: Error) => any);
+        setTransferSyntaxOption(uid: string, option: string, value: boolean, callback: (error: Error) => void);
 
         /** Retrieve the AE title of the Dicoogle archive.
          * @param callback the callback function
          */
-        getAETitle(callback: (error: Error, aetitle: string) => any);
+        getAETitle(callback: (error: Error, aetitle: string) => void);
 
         /** Redefine the AE title of the Dicoogle archive.
          * @param aetitle a valid AE title for the PACS archive
          * @param callback the callback function
          */
-        setAETitle(aetitle: string, callback: (error: Error) => any);
+        setAETitle(aetitle: string, callback: (error: Error) => void);
 
         /** Get all of the current DICOM Query-Retrieve settings.
          * @param callback the callback function
          */
-        getDicomQuerySettings(callback: (error: Error, outcome: DicomQuerySettings) => any);
+        getDicomQuerySettings(callback: (error: Error, outcome: DicomQuerySettings) => void);
 
         /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
          * @param fields a dictionary containing the fields and values as key-value pairs.
          * @param callback the callback function
          */
-        setDicomQuerySettings(fields: DicomQuerySettings, callback: (error: Error) => any);
+        setDicomQuerySettings(fields: DicomQuerySettings, callback: (error: Error) => void);
 
         /** Retrieve information about currently installed web UI plugins.
          * @param slotId the identifiers of slots to contemplate
          * @param callback the callback function
          */
-        getWebUIPlugins(slotId: string|string[], callback: (error: Error, plugins: WebUIPlugin[]) => any);
+        getWebUIPlugins(slotId: string|string[], callback: (error: Error, plugins: WebUIPlugin[]) => void);
 
         /** Obtain the base URL of all Dicoogle services.
          * This method is synchronous.
@@ -510,21 +481,21 @@ declare module "dicoogle-client" {
          * Obtain information about Dicoogle's running (or terminated) tasks.
          * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
          */
-        list(callback: (Error, TaskInfo[]) => any);
+        list(callback: (Error, TaskInfo[]) => void);
 
         /**
          * Close a terminated task from the list of tasks.
          * @param uid the task's unique ID
          * @param callback the callback function
          */
-        close(uid: string, callback: (Error) => any);
+        close(uid: string, callback: (Error) => void);
 
         /**
          * Request that a task is stopped.
          * @param uid the task's unique ID
          * @param callback the callback function
          */
-        stop(uid: string, callback: (Error) => any);
+        stop(uid: string, callback: (Error) => void);
     }
 
     export interface ServiceConfiguration {
@@ -550,26 +521,26 @@ declare module "dicoogle-client" {
          * Obtain information about this DICOM service.
          * @param {function(error: Error, conf:ServiceStatus)} callback the callback function
          */
-        getStatus(callback: (Error, ServiceStatus[]) => any);
+        getStatus(callback: (Error, ServiceStatus) => void);
 
         /**
          * Define the base configurations of this DICOM service.
          * @param config a set of properties to configure (currently `running`, `autostart` and/or `port`)
          * @param callback the callback function
          */
-        configure(config: ServiceConfiguration, callback: (Error) => any);
+        configure(config: ServiceConfiguration, callback: (Error) => void);
 
         /**
          * Start the DICOM service.
          * @param callback the callback function
          */
-        start(callback: (Error) => any);
+        start(callback: (Error) => void);
 
         /**
          * Start the DICOM service.
          * @param callback the callback function
          */
-        start(callback: (Error) => any);
+        start(callback: (Error) => void);
     }
 
     export interface RemoteStorage {
@@ -585,20 +556,20 @@ declare module "dicoogle-client" {
         /** Retrieve a list of the currently registered remote storage servers.
          * @param callback the callback function
          */
-        getRemoteServers(callback: (Error, storages: RemoteStorage[]) => any);
+        getRemoteServers(callback: (Error, storages: RemoteStorage[]) => void);
 
         /** Add a remote storage server.
          * @param store the remote storage information object
          * @param callback the callback function
          */
-        addRemoteServer(store: RemoteStorage, callback: (Error) => any);
+        addRemoteServer(store: RemoteStorage, callback: (Error) => void);
 
         /** Remove a remote storage server. On success, the second callback argument will be
          * `true` if and only if the remote storage existed before the call.
          * @param store the storage's AE title or the storage object.
          * @param callback the callback function
          */
-        removeRemoteServer(store: string|RemoteStorage, callback: (Error, removed: boolean) => any);
+        removeRemoteServer(store: string|RemoteStorage, callback: (Error, removed: boolean) => void);
     }
 
     /** DICOM Query/Retrieve settings fields
@@ -618,14 +589,14 @@ declare module "dicoogle-client" {
         /** Get all of the current DICOM Query-Retrieve settings.
          * @param callback the callback function
          */
-        getDicomQuerySettings(callback: (Error, outcome: DicomQuerySettings) => any);
+        getDicomQuerySettings(callback: (Error, outcome: DicomQuerySettings) => void);
 
         /** Set a group of DICOM Query/Retrieve settings. The given object should contain
          * valid field-value pairs.
          * @param fields a dictionary containing the fields and values as key-value pairs.
          * @param callback the callback function
          */
-        setDicomQuerySettings(fields: DicomQuerySettings, callback: (Error) => any;
+        setDicomQuerySettings(fields: DicomQuerySettings, callback: (Error) => void;
 
     }
 

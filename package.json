@@ -19,7 +19,7 @@
     "node": ">=4.0.0"
   },
   "main": "./lib/index",
-  "typings": "./typings/dicoogle-client.d.ts",
+  "types": "./types/dicoogle-client.d.ts",
   "browserify": {
     "transforms": [
       "envify"
