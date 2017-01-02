@@ -142,15 +142,18 @@ declare module "dicoogle-client" {
         port: number
     }
 
-    export interface LoginOutcome {
+    export interface UserInfo {
         /** The user's unique name */
         user: string
-        /** The current session token */
-        token: string
         /** The current user's assigned roles */
         roles: string[]
         /** Whether this user is an administrator */
         admin: boolean
+    }
+
+    export interface LoginOutcome extends UserInfo {
+        /** The current session token */
+        token: string
     }
 
     /** Indexer settings fields
@@ -291,6 +294,13 @@ declare module "dicoogle-client" {
          *        providing the authentication token and other information
          */
         login(username: string, password: password, callback?: (error: Error, outcome: LoginOutcome) => void);
+
+        /**
+         * Restore a living Dicoogle session identified by the given token.
+         * @param token the same user's token of a previous session
+         * @param callback the callback function providing user information
+         */
+        restoreSession(token: string, callback: (error: Error, outcome: UserInfo) => void);
 
         /**
          * Log out from the server.
@@ -447,9 +457,10 @@ declare module "dicoogle-client" {
         getRoles(): string[];
 
         /**
-         * Retrieve the authentication token. This token is ephemeral and may expire after some time.
+         * [EXPERTS] Retrieve the authentication token. This token is ephemeral and may expire after some time.
          * This method is synchronous.
-         * @returns the user's current authentication token
+         * Use it only when you know what you are doing.
+         * @returns {string} the user's current authentication token
          */
         getToken(): string;
 
@@ -461,11 +472,19 @@ declare module "dicoogle-client" {
         isAuthenticated(): boolean;
 
         /**
-         * Assign the module's session token, used only for restoring previous (but recent) sessions.
-         * This method is synchronous.
+         * [EXPERTS] Assign the module's session token internally. This method is synchronous.
+         * Use it only when you know what you are doing. When restoring a previous (but still
+         * living) session, please prefer [@link restoreSession] instead.
+         * 
          * @param token the same user's token of a previous session
          */
         setToken(token: string);
+
+        /**
+         * [EXPERTS] Clear this object's user session information. This method is synchronous.
+         * Use it only when you know what you are doing.
+         */
+        reset();
 
         tasks: Tasks;
 
@@ -497,21 +516,21 @@ declare module "dicoogle-client" {
          * Obtain information about Dicoogle's running (or terminated) tasks.
          * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
          */
-        list(callback: (Error, TaskInfo[]) => void);
+        list(callback: (error: Error, tasks: TaskInfo[]) => void);
 
         /**
          * Close a terminated task from the list of tasks.
          * @param uid the task's unique ID
          * @param callback the callback function
          */
-        close(uid: string, callback: (Error) => void);
+        close(uid: string, callback: (error: Error) => void);
 
         /**
          * Request that a task is stopped.
          * @param uid the task's unique ID
          * @param callback the callback function
          */
-        stop(uid: string, callback: (Error) => void);
+        stop(uid: string, callback: (error: Error) => void);
     }
 
     export interface ServiceConfiguration {
@@ -537,14 +556,14 @@ declare module "dicoogle-client" {
          * Obtain information about this DICOM service.
          * @param {function(error: Error, conf:ServiceStatus)} callback the callback function
          */
-        getStatus(callback: (Error, ServiceStatus) => void);
+        getStatus(callback: (error: Error, ServiceStatus) => void);
 
         /**
          * Define the base configurations of this DICOM service.
          * @param config a set of properties to configure (currently `running`, `autostart` and/or `port`)
          * @param callback the callback function
          */
-        configure(config: ServiceConfiguration, callback: (Error) => void);
+        configure(config: ServiceConfiguration, callback: (error: Error) => void);
 
         /**
          * Start the DICOM service.
@@ -567,7 +586,7 @@ declare module "dicoogle-client" {
         public?: boolean;
     }
 
-    export interface StorageService : BaseService {
+    export interface StorageService extends BaseService {
 
         /** Retrieve a list of the currently registered remote storage servers.
          * @param callback the callback function
@@ -600,19 +619,18 @@ declare module "dicoogle-client" {
         responseTimeout?: number
     }
 
-    export interface QueryRetrieveService : BaseService {
+    export interface QueryRetrieveService extends BaseService {
 
         /** Get all of the current DICOM Query-Retrieve settings.
          * @param callback the callback function
          */
-        getDicomQuerySettings(callback: (Error, outcome: DicomQuerySettings) => void);
+        getDicomQuerySettings(callback: (error: Error, outcome: DicomQuerySettings) => void);
 
         /** Set a group of DICOM Query/Retrieve settings. The given object should contain
          * valid field-value pairs.
          * @param fields a dictionary containing the fields and values as key-value pairs.
          * @param callback the callback function
          */
-        setDicomQuerySettings(fields: DicomQuerySettings, callback: (Error) => void;
-
+        setDicomQuerySettings(fields: DicomQuerySettings, callback: (error: Error) => void);
     }
-
+}

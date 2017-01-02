@@ -50,12 +50,32 @@ export default class Socket {
             });
     }
 
+    restore(token, callback) {
+        this.get(Endpoints.LOGIN)
+            .set('Authorization', token)
+            .end((err, res) => {
+                if (err) {
+                    if (typeof callback === 'function') {
+                        callback(err);
+                    }
+                    return;
+                }
+                const data = res.body;
+                this._token = token;
+                this._username = data.user;
+                this._roles = data.roles;
+                if (typeof callback === 'function') {
+                    callback(null, data);
+                }
+            });
+    }
+
     logout(callback) {
-        this.request('POST', Endpoints.LOGOUT)
+        this.post(Endpoints.LOGOUT)
             .set('Authorization', this._token)
             .end(err => {
                 if (!err) {
-                    this._reset();
+                    this.reset();
                     if (typeof callback === 'function') {
                         callback();
                     }
@@ -72,10 +92,9 @@ export default class Socket {
      */
     _logout_fallback(callback) {
         this.request('GET', Endpoints.LOGOUT)
-            .set('Authorization', this._token)
             .end(err => {
                 if (!err) {
-                    this._reset();
+                    this.reset();
                 }
                 if (typeof callback === 'function') {
                     callback(err);
@@ -133,8 +152,7 @@ export default class Socket {
         return this._token !== null;
     }
 
-    /** @private */
-    _reset() {
+    reset() {
         this._username = null;
         this._token = null;
         this._roles = null;

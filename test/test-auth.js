@@ -89,6 +89,19 @@ describe('Dicoogle Authentication', function() {
       });
     });
 
+    it("clear and restore previous session ; should give user name, admin and roles", function(done) {
+        var token = Dicoogle.getToken();
+        Dicoogle.reset();
+
+        Dicoogle.restoreSession(token, function(error, data) {
+          assert.equal(error, null, 'should give no error');
+          assert.strictEqual(data.user, 'admin', 'username should be ok');
+          assert.isArray(data.roles, 'roles should be provided');
+          assert.isBoolean(data.admin, 'admin flag expected');
+          done();
+        });
+    });
+
     it("Stable #logout() ; should give no error and clear Dicoogle credentials", function(done) {
       Dicoogle.logout(function(error) {
         assert.equal(error, null, 'should give no error');

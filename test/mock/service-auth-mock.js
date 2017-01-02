@@ -36,6 +36,21 @@ module.exports = function createDicoogleMock() {
             .reply(403, {
                 error: 'Invalid credentials'
             });
+        
+        nock(BASE_URL) // mock get session user information
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+            .get('/login')
+            .query(true)
+            .reply(200, {
+                user: 'admin',
+                admin: true,
+                roles: ['Healthcare', 'Research']
+            });
+        nock(BASE_URL) // mock get session user information
+            .matchHeader('Authorization', null)
+            .get('/login')
+            .query(true)
+            .reply(401);
 
         nock(BASE_URL) // mock get query providers (with required authorization)
             .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
@@ -56,12 +71,14 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL) // mock legacy logout service (used GET in < 2.4.0)
             .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
             .get('/logout')
+            .twice()
             .query(true)
             .reply(200);
 
         nock(BASE_URL) // mock latest behavior of POST logout
             .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
             .post('/logout')
+            .twice()
             .query(true)
             .reply(200);
 

@@ -336,8 +336,9 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   };
 
   /**
-   * Retrieve the authentication token. This token is ephemeral and may expire after some time.
+   * [EXPERTS] Retrieve the authentication token. This token is ephemeral and may expire after some time.
    * This method is synchronous.
+   * Use it only when you know what you are doing.
    * @returns {string} the user's current authentication token
    */
   DicoogleAccess.prototype.getToken = function Dicoogle_getToken() {
@@ -345,14 +346,24 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   };
 
   /**
-   * Assign the module's session token, used only for restoring previous (but recent) sessions.
-   * This method is synchronous.
+   * [EXPERTS] Assign the module's session token internally. This method is synchronous.
+   * Use it only when you know what you are doing. When restoring a previous (but still
+   * living) session, please prefer [@link restoreSession] instead.
+   * 
    * @param {string} token the same user's token of a previous session
    */
   DicoogleAccess.prototype.setToken = function Dicoogle_setToken(token) {
     if (typeof token === 'string') {
-        socket_.setToken(token);
+      socket_.setToken(token);
     }
+  };
+
+  /**
+   * [EXPERTS] Clear this object's user session information. This method is synchronous.
+   * Use it only when you know what you are doing.
+   */
+  DicoogleAccess.prototype.reset = function Dicoogle_reset() {
+    socket_.reset();
   };
 
   /**
@@ -384,11 +395,21 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * Manually log in to Dicoogle using the given credentials.
    * @param {string} username the unique user name for the client
    * @param {password} password the user's password for authentication
-   * @param {function(error:any, {token:string, user:string, roles:string[], admin:boolean})} [callback] the callback function,
-   *        providing the authentication token and other information
+   * @param {function(error:any, {token:string, user:string, roles:string[], admin:boolean})} [callback] the
+   *        callback function providing the authentication token and user information
    */
   DicoogleAccess.prototype.login = function Dicoogle_login(username, password, callback) {
     socket_.login(username, password, callback);
+  };
+
+  /**
+   * Restore a living Dicoogle session identified by the given token.
+   * @param {string} token the same user's token of a previous session
+   * @param {function(error:any, {user:string, roles:string[], admin:boolean})} callback the callback function
+   *        providing user information
+   */
+  DicoogleAccess.prototype.restoreSession = function Dicoogle_restoreSession(token, callback) {
+    socket_.restore(token, callback);
   };
 
   /**
