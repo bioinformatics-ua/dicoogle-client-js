@@ -500,7 +500,7 @@ module.exports = function createDicoogleMock() {
             .query({ effort: /\d+(\.\d+)?/ })
             .reply(200)
             .post('/management/settings/index/thumbnail')
-            .query({ thumbnail: /(|true|false)/i })
+            .query({ saveThumbnail: /(|true|false)/i })
             .reply(200)
             .post('/management/settings/index/thumbnailSize')
             .query({ thumbnailSize: /\d+/ })

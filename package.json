@@ -29,7 +29,7 @@
     "dist/",
     "bin/",
     "lib/",
-    "typings/"
+    "types/"
   ],
   "bin": {
     "dicoogle-query": "bin/dicoogle-query-cli.js"

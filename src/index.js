@@ -27,7 +27,7 @@ const IndexerSettings = Object.freeze({
     ZIP: 'zip',
     /** The percentage of indexation effort (from 0 to 100). type: number */
     EFFORT: 'effort',
-    /** Whether to index thumbnails. type: boolean */
+    /** Whether to save and index thumbnails. type: boolean */
     INDEX_THUMBNAIL: 'thumbnail',
     /** The size of generated thumbnails in pixels. type: number */
     THUMBNAIL_SIZE: 'thumbnailSize',
@@ -481,7 +481,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    */
   DicoogleAccess.prototype.setIndexerSettings = function Dicoogle_setIndexerSettings(fields, value, callback) {
     if (typeof fields === 'string') {
-        const field = fields;
+        const field = fields === 'thumbnail' ? 'saveThumbnail' : fields;
         fields = {};
         fields[field] = value;
     } else {
@@ -490,6 +490,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
     /* istanbul ignore next */
     if (process.env.NODE_ENV !== 'production') {
         const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
+        values.push('saveThumbnail')
         for (const field in fields) {
             if (values.indexOf(field) === -1) {
                 /* eslint-disable no-console */
