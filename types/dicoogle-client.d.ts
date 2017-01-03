@@ -40,11 +40,6 @@ declare module "dicoogle-client" {
          * _Note:_ Available since Dicoogle 2.4.0
          */
         offset?: number;
-        /**
-         * Return the results as a DICOM Object Model tree (Patients -> Studies -> Series -> Instances), false by default
-         * @deprecated use method #searchDIM instead
-         */
-        dim?: boolean
     }
 
     export interface ExportOptions {
