@@ -317,9 +317,9 @@ module.exports = function createDicoogleMock() {
                 fields: JSON.stringify(['Modality', 'PatientName']),
                 keyword: true
             })
-            .reply(200, {
+            .reply(200, JSON.stringify({ // legacy behaviour, must pass
                 uid: "111111-132456-1234567"
-            })
+            }))
             .post('/exportFile')
             .query({
                 query: 'Modality:MR',

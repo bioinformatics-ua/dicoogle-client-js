@@ -202,7 +202,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
                 callback(error);
                 return;
             }
-            const outcome = resp.body;
+            const outcome = JSON.parse(resp.text);
             if (!outcome || typeof outcome.uid !== 'string') {
                 callback(new Error("invalid output from server"));
             } else {
