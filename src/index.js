@@ -487,11 +487,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
     } else {
         callback = value;
     }
+    fields.saveThumbnail = fields.thumbnail;
     /* istanbul ignore next */
     if (process.env.NODE_ENV !== 'production') {
         const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
         values.push('saveThumbnail')
-        fields.saveThumbnail = fields.thumbnail;
         for (let field in fields) {
             if (values.indexOf(field) === -1) {
                 /* eslint-disable no-console */
