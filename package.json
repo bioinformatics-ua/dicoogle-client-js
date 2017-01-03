@@ -70,7 +70,7 @@
     "check": "gulp lint",
     "build": "gulp",
     "prepublish": "gulp",
-    "document": "typedoc --out doc/ --includeDeclarations --target ES6 --name 'Dicoogle JavaScript Client' --readme README.md types/dicoogle-client.d.ts",
+    "document": "typedoc --out docs/ --includeDeclarations --target ES6 --name 'Dicoogle JavaScript Client' --readme README.md types/dicoogle-client.d.ts",
     "test": "cross-env NODE_ENV=test nyc mocha",
     "cover": "cross-env NODE_ENV=test nyc report --reporter=lcov",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
