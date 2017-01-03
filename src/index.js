@@ -560,7 +560,6 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {?string} method the kind of HTTP method to make, defaults to "GET"
    * @param {string|string[]} uri a URI or array of resource sequences to the service, relative
    *                          to Dicoogle's base URL. There should be no leading slash ('/').
-   * @param {object} [options] an object of options to be passed as query strings
    * @returns {SuperAgent} a superagent request object
    */
   DicoogleAccess.prototype.request = function Dicoogle_request(method = 'GET', uri) {
