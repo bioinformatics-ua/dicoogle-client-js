@@ -5,6 +5,7 @@ import Endpoints from './endpoints';
 import Socket from './socket';
 import {StorageService, QueryRetrieveService} from './service';
 import Tasks from './tasks';
+import {isDicomUUID} from './util';
 
 // private variables of the module
 /**@private
@@ -569,6 +570,37 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    */
   DicoogleAccess.prototype.getBase = function Dicoogle_getBase() {
     return socket_.getBase();
+  }
+
+  /** Obtain a URL pointing to an item's thumbnail.
+   * This function is synchronous.
+   * 
+   * @param {string} id a SOPInstanceUID or URI of the item
+   * @param {number} [frame] the frame number, if applicable
+   * @returns {string} the full URL to the thumbnail
+   */
+  DicoogleAccess.prototype.getThumbnailUrl = function Dicoogle_getThumbnailUrl(id, frame) {
+    let qs = isDicomUUID(id) ? `SOPInstanceUID=${id}` : `uri=${id}`;
+    if (typeof frame === 'number') {
+        qs += '&frame=' + frame
+    }
+    return `${socket_.getBase()}/dic2png?thumbnail=true&${qs}`;
+  }
+
+  /** Obtain a URL pointing to an item's quick preview of the image.
+   * This function is synchronous.
+   * 
+   * @param {string} id a SOPInstanceUID or URI of the item
+   * @param {number} [frame] the frame number, if applicable
+   * @returns {string} the full URL to the preview
+   */
+  DicoogleAccess.prototype.getPreviewUrl = function Dicoogle_getPreviewUrl(id, frame) {
+    let qs = isDicomUUID(id) ? `SOPInstanceUID=${id}` : `uri=${id}`;
+    if (typeof frame === 'number') {
+        qs += '&frame=' + frame
+    }
+    return `${socket_.getBase()}/dic2png?${qs}`;
+
   }
 
   /** @private Adapter to legacy service request API.

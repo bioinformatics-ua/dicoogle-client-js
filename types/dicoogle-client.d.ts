@@ -442,6 +442,24 @@ declare module "dicoogle-client" {
          */
         getBase(): string;
 
+        /** Obtain a URL pointing to an item's quick preview of the image.
+         * This function is synchronous.
+         * 
+         * @param id a SOPInstanceUID or URI of the item
+         * @param frame the frame number, if applicable
+         * @returns the full URL to the preview
+         */
+        getPreviewUrl(id: string, frame?: number): string;
+
+        /** Obtain a URL pointing to an item's thumbnail.
+         * This function is synchronous.
+         * 
+         * @param id a SOPInstanceUID or URI of the item
+         * @param frame the frame number, if applicable
+         * @returns the full URL to the thumbnail
+         */
+        getThumbnailUrl(id: string, frame?: number): string;
+        
         /**
          * Get the user name of the currently authenticated user.
          * @returns the unique user name
