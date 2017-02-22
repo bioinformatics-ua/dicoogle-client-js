@@ -64,20 +64,33 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<p><a href="https://badge.fury.io/js/dicoogle-client"><img src="https://badge.fury.io/js/dicoogle-client.svg" alt="npm version"></a> <a href="https://travis-ci.org/bioinformatics-ua/dicoogle-client-js"><img src="https://travis-ci.org/bioinformatics-ua/dicoogle-client-js.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/bioinformatics-ua/dicoogle-client-js?branch=master"><img src="https://coveralls.io/repos/github/bioinformatics-ua/dicoogle-client-js/badge.svg?branch=master" alt="Coverage Status"></a></p>
-				<h1 id="dicoogle-client">Dicoogle Client</h1>
-				<p>This is a web service client API to <a href="http://www.dicoogle.com">Dicoogle</a>, the open-source PACS archive, for use in JavaScript applications.
-				This library is compatible with browser-based JavaScript and Node.js. A CLI application for searching medical images in Dicoogle is also included (<code>dicoogle-query</code>).</p>
-				<h3 id="using-the-javascript-api">Using the JavaScript API</h3>
+				<p><a href="https://badge.fury.io/js/dicoogle-client"><img src="https://badge.fury.io/js/dicoogle-client.svg" alt="npm version"></a></p>
+				<p><code>dicoogle-client</code> is a client API to the web services provided by <a href="http://www.dicoogle.com">Dicoogle</a>, the open-source PACS archive, for use in JavaScript applications.</p>
+				<h2 id="top-level-api">Top-level API</h2>
+				<p>Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 2+).</p>
+				<ul>
+					<li><a href="modules/_types_dicoogle_client_d_.dicoogleclient.html"><code>DicoogleClient</code></a> is a function for retrieving a Dicoogle access object.</li>
+					<li><a href="interfaces/_types_dicoogle_client_d_.dicoogleclient.dicoogleaccess.html"><code>DicoogleAccess</code></a> is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the <a href="interfaces/_types_dicoogle_client_d_.dicoogleclient.dicoogleaccess.html"><code>DicoogleAccess</code></a> documentation page for a list of all methods and namespaces within.</li>
+				</ul>
+				<h2 id="installing">Installing</h2>
+				<h3 id="in-node-js-or-commonjs">In Node.js or CommonJS</h3>
 				<p>In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install &quot;dicoogle-client&quot; with <code>npm</code> and <code>require</code> the &quot;dicoogle-client&quot; module.</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">"dicoogle-client"</span>);
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dicoogle-client'</span>);
 </code></pre>
-				<p>When not using Node.js or a bundler, simply include the &quot;dist/dicoogle-client.min.js&quot; file as a script, thus exposing <code>DicoogleClient</code> as a global.</p>
+				<p>When using TypeScript:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dicoogle-client'</span>);
+</code></pre>
+				<h3 id="on-the-browser-no-module-system">On the browser, no module system</h3>
+				<p>When <em>not</em> using Node.js or a bundler, simply include the &quot;dist/dicoogle-client.min.js&quot; file as a script, thus exposing <code>DicoogleClient</code> as a global.</p>
 				<pre><code class="lang-HTML"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'/path/to/my/libs/dicoogle-client.min.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
-				<p>Afterwards, invoke the <code>DicoogleClient</code> module with the Dicoogle server&#39;s endpoint to obtain an access object. The object is a singleton that can be used multiple times.
+				<h3 id="in-es2015">In ES2015</h3>
+				<p>This is a CommonJS module, and not compatible with ES2015 modules.
+				When using ES2015 modules or TypeScript with ES2015, you should import the default function using <code>require</code>, or include an interoperable require mechanism, such as using <a href="https://babeljs.io/">Babel</a>.</p>
+				<h2 id="basic-usage">Basic Usage</h2>
+				<p>Once <code>DicoogleClient</code> is fetched, invoke it as a function with the Dicoogle server&#39;s endpoint to obtain an access object. The object is a singleton that can be used multiple times.
 				Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.</p>
-				<pre><code class="lang-JavaScript"><span class="hljs-keyword">var</span> Dicoogle = DicoogleClient(<span class="hljs-string">"localhost:8080"</span>);
+				<pre><code class="lang-JavaScript"><span class="hljs-keyword">const</span> Dicoogle = DicoogleClient(<span class="hljs-string">"localhost:8080"</span>);
 
 <span class="hljs-comment">// if required, login to the system before using</span>
 Dicoogle.login(<span class="hljs-string">'admin'</span>, <span class="hljs-string">'mysecretpassword'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error, outcome</span>) </span>{
@@ -87,55 +100,23 @@ Dicoogle.login(<span class="hljs-string">'admin'</span>, <span class="hljs-strin
   }
 
   <span class="hljs-comment">// Ok! Start using Dicoogle!</span>
-  Dicoogle.search(<span class="hljs-string">"PatientName:Pinho^Eduardo"</span>, {<span class="hljs-attr">provider</span>: <span class="hljs-string">'lucene'</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error, result</span>) </span>{
+  Dicoogle.search(<span class="hljs-string">"PatientName:Pinho^Eduardo"</span>, {<span class="hljs-attr">provider</span>: <span class="hljs-string">'lucene'</span>}, (error, outcome) =&gt; {
     <span class="hljs-keyword">if</span> (error) {
       <span class="hljs-built_in">console</span>.error(error);
       <span class="hljs-keyword">return</span>;
     }
-    <span class="hljs-comment">// use result</span>
+    <span class="hljs-comment">// use outcome</span>
+    <span class="hljs-keyword">const</span> {elapsedTime, results} = outcome;
+    <span class="hljs-comment">// ...</span>
   });
 });
 </code></pre>
-				<p>At the moment, the documentation of the API can be read in the project&#39;s wiki (under <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/wiki/Documentation">Documentation</a>) or directly in the <a href="src/index.js">source file&#39;s</a> documented functions. Typescript <a href="typings/dicoogle-client.d.ts">typings</a> are also available.</p>
+				<h2 id="examples">Examples</h2>
 				<p>The repository includes two examples of dicoogle-client for simple querying:</p>
 				<ul>
 					<li>&quot;bin/dicoogle-query-cli.js&quot; is a complete stand-alone Node.js application for querying Dicoogle. This is the source code of the <code>dicoogle-query</code> executable.</li>
 					<li>&quot;example/app.html&quot; is a web page demonstrating simple querying.</li>
 				</ul>
-				<h3 id="using-the-cli-client">Using the CLI client</h3>
-				<p>Install this package globally (<code>npm install -g dicoogle-client</code>), then use <code>dicoogle-query</code>.</p>
-				<p><strong>Usage:</strong> <code>dicoogle-query [OPTIONS] QUERY</code></p>
-				<p><strong>Options:</strong></p>
-				<ul>
-					<li><code>-h</code>, <code>--help</code> : show this help</li>
-					<li><code>-k</code>, <code>--keyword</code> : forcefully perform a keyword-based query</li>
-					<li><code>-F</code>, <code>--free-text</code> : forcefully perform a free text query</li>
-					<li><code>-T</code>, <code>--tty</code> : force terminal (TTY) output instead of minified JSON</li>
-					<li><code>-p</code>, <code>--provider &lt;name&gt;</code> : include this query provider</li>
-					<li><code>-s</code>, <code>--server &lt;url&gt;</code> : set the Dicoogle server&#39;s base endpoint</li>
-					<li><code>-D</code>, <code>--debug</code> : output additional information</li>
-				</ul>
-				<p><strong>Environment variables:</strong></p>
-				<ul>
-					<li><code>DICOOGLE_USERNAME</code> : The client&#39;s unique user name.</li>
-					<li><code>DICOOGLE_PASSWORD</code> : The user&#39;s password.</li>
-				</ul>
-				<p><strong>Example:</strong> <code>dicoogle-query -p lucene -s &quot;http://demo.dicoogle.com&quot; &quot;Modality:MR&quot;</code></p>
-				<h3 id="further-notice">Further Notice</h3>
-				<p>This library is compatible with versions of Dicoogle in the range <code>&gt;=2.0.0 &lt;2.5.0</code>. This client wrapper may be updated as new services emerge.</p>
-				<h3 id="license">License</h3>
-				<p>Copyright (C) 2016  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - <a href="http://bioinformatics.ua.pt/">http://bioinformatics.ua.pt/</a></p>
-				<p>This software is part of Dicoogle.</p>
-				<p>Dicoogle/dicoogle-client-js is free software: you can redistribute it and/or modify
-					it under the terms of the GNU General Public License as published by
-					the Free Software Foundation, either version 3 of the License, or
-				(at your option) any later version.</p>
-				<p>Dicoogle/dicoogle-client-js is distributed in the hope that it will be useful,
-					but WITHOUT ANY WARRANTY; without even the implied warranty of
-					MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-				GNU General Public License for more details.</p>
-				<p>You should have received a copy of the GNU General Public License
-				along with Dicoogle.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -154,7 +135,28 @@ Dicoogle.login(<span class="hljs-string">'admin'</span>, <span class="hljs-strin
 						<span>Externals</span>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_fs_extra_index_d_.html">"node_<wbr>modules/@types/fs-<wbr>extra/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_handlebars_index_d_.html">"node_<wbr>modules/@types/handlebars/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_highlight_js_index_d_.html">"node_<wbr>modules/@types/highlight.js/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_lodash_index_d_.html">"node_<wbr>modules/@types/lodash/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_marked_index_d_.html">"node_<wbr>modules/@types/marked/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_minimatch_index_d_.html">"node_<wbr>modules/@types/minimatch/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_node_modules__types_node_index_d_.html">"node_<wbr>modules/@types/node/index.d"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_modules__types_shelljs_index_d_.html">"node_<wbr>modules/@types/shelljs/index.d"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_node_modules__types_superagent_index_d_.html">"node_<wbr>modules/@types/superagent/index.d"</a>
