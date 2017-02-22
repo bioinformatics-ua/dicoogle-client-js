@@ -1,13 +1,13 @@
 /* eslint-env mocha */
-var assert = require('chai').assert;
-var createMockedDicoogle = require('./mock/service-mock');
-var dicoogleClient = require('../src');
+const assert = require('chai').assert;
+const createMockedDicoogle = require('./mock/service-mock');
+const dicoogleClient = require('../src');
 
-var DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '2.4.1-TEST';
 
 function assertDicomUUID(uid) {
     assert.strictEqual(typeof uid, 'string', "UUID must be a string");
-    assert(uid.match(/(\d+\.?)*/), "'" + uid + "' must be a valid DICOM UUID");
+    assert(uid.match(/^\d(\.\d+)*$/) !== null, "'" + uid + "' must be a valid DICOM UUID");
 }
 
 function createCheckVersion(done) {
@@ -23,6 +23,44 @@ describe('Dicoogle Client (under Node.js)', function() {
   beforeEach(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
+  });
+
+  describe('#getThumbnailUrl()', function() {
+    it('works for URIs', function() {
+        const urls = [
+            'http://127.0.0.1:8080/dic2png?thumbnail=true&uri=file:/dataset1/0.dcm',
+            'http://127.0.0.1:8080/dic2png?thumbnail=true&uri=file:/dataset1/1.dcm&frame=0'
+        ];
+        assert.strictEqual(Dicoogle.getThumbnailUrl('file:/dataset1/0.dcm'), urls[0]);
+        assert.strictEqual(Dicoogle.getThumbnailUrl('file:/dataset1/1.dcm', 0), urls[1]);
+    })
+    it('works for UIDs', function() {
+        const urls = [
+            'http://127.0.0.1:8080/dic2png?thumbnail=true&SOPInstanceUID=09.83.4124.3777.12345',
+            'http://127.0.0.1:8080/dic2png?thumbnail=true&SOPInstanceUID=0.1.573920.7333.54321&frame=4'
+        ];
+        assert.strictEqual(Dicoogle.getThumbnailUrl('09.83.4124.3777.12345'), urls[0]);
+        assert.strictEqual(Dicoogle.getThumbnailUrl('0.1.573920.7333.54321', 4), urls[1]);
+    })
+  });
+
+  describe('#getPreviewUrl()', function() {
+    it('works for URIs', function() {
+        const urls = [
+            'http://127.0.0.1:8080/dic2png?uri=file:/dataset1/0.dcm',
+            'http://127.0.0.1:8080/dic2png?uri=file:/dataset1/1.dcm&frame=0'
+        ];
+        assert.strictEqual(Dicoogle.getPreviewUrl('file:/dataset1/0.dcm'), urls[0]);
+        assert.strictEqual(Dicoogle.getPreviewUrl('file:/dataset1/1.dcm', 0), urls[1]);
+    })
+    it('works for UIDs', function() {
+        const urls = [
+            'http://127.0.0.1:8080/dic2png?SOPInstanceUID=09.83.4124.3777.12345',
+            'http://127.0.0.1:8080/dic2png?SOPInstanceUID=0.1.573920.7333.54321&frame=4'
+        ];
+        assert.strictEqual(Dicoogle.getPreviewUrl('09.83.4124.3777.12345'), urls[0]);
+        assert.strictEqual(Dicoogle.getPreviewUrl('0.1.573920.7333.54321', 4), urls[1]);
+    })
   });
 
   describe('#getVersion()', function() {
@@ -705,6 +743,5 @@ describe('Dicoogle Client (under Node.js)', function() {
           });
       });
   })
-
 });
 

@@ -5,25 +5,18 @@
 This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 This library is compatible with browser-based JavaScript and Node.js. A CLI application for searching medical images in Dicoogle is also included (`dicoogle-query`).
 
-### Using the JavaScript API
+## Using the JavaScript API
 
-In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
+The full API is documented [here](https://bioinformatics-ua.github.io/dicoogle-client-js).
+Documentation was built from our Typescript definitions, which are also available (see [dicoogle-client.d.ts](types/dicoogle-client.d.ts)).
+
+### Quick Start
 
 ```javascript
-var DicoogleClient = require("dicoogle-client");
-```
+const DicoogleClient = require("dicoogle-client");
 
-When not using Node.js or a bundler, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
-
-```HTML
-<script src='/path/to/my/libs/dicoogle-client.min.js'></script>
-```
-
-Afterwards, invoke the `DicoogleClient` module with the Dicoogle server's endpoint to obtain an access object. The object is a singleton that can be used multiple times.
-Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.
-
-```JavaScript
-var Dicoogle = DicoogleClient("localhost:8080");
+// obtain a dicoogle access object
+const Dicoogle = DicoogleClient("localhost:8080");
 
 // if required, login to the system before using
 Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
@@ -33,24 +26,19 @@ Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
   }
 
   // Ok! Start using Dicoogle!
-  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, function(error, result) {
+  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, error, outcome) => {
     if (error) {
       console.error(error);
       return;
     }
-    // use result
+    // use outcome
+    const {elapsedTime, results} = outcome;
+    // ...
   });
 });
 ```
 
-At the moment, the documentation of the API can be read in the project's wiki (under [Documentation](https://github.com/bioinformatics-ua/dicoogle-client-js/wiki/Documentation)) or directly in the [source file's](src/index.js) documented functions. Typescript [typings](typings/dicoogle-client.d.ts) are also available.
-
-The repository includes two examples of dicoogle-client for simple querying:
-
- - "bin/dicoogle-query-cli.js" is a complete stand-alone Node.js application for querying Dicoogle. This is the source code of the `dicoogle-query` executable.
- - "example/app.html" is a web page demonstrating simple querying.
-
-### Using the CLI client
+## Using the CLI client
 
 Install this package globally (`npm install -g dicoogle-client`), then use `dicoogle-query`.
 
@@ -73,11 +61,11 @@ Install this package globally (`npm install -g dicoogle-client`), then use `dico
 
 **Example:** `dicoogle-query -p lucene -s "http://demo.dicoogle.com" "Modality:MR"`
 
-### Further Notice
+## Further Notice
 
-This library is compatible with versions of Dicoogle in the range `>=2.0.0 <2.5.0`. This client wrapper may be updated as new services emerge.
+This library is compatible with versions of Dicoogle in the range `>=2.0.0 <2.5.0`. This client library may be updated as future versions of Dicoogle are released.
 
-### License
+## License
 
 Copyright (C) 2016  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
 
