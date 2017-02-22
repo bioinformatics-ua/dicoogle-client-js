@@ -1,27 +1,29 @@
-import {Request as SuperAgent} from 'superagent';
+import { Request as SuperAgent } from 'superagent';
 
-declare module "dicoogle-client" {
+export = DicoogleClient;
+
+/**
+ * Initialize and provide the Dicoogle access object, which can be used multiple times.
+ *
+ * @param url the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
+ * @param options a set of options regarding service access and user authentication
+ * @returns a singleton dicoogle service access object
+ */
+declare function DicoogleClient(url?: string, options?: DicoogleClient.DicoogleClientOptions): DicoogleClient.DicoogleAccess;
+
+declare namespace DicoogleClient {
 
     type password = string;
 
     /** Web service endpoints
      * @enum {string}
      */
-    export const Endpoints : { [e: string]: string };
+    export const Endpoints: { [e: string]: string };
 
     export interface DicoogleClientOptions {
         token?: string
         secure?: boolean
     }
-
-   /**
-    * Initialize and provide the Dicoogle access object, which can be used multiple times.
-    *
-    * @param url the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
-    * @param options a set of options regarding service access and user authentication
-    * @returns a singleton dicoogle service access object
-    */
-    export default function dicoogleClient(url?: string, options?: DicoogleClientOptions): DicoogleAccess;
 
     export interface SearchOptions {
         /** Force whether the query is keyword-based, defaults to automatic detection */
@@ -159,13 +161,13 @@ declare module "dicoogle-client" {
         path?: string
         /** Whether to index zip files. */
         zip?: boolean
-        /** The percentage of indexation effort (from 0 to 100). */
+        /** The percentage of indexing effort (from 0 to 100). */
         effort?: number
         /** Whether to index thumbnails. */
         thumbnail?: boolean
         /** The size of generated thumbnails in pixels. */
         thumbnailSize?: number
-        /** Listen for changes in the directory for automatic indexation. */
+        /** Listen for changes in the directory for automatic indexing. */
         watcher?: boolean
     }
 
@@ -328,7 +330,7 @@ declare module "dicoogle-client" {
         request(uri: string | string[]): SuperAgent;
 
         /**
-         * Request a new indexation task over a given URI. The operation is recursive,
+         * Request a new indexing task over a given URI. The operation is recursive,
          * indexing anything in the URI's endpoint. The callback will be called after
          * the task is created, not when it is complete.
          * @param uri a URI or array of URIs representing the root resource of the files to be indexed
@@ -336,11 +338,11 @@ declare module "dicoogle-client" {
          */
         index(uri: string, callback: (error: Error) => void): void;
         /**
-         * Request a new indexation task over a given URI. The operation is recursive,
+         * Request a new indexing task over a given URI. The operation is recursive,
          * indexing anything in the URI's endpoint. The callback will be called after
          * the task is created, not when it is complete.
          * @param uri a URI or array of URIs representing the root resource of the files to be indexed
-         * @param provider a provider or array of provider names in which the indexation will carry out, all by default
+         * @param provider a provider or array of provider names in which the indexing will carry out, all by default
          * @param callback the function to call when the task is successfully issued
          */
         index(uri: string, provider: string | string[], callback: (error: Error) => void): void;
@@ -355,7 +357,7 @@ declare module "dicoogle-client" {
         /**
          * Request that the file at the given URI is unindexed to a specific set of indexers. The operation, unlike index(), is not recursive and will not unindex sub-entries.
          * @param uri a URI or array of URIs representing the files to be unindexed
-         * @param provider a provider or array of provider names in which the unindexation will carry out, all by default
+         * @param provider a provider or array of provider names in which the unindexing will carry out, all by default
          * @param callback the function to call on completion
          */
         unindex(uri: string, provider: string | string[], callback: (error: Error) => void): void;
@@ -434,7 +436,7 @@ declare module "dicoogle-client" {
          * @param slotId the identifiers of slots to contemplate
          * @param callback the callback function
          */
-        getWebUIPlugins(slotId: string|string[], callback: (error: Error, plugins: WebUIPlugin[]) => void): void;
+        getWebUIPlugins(slotId: string | string[], callback: (error: Error, plugins: WebUIPlugin[]) => void): void;
 
         /** Obtain the base URL of all Dicoogle services.
          * This method is synchronous.
@@ -459,7 +461,7 @@ declare module "dicoogle-client" {
          * @returns the full URL to the thumbnail
          */
         getThumbnailUrl(id: string, frame?: number): string;
-        
+
         /**
          * Get the user name of the currently authenticated user.
          * @returns the unique user name
@@ -525,7 +527,7 @@ declare module "dicoogle-client" {
         elapsedTime?: number
         /** only if complete; the number of files successfully indexed */
         nIndexed?: number
-        /** only if complete; the number of indexation errors */
+        /** only if complete; the number of indexing errors */
         nErrors?: number
     }
 
@@ -591,10 +593,10 @@ declare module "dicoogle-client" {
         start(callback: (Error) => void): void;
 
         /**
-         * Start the DICOM service.
+         * Stop the DICOM service.
          * @param callback the callback function
          */
-        start(callback: (Error) => void): void;
+        stop(callback: (Error) => void): void;
     }
 
     export interface RemoteStorage {
@@ -623,7 +625,7 @@ declare module "dicoogle-client" {
          * @param store the storage's AE title or the storage object.
          * @param callback the callback function
          */
-        removeRemoteServer(store: string|RemoteStorage, callback: (Error, removed: boolean) => void): void;
+        removeRemoteServer(store: string | RemoteStorage, callback: (Error, removed: boolean) => void): void;
     }
 
     /** DICOM Query/Retrieve settings fields
