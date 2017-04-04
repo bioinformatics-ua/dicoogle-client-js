@@ -110,13 +110,16 @@ gulp.task('coveralls', [], () => {
 function remapCoverageFiles() {
     return gulp.src('./coverage/coverage-final.json')
       .pipe(remapIstanbul({
+          basePath: 'src',
           reports: {
-              'html': './coverage/lcov-report',
+              //'html': './coverage/lcov-report',
               'text': null,
               'text-summary': null,
               'lcovonly': './coverage/lcov.info'
-          }
-      }));
+          },
+          fail: true
+      }))
+      .pipe(gulp.dest('./coverage'));
 }
 
 gulp.task('clean', function() {
