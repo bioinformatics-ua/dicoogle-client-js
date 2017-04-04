@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "alwaysStrict": false,
+        "module": "commonjs",
+        "target": "es5",
+        "outDir": "lib",
+        "sourceMap": true
+    },
+    "include": [
+        "src/"
+    ],
+    "typeAcquisition": {
+        "enable": true
+    }
+}

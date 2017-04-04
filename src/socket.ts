@@ -1,7 +1,12 @@
-import superagent from 'superagent';
+import * as superagent from 'superagent'
+import {SuperAgentRequest} from 'superagent';
 import Endpoints from './endpoints';
 
 export default class Socket {
+    private _user: string;
+    private _roles: string[];
+    private _token: string;
+    private _url: string;
 
     constructor(url = undefined) {
         /** @private */
@@ -28,7 +33,7 @@ export default class Socket {
         }
     }
 
-    login(username, password, callback) {
+    public login(username: string, password, callback) {
 
         this.request('POST', Endpoints.LOGIN)
             .type('application/x-www-form-urlencoded')
@@ -42,7 +47,7 @@ export default class Socket {
                 }
                 const data = res.body;
                 this._token = data.token;
-                this._username = data.user;
+                this._user = data.user;
                 this._roles = data.roles;
                 if (typeof callback === 'function') {
                     callback(null, data);
@@ -50,7 +55,7 @@ export default class Socket {
             });
     }
 
-    restore(token, callback) {
+    restore(token: string, callback: (error?: Error, data?: any) => void) {
         this.get(Endpoints.LOGIN)
             .set('Authorization', token)
             .end((err, res) => {
@@ -62,7 +67,7 @@ export default class Socket {
                 }
                 const data = res.body;
                 this._token = token;
-                this._username = data.user;
+                this._user = data.user;
                 this._roles = data.roles;
                 if (typeof callback === 'function') {
                     callback(null, data);
@@ -70,7 +75,7 @@ export default class Socket {
             });
     }
 
-    logout(callback) {
+    public logout(callback: (error?: any) => void) {
         this.post(Endpoints.LOGOUT)
             .set('Authorization', this._token)
             .end(err => {
@@ -87,10 +92,8 @@ export default class Socket {
 
     /** This is a fallback implementation of logout that uses GET instead of POST,
      * as in version 2.3.0 of Dicoogle.
-     * @private
-     * @param {function(error:any)} callback the callback function
      */
-    _logout_fallback(callback) {
+    private _logout_fallback(callback: (error:any) => void) {
         this.request('GET', Endpoints.LOGOUT)
             .end(err => {
                 if (!err) {
@@ -103,57 +106,57 @@ export default class Socket {
     }
 
     /** Create a request to Dicoogle.
-     * @param {string} method - the intended HTTP method ('GET', 'POST', ...)
-     * @param {string|string[]} uri - the URI to the intended service, relative to Dicoogle's base URL
-     * @returns {SuperAgent} a superagent object for a new request to this service
+     * @param method - the intended HTTP method ('GET', 'POST', ...)
+     * @param uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns a superagent object for a new request to this service
      */
-    request(method, uri) {
+    public request(method: string, uri: string | string[]): SuperAgentRequest {
         return superagent(method, [this._url].concat(uri).join('/'))
                    .set('Authorization', this._token);
     }
 
     /** Create a GET request to Dicoogle.
-     * @param {string|string[]} uri - the URI to the intended service, relative to Dicoogle's base URL
-     * @returns {SuperAgent} a superagent object for a new request to this service
+     * @param uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns a superagent object for a new request to this service
      */
-    get(uri) {
+    public get(uri: string | string[]): SuperAgentRequest {
         return this.request('GET', uri);
     }
 
     /** Create a POST request to Dicoogle.
-     * @param {string|string[]} uri - the URI to the intended service, relative to Dicoogle's base URL
-     * @returns {SuperAgent} a superagent object for a new request to this service
+     * @param uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns a superagent object for a new request to this service
      */
-    post(uri) {
+    public post(uri: string | string[]): SuperAgentRequest {
         return this.request('POST', uri);
     }
 
-    getToken() {
+    public getToken(): string | null {
         return this._token;
     }
 
-    setToken(token) {
+    public setToken(token: string | null) {
         this._token = token;
     }
 
-    getUsername() {
-        return this._username;
+    public getUsername(): string | null {
+        return this._user;
     }
 
-    getRoles() {
+    public getRoles(): string[] | null {
         return this._roles ? [].concat(this._roles) : null;
     }
 
-    getBase() {
+    public getBase(): string {
         return this._url;
     }
 
-    hasToken() {
+    public hasToken(): boolean {
         return this._token !== null;
     }
 
-    reset() {
-        this._username = null;
+    public reset(): void {
+        this._user = null;
         this._token = null;
         this._roles = null;
     }
