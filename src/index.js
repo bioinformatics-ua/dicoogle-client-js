@@ -644,7 +644,7 @@ var m = new DicoogleAccess();
  * @param {DicoogleClientOptions} options a set of options regarding service access and user authentication
  * @returns {Object} a singleton dicoogle service access object
  */
-export default function dicoogleClient(url, options = {}) {
+module.exports = function dicoogleClient(url, options = {}) {
     if (socket_ && (!url || url === socket_.getBase())) {
         return m;
     }

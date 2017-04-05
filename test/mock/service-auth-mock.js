@@ -1,4 +1,4 @@
-const dicoogleClient = require('../../src');
+const dicoogleClient = require('../../lib');
 const nock = require('nock');
 const qs = require('querystring');
 
