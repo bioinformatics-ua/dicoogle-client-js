@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ * Copyright (C) 2017  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
  * This file is part of Dicoogle/dicoogle-client-js.
  *
