@@ -18,6 +18,7 @@
  */
 
 import { Request as SuperAgent } from 'superagent';
+import * as Endpoints from '../src/endpoints';
 
 export = DicoogleClient;
 
@@ -34,16 +35,16 @@ declare namespace DicoogleClient {
 
     type password = string;
 
-    /** Web service endpoints
-     * @enum {string}
-     */
-    export const Endpoints: { [e: string]: string };
+    /** Web service endpoints */
+    export const Endpoints;
 
+    /** Options for the `login` method.  */
     export interface DicoogleClientOptions {
         token?: string
         secure?: boolean
     }
 
+    /** Options for the `search` method. */
     export interface SearchOptions {
         /** Force whether the query is keyword-based, defaults to automatic detection */
         keyword?: boolean
@@ -63,6 +64,7 @@ declare namespace DicoogleClient {
         offset?: number;
     }
 
+    /** Options for the `issueExport` method. */
     export interface ExportOptions {
         /** Force whether the query is keyword-based, defaults to automatic detection */
         keyword?: boolean
@@ -70,6 +72,7 @@ declare namespace DicoogleClient {
         provider?: string | string[]
     }
 
+    /** Options for the `searchDIM` method. */
     export interface SearchDIMOptions {
         /** Force whether the query is keyword-based, defaults to automatic detection */
         keyword?: boolean
@@ -524,13 +527,13 @@ declare namespace DicoogleClient {
         reset(): void;
 
         /** Namespace for task management. */
-        tasks: Tasks;
+        readonly tasks: Tasks;
 
         /** Namespace for DICOM Storage service management. */
-        storage: StorageService;
+        readonly storage: StorageService;
 
         /** Namespace for DICOM Query/Retrieve service management. */
-        queryRetrieve: QueryRetrieveService;
+        readonly queryRetrieve: QueryRetrieveService;
     }
 
     export interface TaskInfo {

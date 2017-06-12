@@ -20,7 +20,7 @@
 import Endpoints from './endpoints';
 import Socket from './socket';
 
-interface TaskInfo {
+export interface TaskInfo {
     /** the UUID of the task */
     taskUid: string
     /** a human readable task name */

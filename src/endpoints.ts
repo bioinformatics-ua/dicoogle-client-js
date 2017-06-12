@@ -47,3 +47,27 @@ const Endpoints = Object.freeze({
 });
 
 export default Endpoints;
+
+export const SEARCH = Endpoints.SEARCH;
+export const SEARCH_DIM = Endpoints.SEARCH_DIM;
+export const PROVIDERS = Endpoints.PROVIDERS;
+export const DUMP = Endpoints.DUMP;
+export const EXPORT = Endpoints.EXPORT;
+export const DIC2PNG = Endpoints.DIC2PNG;
+export const DICTAGS = Endpoints.DICTAGS;
+export const QR_SERVICE = Endpoints.QR_SERVICE;
+export const STORAGE_SERVICE = Endpoints.STORAGE_SERVICE;
+export const INDEXER_SETTINGS = Endpoints.INDEXER_SETTINGS;
+export const TRANSFER_SETTINGS = Endpoints.TRANSFER_SETTINGS;
+export const DICOM_QUERY_SETTINGS = Endpoints.DICOM_QUERY_SETTINGS;
+export const DICOM_STORAGE_SETTINGS = Endpoints.DICOM_STORAGE_SETTINGS;
+export const DICOM_AETITLE_SETTINGS = Endpoints.DICOM_AETITLE_SETTINGS;
+export const INDEX = Endpoints.INDEX;
+export const UNINDEX = Endpoints.UNINDEX;
+export const REMOVE = Endpoints.REMOVE;
+export const TASKS = Endpoints.TASKS;
+export const VERSION = Endpoints.VERSION;
+export const LOGGER = Endpoints.LOGGER;
+export const LOGIN = Endpoints.LOGIN;
+export const LOGOUT = Endpoints.LOGOUT;
+export const WEBUI = Endpoints.WEBUI;

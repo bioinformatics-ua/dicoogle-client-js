@@ -298,27 +298,27 @@ module.exports = function createDicoogleMock() {
 
             // mock index on specific provider
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-\/]+/, plugin: /.*/ })
+            .query({ uri: /[a-z0-9\-/]+/, plugin: /.*/ })
             .reply(200)
 
             // mock index on all providers
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-\/]+/ })
+            .query({ uri: /[a-z0-9\-/]+/ })
             .reply(200)
 
             // mock unindex on all providers
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-\/]+/ })
+            .query({ uri: /[a-z0-9\-/]+/ })
             .reply(200)
 
             // mock unindex on specific provider
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-\/]+/, provider: /.*/ })
+            .query({ uri: /[a-z0-9\-/]+/, provider: /.*/ })
             .reply(200)
 
             // mock remove
             .post('/management/tasks/remove')
-            .query({ uri: /[a-z0-9\-\/]+/ })
+            .query({ uri: /[a-z0-9\-/]+/ })
             .reply(200)
 
             // mock dump
@@ -474,7 +474,7 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/management/settings/index')
             .once().reply(200, () => JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
         nock(BASE_URL).get('/management/settings/index')
-            .reply(200, () => INDEXER_SETTINGS);               // with patched Dicoogle
+            .reply(200, () => INDEXER_SETTINGS); // with patched Dicoogle
         // getters
         nock(BASE_URL)
             .get('/management/settings/index/path')
@@ -531,7 +531,7 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/management/settings/transfer')
             .once().reply(200, JSON.stringify(TRANSFER_SETTINGS)) // in Dicoogle 2.3.1
             .get('/management/settings/transfer')
-            .reply(200, TRANSFER_SETTINGS);                       // with patched Dicoogle
+            .reply(200, TRANSFER_SETTINGS); // with patched Dicoogle
 
         nock(BASE_URL).post('/management/settings/transfer')
             .query({uid: /(\d\.?)+/, option: /\S*/, value: true})
