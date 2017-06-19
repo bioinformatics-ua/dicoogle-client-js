@@ -6,7 +6,7 @@
 
 Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 2+).
 
-- [`DicoogleClient`](modules/_types_index_d.dicoogleclient.html) is a function for retrieving a Dicoogle access object.
+- [`DicoogleClient`](modules/_types_index_d_.dicoogleclient.html) is a function for retrieving a Dicoogle access object.
 - [`DicoogleAccess`](interfaces/_types_index_d_.dicoogleclient.dicoogleaccess.html) is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`](interfaces/_types_index_d_.dicoogleclient.dicoogleaccess.html) documentation page for a list of all methods and namespaces within.
 
 ## Installing

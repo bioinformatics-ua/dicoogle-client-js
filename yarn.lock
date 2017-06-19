@@ -38,9 +38,9 @@
   dependencies:
     "@types/node" "*"
 
-"@types/superagent@^2.0.36":
-  version "2.0.37"
-  resolved "https://registry.yarnpkg.com/@types/superagent/-/superagent-2.0.37.tgz#665d239dbacfc60fb1e1a7f108f6d02ffdfc949b"
+"@types/superagent@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@types/superagent/-/superagent-3.5.0.tgz#53935c564616998b24846c0e60c792c0fd827334"
   dependencies:
     "@types/node" "*"
 
@@ -1577,17 +1577,7 @@ gulplog@^1.0.0:
   dependencies:
     glogg "^1.0.0"
 
-handlebars@^4.0.1:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.5.tgz#92c6ed6bb164110c50d4d8d0fbddc70806c6f8e7"
-  dependencies:
-    async "^1.4.0"
-    optimist "^0.6.1"
-    source-map "^0.4.4"
-  optionalDependencies:
-    uglify-js "^2.6"
-
-handlebars@^4.0.6:
+handlebars@^4.0.1, handlebars@^4.0.6:
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.10.tgz#3d30c718b09a3d96f23ea4cc1f403c4d3ba9ff4f"
   dependencies:

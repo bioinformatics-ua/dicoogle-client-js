@@ -35,7 +35,7 @@
   },
   "license": "GPL-3.0+",
   "dependencies": {
-    "@types/superagent": "^2.0.36",
+    "@types/superagent": "^3.5.0",
     "superagent": "^3.5.2"
   },
   "devDependencies": {
