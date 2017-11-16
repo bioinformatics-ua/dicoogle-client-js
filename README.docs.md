@@ -27,10 +27,10 @@ import DicoogleClient = require('dicoogle-client');
 
 ### On the browser, no module system
 
-When _not_ using Node.js or a bundler, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
+When _not_ using Node.js or any module system, include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
 
 ```HTML
-<script src='/path/to/my/libs/dicoogle-client.min.js'></script>
+<script src='path/to/my/libs/dicoogle-client.min.js'></script>
 ```
 
 ### In ES2015
