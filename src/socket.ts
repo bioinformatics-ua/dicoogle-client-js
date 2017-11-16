@@ -130,8 +130,11 @@ export default class Socket {
      * @returns a superagent object for a new request to this service
      */
     public request(method: string, uri: string | string[]): SuperAgentRequest {
-        return superagent(method, [this._url].concat(uri).join('/'))
-                   .set('Authorization', this._token);
+        const req = superagent(method, [this._url].concat(uri).join('/'))
+        if (this._token) {
+            req.set('Authorization', this._token);
+        }
+        return req;
     }
 
     /** Create a GET request to Dicoogle.
