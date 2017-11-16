@@ -30,6 +30,7 @@ describe('Utils: #isDicomUUID()', function() {
         assert.isFalse(isDicomUUID("...1242"));
         assert.isFalse(isDicomUUID("file:/opt/data/123"));
         assert.isFalse(isDicomUUID("1:/2/3/4"));
+        assert.isFalse(isDicomUUID("123456789.123456789.123456789.123456789.123456789.123456789.123456"));
     });
 
 });
