@@ -436,9 +436,16 @@ module.exports = function createDicoogleMock() {
                 type: 'add',
                 aetitle: /[A-Z0-9_ ]+/,
                 ip: /.+/,
-                port: /[0-9]+/
+                port: /[0-9]+/,
+                description: /.*/
             })
             .reply(200, { added: true });
+        // adding with not enough info
+        nock(BASE_URL).post('/management/settings/storage/dicom')
+            .query(q => {
+                return q.type === 'add' && (!q.aetitle || !q.ip || !q.port || !q.description);
+            })
+            .reply(500);
         nock(BASE_URL).get('/management/settings/storage/dicom')
             .reply(200, REMOTE_STORAGES.concat({
                 AETitle: 'A_NEW_STORAGE',

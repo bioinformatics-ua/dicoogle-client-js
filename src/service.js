@@ -128,7 +128,7 @@ export class StorageService extends BaseService {
       this._socket.request('POST', Endpoints.DICOM_STORAGE_SETTINGS)
           .query({
             type: "add",
-            aetitle, ip, port, description,
+            aetitle, ip, port, description: description || '',
             public: store.public
           })
           .end(callback);
