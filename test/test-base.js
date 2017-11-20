@@ -579,6 +579,23 @@ describe('Dicoogle Client (under Node.js)', function() {
                     });
                 });
             });
+            it("storage#addRemoteServer(); increases list to 4 stores", function(done) {
+                Dicoogle.storage.addRemoteServer({
+                    aetitle: 'ONE_MORE_SERV',
+                    ip: '10.0.0.145',
+                    port: 6666,
+                    description: 'our public store',
+                    public: true
+                },
+                function (error) {
+                    assert.equal(error, null);
+                    Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                        assert.equal(error, null);
+                        assert.strictEqual(remotes.length, 4);
+                        done();
+                    });
+                });
+            });
         });
 
         describe('Remove', function() {

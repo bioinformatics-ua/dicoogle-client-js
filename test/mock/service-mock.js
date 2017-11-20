@@ -430,15 +430,17 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/management/settings/storage/dicom')
             .reply(200, REMOTE_STORAGES);
 
-            // adding
+        // adding a server (without public property)
         nock(BASE_URL).post('/management/settings/storage/dicom')
             .query({
                 type: 'add',
                 aetitle: /[A-Z0-9_ ]+/,
                 ip: /.+/,
-                port: /[0-9]+/
+                port: /[0-9]+/,
+                description: /.*/
             })
             .reply(200, { added: true });
+        // first response should have 3 servers
         nock(BASE_URL).get('/management/settings/storage/dicom')
             .reply(200, REMOTE_STORAGES.concat({
                 AETitle: 'A_NEW_STORAGE',
@@ -447,9 +449,42 @@ module.exports = function createDicoogleMock() {
                 description: '',
                 isPublic: false
             }))
+        // adding a server (with public property)
+        nock(BASE_URL).post('/management/settings/storage/dicom')
+            .query({
+                type: 'add',
+                aetitle: /[A-Z0-9_ ]+/,
+                ip: /.+/,
+                port: /[0-9]+/,
+                description: /.*/,
+                public: 'true'
+            })
+            .reply(200, { added: true });
+        // second response should have 4 servers
+        nock(BASE_URL).get('/management/settings/storage/dicom')
+        .reply(200, REMOTE_STORAGES.concat([{
+            AETitle: 'A_NEW_STORAGE',
+            ipAddrs: '10.0.0.144',
+            port: 6646,
+            description: '',
+            isPublic: false
+        }, {
+            aetitle: 'ONE_MORE_SERV',
+            ip: '10.0.0.145',
+            port: 6666,
+            description: 'our public store',
+            public: true
+        }]));
 
-            // removing by whole object
-            .post('/management/settings/storage/dicom')
+        // adding with not enough info
+        nock(BASE_URL).post('/management/settings/storage/dicom')
+        .query(q => {
+            return q.type === 'add' && (!q.aetitle || !q.ip || !q.port || !q.description);
+        })
+        .reply(500, {error: 'Parameters missing'});
+
+        // removing by whole object
+        nock(BASE_URL).post('/management/settings/storage/dicom')
             .query({
                 type: 'remove',
                 aetitle: /[A-Z0-9_ ]+/,
