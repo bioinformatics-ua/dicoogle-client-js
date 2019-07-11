@@ -44,23 +44,26 @@ function licenseText() {
   return _licenseText;
 }
 
-gulp.task('lint', function () {
+function lint() {
   return gulp.src(['src/*.js', 'test/*.js', 'test/mock/*.js', 'bin/*.js'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
-});
+}
 
-gulp.task('main', ['lint'], function () {
-   return tsProject.src()
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(tsProject())
-        .pipe(sourcemaps.write('./'))        
-        .pipe(gulp.dest("lib"));
-});
+gulp.task('lint', lint);
 
-gulp.task('bundle', ['lint', 'main'], function () {
+function main() {
+  return tsProject.src()
+       .pipe(buffer())
+       .pipe(sourcemaps.init({loadMaps: true}))
+       .pipe(tsProject())
+       .pipe(sourcemaps.write('./'))        
+       .pipe(gulp.dest("lib"));
+}
+gulp.task('main', gulp.series(lint, main));
+
+function bundle() {
   // set up the browserify instance on a task basis
   var b = browserify({
     entries: './lib/index.js',
@@ -72,59 +75,63 @@ gulp.task('bundle', ['lint', 'main'], function () {
         }]
     ]
   });
-
   return b.bundle()
     .pipe(source('dicoogle-client.min.js'))
     .pipe(buffer())
     .pipe(uglify())
     .pipe(header(licenseText()))
     .pipe(gulp.dest('dist'));
-});
+}
+gulp.task('bundle', gulp.series(lint, main, bundle));
 
-gulp.task('test', ['main'], () => {
-    return gulp
-        .src([
-            'test/**/test-*.js'
-        ])
-        .pipe(mocha({
-            bail: true,
-            timeout: 50000
-        }));
-});
+function test() {
+  return gulp
+      .src([
+          'test/**/test-*.js'
+      ])
+      .pipe(mocha({
+          bail: true,
+          timeout: 50000
+      }));
+}
+gulp.task('test', test);
 
-gulp.task('pre-cover', ['main'], () => {
-    return gulp.src(['lib/**/*.js'])
-        .pipe(istanbul({
-            includeUntested: true
-        }))
-        .pipe(istanbul.hookRequire());
-});
+function preCover() {
+  return gulp.src(['lib/**/*.js'])
+      .pipe(istanbul({
+          includeUntested: true
+      }))
+      .pipe(istanbul.hookRequire());
+}
+gulp.task('pre-cover', preCover);
 
-gulp.task('cover', ['pre-cover'], function () {
-    return gulp.src(['test/**/test-*.js'])
-        .pipe(mocha({
-            bail: true,
-            timeout: 50000
-        }))
-        // Creating the reports after tests ran
-        .pipe(istanbul.writeReports({
-            reporters: [ 'json' ]
-        }))
-        .pipe(istanbul.enforceThresholds({
-          thresholds: {
-            global: {
-              statements: 80,
-              lines: 70,
-              functions: -10
-            }
+function cover() {
+  return gulp.src(['test/**/test-*.js'])
+      .pipe(mocha({
+          bail: true,
+          timeout: 50000
+      }))
+      // Creating the reports after tests ran
+      .pipe(istanbul.writeReports({
+          reporters: [ 'json' ]
+      }))
+      .pipe(istanbul.enforceThresholds({
+        thresholds: {
+          global: {
+            statements: 80,
+            lines: 70,
+            functions: -10
           }
-        })).on('end', remapCoverageFiles);
-});
+        }
+      })).on('end', remapCoverageFiles);
+}
+gulp.task('cover', gulp.series(preCover, cover));
 
-gulp.task('coveralls', [], () => {
-    return gulp.src('coverage/lcov.info')
-        .pipe(coveralls());
-});
+function taskCoveralls() {
+  return gulp.src('coverage/lcov.info')
+      .pipe(coveralls());
+}
+gulp.task('coveralls', taskCoveralls);
 
 function remapCoverageFiles() {
     return gulp.src('./coverage/coverage-final.json')
@@ -141,9 +148,12 @@ function remapCoverageFiles() {
       .pipe(gulp.dest('./coverage'));
 }
 
-gulp.task('clean', function() {
+function clean() {
   return gulp.src(['dist/*', 'lib/*'], { read: false })
     .pipe( rm() );
-});
+}
+gulp.task('clean', clean);
 
-gulp.task('default', ['main', 'bundle']);
+
+exports.default = gulp.series('main', 'bundle');
+gulp.task('default', exports.default);
