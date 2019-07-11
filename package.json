@@ -16,7 +16,7 @@
   ],
   "version": "4.2.0",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "main": "./lib/index",
   "types": "./types/index.d.ts",
