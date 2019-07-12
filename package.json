@@ -35,8 +35,8 @@
   },
   "license": "GPL-3.0+",
   "dependencies": {
-    "@types/superagent": "^3.5.7",
-    "superagent": "^3.8.2"
+    "@types/superagent": "^4.1.3",
+    "superagent": "^5.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
