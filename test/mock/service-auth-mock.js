@@ -17,7 +17,7 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dicoogleClient = require('../../lib');
+const dicoogleClient = require('../../src');
 const nock = require('nock');
 const qs = require('querystring');
 

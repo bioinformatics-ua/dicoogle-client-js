@@ -48,8 +48,7 @@ function lint() {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 }
-
-gulp.task("lint", lint);
+exports.lint = lint;
 
 function main() {
   return tsProject
@@ -60,7 +59,7 @@ function main() {
     .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest("lib"));
 }
-gulp.task("main", gulp.series(lint, main));
+exports.main = main;
 
 function bundle() {
   // set up the browserify instance on a task basis
@@ -85,22 +84,12 @@ function bundle() {
     .pipe(header(licenseText()))
     .pipe(gulp.dest("dist"));
 }
-gulp.task("bundle", gulp.series(lint, main, bundle));
-
-function test() {
-  return gulp.src(["test/**/test-*.js"]).pipe(
-    mocha({
-      bail: true,
-      timeout: 50000
-    })
-  );
-}
-gulp.task("test", test);
+exports.bundle = bundle;
 
 function clean() {
-  return gulp.src(["dist/*", "lib/*"], { read: false }).pipe(rm());
+  return gulp.src(["dist/*", "lib/*", "coverage/**", ".nyc_output/**", "docs/**"], { read: false }).pipe(rm());
 }
-gulp.task("clean", clean);
+exports.clean = clean;
 
-exports.default = gulp.series("main", "bundle");
+exports.default = gulp.series(lint, main);
 gulp.task("default", exports.default);

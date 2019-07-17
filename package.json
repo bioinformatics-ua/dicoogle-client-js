@@ -48,26 +48,28 @@
     "gulp": "^4.0.2",
     "gulp-eslint": "^6.0.0",
     "gulp-header": "^2.0.9",
-    "gulp-mocha": "^6.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-rm": "^2.0.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.1",
     "gulp-uglify": "^3.0.0",
+    "mocha": "^6.1.4",
     "nock": "^10.0.6",
     "nyc": "^14.1.1",
+    "ts-node": "^8.3.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.5.3",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "check": "gulp lint",
-    "build": "gulp",
-    "prepare": "gulp",
+    "check": "gulp --series lint",
+    "build": "gulp --series lint main bundle",
+    "prepare": "gulp default",
+    "clean": "gulp clean",
     "document": "cd types && typedoc --includeDeclarations --out ../docs/ --target ES6 --name 'Dicoogle JavaScript Client' --readme ../README.docs.md index.d.ts",
-    "test": "cross-env NODE_ENV=test gulp test",
-    "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text gulp test",
+    "test": "cross-env NODE_ENV=test mocha -r ts-node/register",
+    "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha -r ts-node/register",
     "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
@@ -75,6 +77,13 @@
     "url": "https://github.com/bioinformatics-ua/dicoogle-client-js.git"
   },
   "nyc": {
-    "exclude": ["gulpfile.js", "test/*"]
+    "extension": [
+      ".js",
+      ".ts"
+    ],
+    "exclude": [
+      "gulpfile.js",
+      "test/*"
+    ]
   }
 }
