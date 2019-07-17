@@ -25,7 +25,6 @@ const eslint = require("gulp-eslint");
 const fs = require("fs");
 const gulp = require("gulp");
 const header = require("gulp-header");
-const mocha = require("gulp-mocha");
 const rm = require("gulp-rm");
 const source = require("vinyl-source-stream");
 const sourcemaps = require("gulp-sourcemaps");
