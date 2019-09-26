@@ -31,15 +31,15 @@ module.exports = function createDicoogleMock() {
     if (!nockDone) {
         // prepare Dicoogle server mock
         nock(BASE_URL, { // mock /login with admin account
+                
                 reqheaders: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                  }
             })
             .post('/login', function(data) {
-                const parsedData = qs.parse(data);
-                return parsedData.username === 'admin' &&
-                        typeof parsedData.password === 'string' &&
-                        parsedData.password.length >= 3;
+                return data.username === 'admin' &&
+                        typeof data.password === 'string' &&
+                        data.password.length >= 3;
             })
             .twice()
             .reply(200, {
@@ -49,8 +49,7 @@ module.exports = function createDicoogleMock() {
                 token: '9ebdff77-dffc-4904-a954-74f72ba77483'
             })
             .post('/login', function(data) {
-                const parsedData = qs.parse(data);
-                return parsedData.username === 'admin' && parsedData.password.length < 3;
+                return data.username === 'admin' && data.password.length < 3;
             })
             .reply(403, {
                 error: 'Invalid credentials'

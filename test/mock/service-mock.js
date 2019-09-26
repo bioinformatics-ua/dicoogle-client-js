@@ -384,7 +384,7 @@ module.exports = function createDicoogleMock() {
 
         nock(BASE_URL)
             .post('/management/dicom/query')
-            .query(false)
+            .query({})
             .reply(400, {
                 error: "Incomplete configurations"
             })
