@@ -19,7 +19,6 @@
 
 const dicoogleClient = require('../../src');
 const nock = require('nock');
-const qs = require('querystring');
 
 let nockDone = false;
 
