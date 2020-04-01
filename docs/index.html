@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -69,28 +67,25 @@
 				<h2 id="top-level-api">Top-level API</h2>
 				<p>Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 2+).</p>
 				<ul>
-					<li><a href="modules/_types_dicoogle_client_d_.dicoogleclient.html"><code>DicoogleClient</code></a> is a function for retrieving a Dicoogle access object.</li>
-					<li><a href="interfaces/_types_dicoogle_client_d_.dicoogleclient.dicoogleaccess.html"><code>DicoogleAccess</code></a> is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the <a href="interfaces/_types_dicoogle_client_d_.dicoogleclient.dicoogleaccess.html"><code>DicoogleAccess</code></a> documentation page for a list of all methods and namespaces within.</li>
+					<li><a href="modules/_index_.html#dicoogleclient"><code>dicoogleClient</code></a> is a function for retrieving a Dicoogle access object.</li>
+					<li><a href="classes/_index_.dicoogleaccess.html"><code>DicoogleAccess</code></a> is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the <a href="classes/_index_.dicoogleaccess.html"><code>DicoogleAccess</code></a> documentation page for a list of all methods and namespaces within.</li>
 				</ul>
 				<h2 id="installing">Installing</h2>
 				<h3 id="in-node-js-or-commonjs">In Node.js or CommonJS</h3>
 				<p>In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install &quot;dicoogle-client&quot; with <code>npm</code> and <code>require</code> the &quot;dicoogle-client&quot; module.</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dicoogle-client'</span>);
-</code></pre>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dicoogle-client'</span>);</code></pre>
 				<p>When using TypeScript:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dicoogle-client'</span>);
-</code></pre>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> DicoogleClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dicoogle-client'</span>);</code></pre>
 				<h3 id="on-the-browser-no-module-system">On the browser, no module system</h3>
-				<p>When <em>not</em> using Node.js or a bundler, simply include the &quot;dist/dicoogle-client.min.js&quot; file as a script, thus exposing <code>DicoogleClient</code> as a global.</p>
-				<pre><code class="lang-HTML"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'/path/to/my/libs/dicoogle-client.min.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-</code></pre>
+				<p>When <em>not</em> using Node.js or any module system, include the &quot;dist/dicoogle-client.min.js&quot; file as a script, thus exposing <code>DicoogleClient</code> as a global.</p>
+				<pre><code class="language-HTML"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'path/to/my/libs/dicoogle-client.min.js'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
 				<h3 id="in-es2015">In ES2015</h3>
 				<p>This is a CommonJS module, and not compatible with ES2015 modules.
 				When using ES2015 modules or TypeScript with ES2015, you should import the default function using <code>require</code>, or include an interoperable require mechanism, such as using <a href="https://babeljs.io/">Babel</a>.</p>
 				<h2 id="basic-usage">Basic Usage</h2>
 				<p>Once <code>DicoogleClient</code> is fetched, invoke it as a function with the Dicoogle server&#39;s endpoint to obtain an access object. The object is a singleton that can be used multiple times.
 				Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.</p>
-				<pre><code class="lang-JavaScript"><span class="hljs-keyword">const</span> Dicoogle = DicoogleClient(<span class="hljs-string">"localhost:8080"</span>);
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> Dicoogle = DicoogleClient(<span class="hljs-string">"localhost:8080"</span>);
 
 <span class="hljs-comment">// if required, login to the system before using</span>
 Dicoogle.login(<span class="hljs-string">'admin'</span>, <span class="hljs-string">'mysecretpassword'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error, outcome</span>) </span>{
@@ -109,8 +104,7 @@ Dicoogle.login(<span class="hljs-string">'admin'</span>, <span class="hljs-strin
     <span class="hljs-keyword">const</span> {elapsedTime, results} = outcome;
     <span class="hljs-comment">// ...</span>
   });
-});
-</code></pre>
+});</code></pre>
 				<h2 id="examples">Examples</h2>
 				<p>The repository includes two examples of dicoogle-client for simple querying:</p>
 				<ul>
@@ -125,41 +119,20 @@ Dicoogle.login(<span class="hljs-string">'admin'</span>, <span class="hljs-strin
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_endpoints_.html">"endpoints"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_types_dicoogle_client_d_.html">"types/dicoogle-<wbr>client.d"</a>
+						<a href="modules/_index_.html">"index"</a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_socket_.html">"socket"</a>
 					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_fs_extra_index_d_.html">"node_<wbr>modules/@types/fs-<wbr>extra/index.d"</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_tasks_.html">"tasks"</a>
 					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_handlebars_index_d_.html">"node_<wbr>modules/@types/handlebars/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_highlight_js_index_d_.html">"node_<wbr>modules/@types/highlight.js/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_lodash_index_d_.html">"node_<wbr>modules/@types/lodash/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_marked_index_d_.html">"node_<wbr>modules/@types/marked/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_minimatch_index_d_.html">"node_<wbr>modules/@types/minimatch/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_node_index_d_.html">"node_<wbr>modules/@types/node/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_shelljs_index_d_.html">"node_<wbr>modules/@types/shelljs/index.d"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_node_modules__types_superagent_index_d_.html">"node_<wbr>modules/@types/superagent/index.d"</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_util_.html">"util"</a>
 					</li>
 				</ul>
 			</nav>
