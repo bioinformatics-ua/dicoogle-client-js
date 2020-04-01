@@ -17,11 +17,11 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as superagent from 'superagent'
+import superagent from 'superagent'
 import {SuperAgentRequest} from 'superagent';
 import Endpoints from './endpoints';
 
-export default class Socket {
+export class Socket {
     private _user: string;
     private _roles: string[];
     private _token: string;

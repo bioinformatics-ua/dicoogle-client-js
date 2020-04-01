@@ -18,7 +18,7 @@
  */
 
 import Endpoints from './endpoints';
-import Socket from './socket';
+import {Socket} from './socket';
 
 export interface TaskInfo {
     /** the UUID of the task */
@@ -37,7 +37,7 @@ export interface TaskInfo {
     nErrors?: number
 }
 
-export default class Tasks {
+export class Tasks {
   private _socket: Socket;
 
   constructor(socket) {

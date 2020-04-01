@@ -19,7 +19,7 @@
     "node": ">=10.0.0"
   },
   "main": "./lib/index",
-  "types": "./types/index.d.ts",
+  "types": "./lib/index.d.ts",
   "browserify": {
     "transforms": [
       "envify"
@@ -67,7 +67,7 @@
     "build": "gulp --series lint main bundle",
     "prepare": "gulp default",
     "clean": "gulp clean",
-    "document": "cd types && typedoc --includeDeclarations --out ../docs/ --target ES6 --name 'Dicoogle JavaScript Client' --readme ../README.docs.md index.d.ts",
+    "document": "typedoc ./src/",
     "test": "cross-env NODE_ENV=test mocha -r ts-node/register",
     "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha -r ts-node/register",
     "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
