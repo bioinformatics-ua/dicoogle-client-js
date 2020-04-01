@@ -124,12 +124,18 @@ export class Socket {
             });
     }
 
+    /** Create a GET request to Dicoogle.
+     * @param uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns a superagent object for a new request to this service
+     */
+    public request(uri: string | string[]): SuperAgentRequest;
     /** Create a request to Dicoogle.
      * @param method - the intended HTTP method ('GET', 'POST', ...)
      * @param uri - the URI to the intended service, relative to Dicoogle's base URL
      * @returns a superagent object for a new request to this service
      */
-    public request(method: string, uri: string | string[]): SuperAgentRequest {
+    public request(method: string, uri: string | string[]): SuperAgentRequest;
+    public request(method: any, uri?: string | string[]): SuperAgentRequest {
         const req = superagent(method, [this._url].concat(uri).join('/'))
         if (this._token) {
             req.set('Authorization', this._token);
