@@ -16,6 +16,7 @@ var query;
 var keyword = undefined;
 var debug = false;
 var forceTTY = false;
+var forceJSON = false;
 var providers = [];
 
 var USER = process.env.DICOOGLE_USER;
@@ -30,6 +31,7 @@ for (var i = 2; i < process.argv.length; i++) {
     console.log("  -k, --keyword         : forcefully perform a keyword-based query");
     console.log("  -F, --free-text       : forcefully perform a free text query");
     console.log("  -T, --tty             : force terminal (TTY) output instead of minified JSON");
+    console.log("      --json            : force minified JSON output even on a terminal (TTY)");
     console.log("  -p, --provider <name> : include this query provider");
     console.log("  -s, --server <url>    : set the Dicoogle server's base endpoint");
     console.log("  -D, --debug           : output additional details");
@@ -43,6 +45,8 @@ for (var i = 2; i < process.argv.length; i++) {
     keyword = false;
   } else if (process.argv[i] === '--tty' || process.argv[i] === '-T') {
     forceTTY = true;
+  } else if (process.argv[i] === '--json') {
+    forceJSON = true;
   } else if (process.argv[i] === '--debug' || process.argv[i] === '-D') {
     debug = true;
   } else if (process.argv[i] === '--provider' || process.argv[i] === '-p') {
@@ -100,7 +104,7 @@ function doSearch() {
         console.error(error);
       } else {
         var result = outcome.results || [];
-        if (process.stdout.isTTY || forceTTY) {
+        if ((process.stdout.isTTY && !forceJSON) || forceTTY) {
           console.log(util.inspect(result, {colors: true, depth: 2}));
         } else {
           console.log(JSON.stringify(result));

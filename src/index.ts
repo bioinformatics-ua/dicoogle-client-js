@@ -1,22 +1,35 @@
+/*
+ * Copyright (C) 2017  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ *
+ * This file is part of Dicoogle/dicoogle-client-js.
+ *
+ * Dicoogle/dicoogle-client-js is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Dicoogle/dicoogle-client-js is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /**
  * Dicoogle Service Wrapper
  */
 import Endpoints from './endpoints';
-import Socket from './socket';
+import {Socket} from './socket';
 import {StorageService, QueryRetrieveService} from './service';
-import Tasks from './tasks';
+import {Tasks} from './tasks';
 import {isDicomUUID} from './util';
 
 // private variables of the module
 /**@private
- * @define {Socket}
  */
-var socket_;
-
-/** @constructor */
-function DicoogleAccess() {}
-
-DicoogleAccess.prototype.Endpoints = Endpoints;
+var socket_: Socket;
 
 /** Indexer settings fields
  * @enum {string}
@@ -35,7 +48,6 @@ const IndexerSettings = Object.freeze({
     /** Listen for changes in the directory for automatic indexation. type: boolean */
     WATCHER: 'watcher'
 });
-DicoogleAccess.prototype.IndexerSettings = IndexerSettings;
 
 /** Service settings fields
  * @enum {string}
@@ -46,65 +58,226 @@ const ServiceSettings = Object.freeze({
     /** Whether to start the service on server launch. type: boolean */
     AUTOSTART: 'autostart'
 });
-DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
 
-  /** @typedef {Object} SearchOptions
-   * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
-   * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @param {string|string[]} [field] - a set of field names to be passed to the query providers when requesting the query.
+/** Options for the `login` method.  */
+interface DicoogleClientOptions {
+  token?: string
+  secure?: boolean
+}
+
+/** Options for the `search` method. */
+interface SearchOptions {
+  /** Force whether the query is keyword-based, defaults to automatic detection.
+   * _Note:_ This field is deprecated in Dicoogle 3.
+   */
+  keyword?: boolean
+  /** Whether to perform an automatic query expansion. This is usually only necessary
+   * for query providers without free text query support.
+   * _Note:_ Available since Dicoogle 3.
+   */
+  expand?: boolean
+  /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
+  provider?: string | string[]
+  /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @deprecated Please use `provider` instead.
+   */
+  providers?: string | string[]
+  /** A set of field names to be passed to the query providers when requesting the query.
    * When empty, the server will provide a default set based on a few DICOM attributes.
-   * @param {number} [psize] Activate pagination by defining the size of the page. _Note:_ Available since Dicoogle 2.4.0
-   * @param {number} [offset] When paginating, define the offset of the page to retrieve. _Note:_ Available since Dicoogle 2.4.0
    */
+  field?: string | string[]
+  /** Activate pagination by defining the size of the page.
+   * _Note:_ Available since Dicoogle 2.4.0
+   */
+  psize?: number;
+  /** When paginating, define the offset of the page to retrieve.
+   * _Note:_ Available since Dicoogle 2.4.0
+   */
+  offset?: number;
+}
 
-  /** @typedef {Object} SearchDIMOptions
-   * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
-   * @param {string|string[]} [provider] - an array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
-   * @param {string|string[]} [field] - a set of field names to be passed to the query providers when requesting the query.
+/** Options for the `searchDIM` method. */
+interface SearchDIMOptions {
+  /** Force whether the query is keyword-based, defaults to automatic detection.
+   * _Note:_ This field is deprecated in Dicoogle 3.
+   */
+  keyword?: boolean
+  /** Whether to perform an automatic query expansion. This is usually only necessary
+   * for query providers without free text query support.
+   * _Note:_ Available since Dicoogle 3.
+   */
+  expand?: boolean
+  /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
+  provider?: string | string[]
+  /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
+   * @deprecated Please use `provider` instead.
+   */
+  providers?: string | string[]
+  /** A set of field names to be passed to the query providers when requesting the query.
    * When empty, the server will provide a default set based on a few DICOM attributes.
-   * @param {number} [psize] - Activate pagination by defining the size of the page (in number of patients). _Note:_ Available since Dicoogle 2.4.0
-   * @param {number} [offset] - When paginating, define the offset of the page to retrieve (in number of patients). _Note:_ Available since Dicoogle 2.4.0
-   * @param {string} [depth] - Define the depth of retrieval based on the DIM level. _Note:_ Available since Dicoogle 2.4.0
    */
+  field?: string | string[]
+  /** Activate pagination by defining the size of the page (in number of patients).
+   * _Note:_ Available since Dicoogle 2.4.0
+   */
+  psize?: number;
+  /** When paginating, define the offset of the page to retrieve (in number of patients). */
+  offset?: number;
+  /** Define the depth of retrieval based on the DIM level.
+   * _Note:_ Available since Dicoogle 2.4.0
+   */
+  depth?: DIMLevel;
+}
 
-  /** @typedef {Object} ExportOptions
-   * @param {boolean} [keyword] - force whether the query is keyword-based, defaults to automatic detection
-   * @param {string|string[]} [provider] - one or more query provider names, defaults to the server's default query provider(s)
-   */
+/** Options for the `issueExport` method. */
+interface ExportOptions {
+  /** Force whether the query is keyword-based, defaults to automatic detection */
+  keyword?: boolean
+  /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
+  provider?: string | string[]
+}
 
-  /** @typedef {Object} SearchOutcome
-   * @param {object[]} results - The list of results
-   * @param {number} elapsedTime - The time spent performing the search in the server, in milliseconds
-   */
+type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
-  /** @typedef {Object} SearchDIMOutcome
-   * @param {SearchStudyResult[]} results - The list of results
-   * @param {number} elapsedTime - The time spent performing the search in the server, in milliseconds
-   */
+interface SearchResult {
+  [attribute: string]: any
+  uri: string
+  score?: number
+}
 
-  /** @typedef {Object} SearchStudyResult
-   * @param {string} studyDate
-   * @param {string} studyDescription
-   * @param {string} studyInstanceUID
-   * @param {string} institutionName
-   * @param {string|string[]} modalities
-   * @param {SearchSeriesResult[]} series
-   */
+interface SearchOutcome {
+  /** The list of results */
+  results: SearchResult[]
+  /** The time spent performing the search in the server, in milliseconds */
+  elapsedTime: number
+}
 
-  /** @typedef {Object} SearchSeriesResult
-   * @param {number} serieNumber
-   * @param {string} serieInstanceUID
-   * @param {string} serieDescription
-   * @param {string} serieModality
-   * @param {SearchImageResult[]} images
-   */
+interface SearchDIMOutcome {
+  /** The list of results */
+  results: SearchPatientResult[]
+  /** The time spent performing the search in the server, in milliseconds */
+  elapsedTime: number
+}
 
-  /** @typedef {Object} SearchImageResult
-   * @param {string} sopInstanceUID
-   * @param {string} uri
-   * @param {string} rawPath
-   * @param {string} filename
+interface SearchPatientResult {
+  id: string
+  name: string
+  gender: string
+  nStudies: number
+  birthdate: string
+  studies: SearchStudyResult[]
+}
+
+interface SearchStudyResult {
+  studyDate: string
+  studyDescription: string
+  studyInstanceUID: string
+  institutionName: string
+  modalities: string | string[]
+  series: SearchSeriesResult[]
+}
+
+interface SearchSeriesResult {
+  serieNumber: number
+  serieInstanceUID: string
+  serieDescription: string
+  serieModality: string
+  images: SearchImageResult[]
+}
+
+interface SearchImageResult {
+  sopInstanceUID: string
+  uri: string
+  rawPath: string
+  filename: string
+}
+
+interface DumpOutcome {
+  /** The contents of the requested item */
+  results: SearchResult
+  /** The time spent performing the search in the server, in milliseconds */
+  elapsedTime: number
+}
+
+interface ServiceStatus {
+  running: boolean
+  autostart: boolean
+  port: number
+}
+
+interface UserInfo {
+  /** The user's unique name */
+  user: string
+  /** The current user's assigned roles */
+  roles: string[]
+  /** Whether this user is an administrator */
+  admin: boolean
+}
+
+interface LoginOutcome extends UserInfo {
+  /** The current session token */
+  token: string
+}
+
+/** Indexer settings fields
+ */
+interface IndexerSettings {
+  /** The path to the directory to watch. */
+  path?: string
+  /** Whether to index zip files. */
+  zip?: boolean
+  /** The percentage of indexing effort (from 0 to 100). */
+  effort?: number
+  /** Whether to index thumbnails. */
+  thumbnail?: boolean
+  /** The size of generated thumbnails in pixels. */
+  thumbnailSize?: number
+  /** Listen for changes in the directory for automatic indexing. */
+  watcher?: boolean
+}
+
+interface TransferSyntax {
+  uid: string
+  sop_name: string
+  options: TransferOption[]
+}
+
+interface TransferOption {
+  name: string
+  value: boolean
+}
+
+/** Abridged information about a web UI plugin. */
+interface WebUIPlugin {
+  name: string
+  version: string
+  description?: string
+  slotId: string
+  moduleFile?: string
+  caption?: string
+  roles?: string[]
+  settings?: any
+}
+
+/** Main entrypoint to the Dicoogle web API.
+ */
+class DicoogleAccess {
+
+  /**
+   * @private Please use the `dicoogleClient` function
    */
+  constructor() {}
+    
+  public Endpoints = Endpoints;
+  public IndexerSettings = IndexerSettings;
+  public ServiceSettings = ServiceSettings;
+
+  /** Task namespace */
+  public tasks: Tasks;
+  /** Storage service namespace */
+  public storage: StorageService;
+  /** Query/Retrieve service namespace */
+  public queryRetrieve: QueryRetrieveService;
 
   /**
    * Perform a text query.
@@ -112,7 +285,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {SearchOptions} [options] a hash of options related to the search
    * @param {function(error:any, outcome:SearchOutcome)} callback the callback function providing the outcome
    */
-  DicoogleAccess.prototype.search = function Dicoogle_search(query, options = {}, callback) {
+  search(query, options: SearchOptions = {}, callback) {
       if (!callback && typeof options === 'function') {
         callback = options;
         options = {};
@@ -120,7 +293,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       const provider = options.provider || options.providers;
       const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       const {field, psize, offset} = options;
-      serviceRequest('GET', Endpoints.SEARCH, {
+      this.serviceRequest('GET', Endpoints.SEARCH, {
           query,
           keyword,
           field,
@@ -132,11 +305,11 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
 
   /**
    * Perform a text query with DIM-formatted outcome.
-   * @param {string} query text query
-   * @param {SearchOptions} [options] a hash of options related to the search
-   * @param {function(error:any, outcome:SearchDIMOutcome)} callback the callback function providing the outcome
+   * @param query text query
+   * @param options a hash of options related to the search
+   * @param callback the callback function providing the outcome
    */
-  DicoogleAccess.prototype.searchDIM = function Dicoogle_search(query, options = {}, callback) {
+  searchDIM(query: string, options: SearchDIMOptions = {}, callback: (error: any, outcome: SearchDIMOutcome) => void) {
       if (!callback && typeof options === 'function') {
         callback = options;
         options = {};
@@ -144,7 +317,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
       const provider = options.provider || options.providers;
       const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
       const {psize, offset, depth} = options;
-      serviceRequest('GET', Endpoints.SEARCH_DIM, {
+      this.serviceRequest('GET', Endpoints.SEARCH_DIM, {
           query,
           keyword,
           provider,
@@ -160,30 +333,42 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string|string[]} [provider] a list of provider plugins
    * @param {function(error:any, {results:object, elapsedTime:number})} callback the callback function
    */
-  DicoogleAccess.prototype.dump = function Dicoogle_dump(uid, provider, callback) {
-    if (typeof provider === 'function' && !callback) {
-        callback = provider;
-        provider = undefined;
+  dump(uid: string, callback: (error: any, outcome?: {results: object, elapsedTime: number}) => void);
+  /**
+   * Retrieve an image's meta-data (perform an information dump)
+   * @param {string} uid the SOP instance UID
+   * @param {string|string[]} [provider] a list of provider plugins
+   * @param {function(error:any, {results:object, elapsedTime:number})} callback the callback function
+   */
+  dump(uid: string, provider: string | string[], callback: (error: any, outcome?: {results: object, elapsedTime: number}) => void);
+  dump(uid: string, arg1: string | string[] | ((error: any, outcome?: {results: object, elapsedTime: number}) => void), arg2?: (error: any, outcome?: {results: object, elapsedTime: number}) => void) {
+    let callback, provider;
+    if (typeof arg1 === 'function' && !arg2) {
+      callback = arg1;
+      provider = undefined;
+    } else {
+      callback = arg2;
+      provider = arg1;
     }
-    serviceRequest('GET', Endpoints.DUMP, {
+    this.serviceRequest('GET', Endpoints.DUMP, {
         uid, provider
       }, callback);
   };
 
-  /** Request a CSV file export of the results.
-   * @param {string} query the query to perform
-   * @param {string|string[]} fields - a set of field names to be passed to the query providers when requesting
+  /** Request a CSV file of the results.
+   * @param query the query to perform
+   * @param fields - a set of field names to be passed to the query providers when requesting
    * the query. The same fields will be provided in the resulting CSV file, in the given order.
-   * @param {ExportOptions} [options] additional options
-   * @param {function(error:any, uid:string)} callback the callback function providing the UID of the file
+   * @param options additional options
+   * @param callback the callback function providing the UID of the file
    */
-  DicoogleAccess.prototype.issueExport = function Dicoogle_issueExport(query, fields, options, callback) {
+  issueExport(query: string, fields: string | string[], options: ExportOptions = {}, callback: (error: any, uid?: string) => void) {
     if (typeof options === 'function' && !callback) {
         callback = options;
         options = {};
     }
     fields = [].concat(fields);
-    let qs = {
+    let qs: any = {
         query, fields: JSON.stringify(fields)
     };
     if (typeof options.keyword === 'boolean') {
@@ -209,38 +394,50 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   }
 
   /**
-   * Retrieve a list of provider plugins
-   * @param {string} [type] the type of provider ("query", "index", ...) - defaults to "query"
-   * @param {function(error:any, result:string[])} callback the callback function
+   * Retrieve a list of query provider plugins
+   * @param callback the callback function
    */
-  DicoogleAccess.prototype.getProviders = function Dicoogle_getProviders(type = 'query', callback) {
-    if (typeof type === 'function' && !callback) {
-      callback = type;
+  getProviders(callback: (error: any, result?: string[]) => void);
+
+  /**
+   * Retrieve a list of query provider plugins
+   * @param type the type of provider ("query", "index", ...) - defaults to "query"
+   * @param callback the callback function
+   */
+  getProviders(type: string, callback: (error: any, result?: string[]) => void);
+
+  getProviders(arg0: string | ((error:any, result?: string[]) => void), arg1?: (error:any, result?: string[]) => void) {
+    let type, callback;
+    if (typeof arg0 === 'function' && !arg1) {
       type = 'query';
+      callback = arg0;
+    } else {
+      type = arg0;
+      callback = arg1;
     }
-    serviceRequest('GET', Endpoints.PROVIDERS, { type }, callback);
+    this.serviceRequest('GET', Endpoints.PROVIDERS, { type }, callback);
   };
 
   /**
    * Retrieve a list of query provider plugins
    * @param {function(error:any, result:string[])} callback the callback function
    */
-  DicoogleAccess.prototype.getQueryProviders = function Dicoogle_getQueryProviders(callback) {
-    this.getProviders(callback);
+  getQueryProviders(callback) {
+    this.getProviders('query', callback);
   };
 
   /**
    * Retrieve a list of index provider plugins
    * @param {function(error:any, result:string[])} callback the callback function
    */
-  DicoogleAccess.prototype.getIndexProviders = function Dicoogle_getIndexProviders(callback) {
+  getIndexProviders(callback) {
     this.getProviders('index', callback);
   };
 
   /** Retrieve a list of storage interface plugins
    * @param {function(error:any, result:string[])} callback the callback function
    */
-  DicoogleAccess.prototype.getStorageProviders = function Dicoogle_getStorageProviders(callback) {
+  getStorageProviders(callback) {
     this.getProviders('storage', callback);
   };
 
@@ -250,12 +447,12 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string|string[]} [provider] a provider or array of provider names in which the indexation will carry out, all by default
    * @param {function(error:any)} callback the function to call when the task is successfully issued
    */
-  DicoogleAccess.prototype.index = function Dicoogle_index(uri, provider, callback) {
+  index(uri, provider, callback) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
     }
-    serviceRequest('POST', Endpoints.INDEX, {
+    this.serviceRequest('POST', Endpoints.INDEX, {
       uri,
       plugin: provider
     }, callback);
@@ -264,8 +461,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   /** Retrieve the Dicoogle server's log text.
    * @param {function(error:any, text:string)} callback the callback function
    */
-  DicoogleAccess.prototype.getRawLog = function Dicoogle_getRawLog(callback) {
-    serviceRequest('GET', Endpoints.LOGGER, {}, callback, 'text/plain');
+  getRawLog(callback) {
+    this.serviceRequest('GET', Endpoints.LOGGER, {}, callback, 'text/plain');
   };
 
   /**
@@ -274,12 +471,12 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string|string[]} [provider] a provider or array of provider names in which the unindexation will carry out, all by default
    * @param {function(error:any)} callback the function to call on completion
    */
-  DicoogleAccess.prototype.unindex = function Dicoogle_unindex(uri, provider, callback) {
+  unindex(uri, provider, callback) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
     }
-    serviceRequest('POST', Endpoints.UNINDEX, {
+    this.serviceRequest('POST', Endpoints.UNINDEX, {
       uri,
       provider
     }, callback);
@@ -290,8 +487,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string|string[]} uri a URI or array of URIs representing the files to be removed
    * @param {function(error:any)} callback the function to call on completion
    */
-  DicoogleAccess.prototype.remove = function Dicoogle_remove(uri, callback) {
-    serviceRequest('POST', Endpoints.REMOVE, {
+  remove(uri, callback) {
+    this.serviceRequest('POST', Endpoints.REMOVE, {
       uri
     }, callback);
   };
@@ -299,16 +496,16 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
   /** Retrieve the running Dicoogle version.
    * @param {function(error:any, {version:string})} callback the callback function
    */
-  DicoogleAccess.prototype.getVersion = function Dicoogle_getVersion(callback) {
-    serviceRequest('GET', Endpoints.VERSION, {}, callback);
+  getVersion(callback) {
+    this.serviceRequest('GET', Endpoints.VERSION, {}, callback);
   };
 
   /** Retrieve information about currently installed web UI plugins.
    * @param {string} slotId the identifiers of slots to contemplate
    * @param {function(error:any,plugins:WebUIPlugin[])} callback the callback function
    */
-  DicoogleAccess.prototype.getWebUIPlugins = function Dicoogle_getWebUIPlugins(slotId, callback) {
-    serviceRequest('GET', Endpoints.WEBUI, slotId ? {'slot-id': slotId} : {}, (error, outcome) => {
+  getWebUIPlugins(slotId, callback) {
+    this.serviceRequest('GET', Endpoints.WEBUI, slotId ? {'slot-id': slotId} : {}, (error, outcome) => {
         if (error) {
             callback(error);
             return;
@@ -338,7 +535,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * Use it only when you know what you are doing.
    * @returns {string} the user's current authentication token
    */
-  DicoogleAccess.prototype.getToken = function Dicoogle_getToken() {
+  getToken() {
     return socket_.getToken();
   };
 
@@ -349,7 +546,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * 
    * @param {string} token the same user's token of a previous session
    */
-  DicoogleAccess.prototype.setToken = function Dicoogle_setToken(token) {
+  setToken(token) {
     if (typeof token === 'string') {
       socket_.setToken(token);
     }
@@ -359,7 +556,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * [EXPERTS] Clear this object's user session information. This method is synchronous.
    * Use it only when you know what you are doing.
    */
-  DicoogleAccess.prototype.reset = function Dicoogle_reset() {
+  reset() {
     socket_.reset();
   };
 
@@ -368,7 +565,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * authentication token.
    * @returns {boolean} whether the user is authenticated or not.
    */
-  DicoogleAccess.prototype.isAuthenticated = function Dicoogle_isAuthenticated() {
+  isAuthenticated() {
     return socket_.hasToken();
   };
 
@@ -376,7 +573,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * Get the user name of the currently authenticated user.
    * @returns {string} the unique user name
    */
-  DicoogleAccess.prototype.getUsername = function Dicoogle_getUsername() {
+  getUsername() {
     return socket_.getUsername();
   };
 
@@ -384,7 +581,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * Get the names of the roles assigned to this user.
    * @returns {string[]} an array of role names, null if the user is not authenticated
    */
-  DicoogleAccess.prototype.getRoles = function Dicoogle_getRoles() {
+  getRoles() {
     return socket_.getRoles();
   };
 
@@ -395,7 +592,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, {token:string, user:string, roles:string[], admin:boolean})} [callback] the
    *        callback function providing the authentication token and user information
    */
-  DicoogleAccess.prototype.login = function Dicoogle_login(username, password, callback) {
+  login(username, password, callback) {
     socket_.login(username, password, callback);
   };
 
@@ -405,7 +602,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, {user:string, roles:string[], admin:boolean})} callback the callback function
    *        providing user information
    */
-  DicoogleAccess.prototype.restoreSession = function Dicoogle_restoreSession(token, callback) {
+  restoreSession(token, callback) {
     socket_.restore(token, callback);
   };
 
@@ -413,7 +610,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * Log out from the server.
    * @param {function(error:any)} [callback] the callback function
    */
-  DicoogleAccess.prototype.logout = function Dicoogle_logout(callback) {
+  logout(callback) {
     socket_.logout(callback);
   };
 
@@ -423,7 +620,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string} [field] a particular field to retrieve
    * @param {function(error:any, outcome:any)} callback the callback function
    */
-  DicoogleAccess.prototype.getIndexerSettings = function Dicoogle_getIndexerSettings(field, callback) {
+  getIndexerSettings(field, callback) {
     if (typeof field === 'function' && !callback) {
       callback = field;
       field = undefined;
@@ -476,7 +673,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string} [value] the value to assign to the field, required if `fields` is a string
    * @param {function(error:any)} callback the callback function
    */
-  DicoogleAccess.prototype.setIndexerSettings = function Dicoogle_setIndexerSettings(fields, value, callback) {
+  setIndexerSettings(fields, value, callback) {
     if (typeof fields === 'string') {
         const field = fields === 'thumbnail' ? 'saveThumbnail' : fields;
         fields = {};
@@ -497,13 +694,13 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
             }
         }
     }
-    serviceRequest('POST', Endpoints.INDEXER_SETTINGS, fields, callback);
+    this.serviceRequest('POST', Endpoints.INDEXER_SETTINGS, fields, callback);
   };
 
   /** Get the list of current transfer syntax settings available.
    * @param {function(error:any, outcome:TransferSyntax[])} callback the callback function
    */
-  DicoogleAccess.prototype.getTransferSyntaxSettings = function Dicoogle_getTransferSyntaxSettings(callback) {
+  getTransferSyntaxSettings(callback) {
     socket_.request('GET', Endpoints.TRANSFER_SETTINGS)
         .end(function (err, res) {
             if (err) {
@@ -520,15 +717,15 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {boolean} value whether to set (true) or reset (false) the option
    * @param {function(error:any)} callback the callback function
    */
-  DicoogleAccess.prototype.setTransferSyntaxOption = function Dicoogle_setTransferSyntaxOption(uid, option, value, callback) {
-      serviceRequest('POST', Endpoints.TRANSFER_SETTINGS, {uid, option, value}, callback);
+  setTransferSyntaxOption(uid, option, value, callback) {
+      this.serviceRequest('POST', Endpoints.TRANSFER_SETTINGS, {uid, option, value}, callback);
   }
 
   /** Retrieve the AE title of the Dicoogle archive.
    * @param {function(error:any, aetitle:string)} callback the callback function
    */
-  DicoogleAccess.prototype.getAETitle = function Dicoogle_getAETitle(callback) {
-      serviceRequest('GET', Endpoints.DICOM_AETITLE_SETTINGS, {}, function(err, outcome) {
+  getAETitle(callback) {
+      this.serviceRequest('GET', Endpoints.DICOM_AETITLE_SETTINGS, {}, function(err, outcome) {
         if (err) {
             callback(err);
             return;
@@ -546,8 +743,8 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {string} aetitle a valid AE title for the PACS archive
    * @param {function(error:any)} callback the callback function
    */
-  DicoogleAccess.prototype.setAETitle = function Dicoogle_setAETitle(aetitle, callback) {
-      serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, callback);
+  setAETitle(aetitle, callback) {
+      this.serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, callback);
   };
 
   /**
@@ -560,7 +757,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    *                          to Dicoogle's base URL. There should be no leading slash ('/').
    * @returns {SuperAgent} a superagent request object
    */
-  DicoogleAccess.prototype.request = function Dicoogle_request(method = 'GET', uri) {
+  request(method = 'GET', uri) {
       return socket_.request(method, uri);
   };
 
@@ -568,7 +765,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * This method is synchronous.
    * @returns {string} the currently configured base endpoint of Dicoogle
    */
-  DicoogleAccess.prototype.getBase = function Dicoogle_getBase() {
+  getBase() {
     return socket_.getBase();
   }
 
@@ -579,7 +776,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {number} [frame] the frame number, if applicable
    * @returns {string} the full URL to the thumbnail
    */
-  DicoogleAccess.prototype.getThumbnailUrl = function Dicoogle_getThumbnailUrl(id, frame) {
+  getThumbnailUrl(id, frame) {
     let qs = isDicomUUID(id) ? `SOPInstanceUID=${id}` : `uri=${id}`;
     if (typeof frame === 'number') {
         qs += '&frame=' + frame
@@ -594,7 +791,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {number} [frame] the frame number, if applicable
    * @returns {string} the full URL to the preview
    */
-  DicoogleAccess.prototype.getPreviewUrl = function Dicoogle_getPreviewUrl(id, frame) {
+  getPreviewUrl(id, frame) {
     let qs = isDicomUUID(id) ? `SOPInstanceUID=${id}` : `uri=${id}`;
     if (typeof frame === 'number') {
         qs += '&frame=' + frame
@@ -612,7 +809,7 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
    * @param {function(error:any, outcome:any)} callback the callback function
    * @param {string} [mimeType] the MIME type, application/json by default
    */
-  function serviceRequest(method, uri, qs, callback, mimeType = 'application/json') {
+  private serviceRequest(method, uri, qs, callback, mimeType = 'application/json') {
       const asText = mimeType ? mimeType.split('/')[0] === 'text' : false;
       let req = socket_.request(method, uri).query(qs);
       if (mimeType) {
@@ -626,9 +823,10 @@ DicoogleAccess.prototype.ServiceSettings = ServiceSettings;
           callback(null, res ? (asText ? res.text : res.body) : null);
       });
   }
+}
 
-// singleton module */
-var m = new DicoogleAccess();
+/** @private singleton module */
+let m: DicoogleAccess = new DicoogleAccess();
 
 /** Object type for containing Dicoogle client options.
  * @typedef {Object} DicoogleClientOptions
@@ -640,11 +838,11 @@ var m = new DicoogleAccess();
 /**
  * Initialize the Dicoogle access object, which can be used multiple times.
  *
- * @param {string} [url] the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
- * @param {DicoogleClientOptions} options a set of options regarding service access and user authentication
- * @returns {Object} a singleton dicoogle service access object
+ * @param url the controller service's base url, can be null iif the endpoint is the browser context's host or the access object is already created
+ * @param options a set of options regarding service access and user authentication
+ * @returns a singleton dicoogle service access object
  */
-export default function dicoogleClient(url, options = {}) {
+function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): DicoogleAccess {
     if (socket_ && (!url || url === socket_.getBase())) {
         return m;
     }
@@ -655,7 +853,7 @@ export default function dicoogleClient(url, options = {}) {
         }
     }
 
-    socket_ = new Socket(url, options.token);
+    socket_ = new Socket(url);
     if (typeof options.token === 'string') {
         socket_.setToken(options.token);
     }
@@ -666,3 +864,4 @@ export default function dicoogleClient(url, options = {}) {
 
     return m;
 }
+export = dicoogleClient;

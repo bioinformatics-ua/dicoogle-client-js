@@ -8,7 +8,7 @@ This library is compatible with browser-based JavaScript and Node.js. A CLI appl
 ## Using the JavaScript API
 
 The full API is documented [here](https://bioinformatics-ua.github.io/dicoogle-client-js).
-Documentation was built from our Typescript definitions, which are also available (see [dicoogle-client.d.ts](types/dicoogle-client.d.ts)).
+Documentation was built from our Typescript definitions, which are also available.
 
 ### Quick Start
 
@@ -26,7 +26,7 @@ Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
   }
 
   // Ok! Start using Dicoogle!
-  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, error, outcome) => {
+  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, (error, outcome) => {
     if (error) {
       console.error(error);
       return;

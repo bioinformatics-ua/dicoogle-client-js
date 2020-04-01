@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2017  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ *
+ * This file is part of Dicoogle/dicoogle-client-js.
+ *
+ * Dicoogle/dicoogle-client-js is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Dicoogle/dicoogle-client-js is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* eslint-env mocha */
 const assert = require('chai').assert;
 const createMockedDicoogle = require('./mock/service-mock');
@@ -556,6 +575,23 @@ describe('Dicoogle Client (under Node.js)', function() {
                     Dicoogle.storage.getRemoteServers(function (error, remotes) {
                         assert.equal(error, null);
                         assert.strictEqual(remotes.length, 3);
+                        done();
+                    });
+                });
+            });
+            it("storage#addRemoteServer(); increases list to 4 stores", function(done) {
+                Dicoogle.storage.addRemoteServer({
+                    aetitle: 'ONE_MORE_SERV',
+                    ip: '10.0.0.145',
+                    port: 6666,
+                    description: 'our public store',
+                    public: true
+                },
+                function (error) {
+                    assert.equal(error, null);
+                    Dicoogle.storage.getRemoteServers(function (error, remotes) {
+                        assert.equal(error, null);
+                        assert.strictEqual(remotes.length, 4);
                         done();
                     });
                 });

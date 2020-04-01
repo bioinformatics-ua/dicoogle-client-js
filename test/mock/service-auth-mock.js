@@ -1,6 +1,24 @@
+/*
+ * Copyright (C) 2017  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ *
+ * This file is part of Dicoogle/dicoogle-client-js.
+ *
+ * Dicoogle/dicoogle-client-js is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Dicoogle/dicoogle-client-js is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 const dicoogleClient = require('../../src');
 const nock = require('nock');
-const qs = require('querystring');
 
 let nockDone = false;
 
@@ -12,15 +30,15 @@ module.exports = function createDicoogleMock() {
     if (!nockDone) {
         // prepare Dicoogle server mock
         nock(BASE_URL, { // mock /login with admin account
+                
                 reqheaders: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                  }
             })
             .post('/login', function(data) {
-                const parsedData = qs.parse(data);
-                return parsedData.username === 'admin' &&
-                        typeof parsedData.password === 'string' &&
-                        parsedData.password.length >= 3;
+                return data.username === 'admin' &&
+                        typeof data.password === 'string' &&
+                        data.password.length >= 3;
             })
             .twice()
             .reply(200, {
@@ -30,8 +48,7 @@ module.exports = function createDicoogleMock() {
                 token: '9ebdff77-dffc-4904-a954-74f72ba77483'
             })
             .post('/login', function(data) {
-                const parsedData = qs.parse(data);
-                return parsedData.username === 'admin' && parsedData.password.length < 3;
+                return data.username === 'admin' && data.password.length < 3;
             })
             .reply(403, {
                 error: 'Invalid credentials'

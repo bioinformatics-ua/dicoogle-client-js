@@ -14,12 +14,12 @@
     "client",
     "api"
   ],
-  "version": "4.1.0",
+  "version": "4.2.0",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=10.0.0"
   },
   "main": "./lib/index",
-  "types": "./types/dicoogle-client.d.ts",
+  "types": "./lib/index.d.ts",
   "browserify": {
     "transforms": [
       "envify"
@@ -28,61 +28,62 @@
   "files": [
     "dist/",
     "bin/",
-    "lib/",
-    "types/"
+    "lib/"
   ],
   "bin": {
     "dicoogle-query": "bin/dicoogle-query-cli.js"
   },
   "license": "GPL-3.0+",
   "dependencies": {
-    "@types/superagent": "^2.0.36",
-    "superagent": "^3.4.4"
+    "@types/superagent": "^4.1.7",
+    "superagent": "^5.2.2"
   },
   "devDependencies": {
-    "babel-core": "^6.23.1",
-    "babel-eslint": "^7.1.1",
-    "babel-plugin-add-module-exports": "^0.2.0",
-    "babel-plugin-istanbul": "^4.0.0",
-    "babel-preset-es2015": "^6.22.0",
-    "babel-register": "^6.23.0",
-    "browserify": "^13.0.0",
-    "chai": "^3.5.0",
-    "coveralls": "^2.11.16",
-    "cross-env": "^3.1.4",
+    "babel-eslint": "^10.1.0",
+    "browserify": "^16.5.1",
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.11",
+    "cross-env": "^7.0.2",
     "envify": "^4.0.0",
-    "gulp": "^3.9.0",
-    "gulp-babel": "^6.1.1",
-    "gulp-eslint": "3.0.1",
-    "gulp-header": "^1.7.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-rm": "^1.0.0",
-    "gulp-uglify": "^2.0.1",
-    "mocha": "^3.2.0",
-    "nock": "^9.0.6",
-    "nyc": "^10.1.2",
-    "typedoc": "^0.5.7",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "gulp": "^4.0.2",
+    "gulp-eslint": "^6.0.0",
+    "gulp-header": "^2.0.9",
+    "gulp-rename": "^2.0.0",
+    "gulp-rm": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-typescript": "^5.0.1",
+    "gulp-uglify": "^3.0.0",
+    "mocha": "^6.2.3",
+    "nock": "^12.0.3",
+    "nyc": "^14.1.1",
+    "ts-node": "^8.8.1",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.8.3",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "check": "gulp lint",
-    "build": "gulp",
-    "prepublish": "gulp",
-    "document": "typedoc --out docs/ --includeDeclarations --target ES6 --name 'Dicoogle JavaScript Client' --readme README.docs.md types/dicoogle-client.d.ts",
-    "test": "cross-env NODE_ENV=test nyc mocha",
-    "cover": "cross-env NODE_ENV=test nyc report --reporter=lcov",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "check": "gulp --series lint",
+    "build": "gulp --series lint main bundle",
+    "prepare": "gulp default",
+    "clean": "gulp clean",
+    "document": "typedoc ./src/",
+    "test": "cross-env NODE_ENV=test mocha -r ts-node/register",
+    "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha -r ts-node/register",
+    "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/bioinformatics-ua/dicoogle-client-js.git"
   },
   "nyc": {
-    "require": [
-      "babel-register"
+    "extension": [
+      ".js",
+      ".ts"
     ],
-    "sourceMap": false,
-    "instrument": false
+    "exclude": [
+      "gulpfile.js",
+      "test/*"
+    ]
   }
 }

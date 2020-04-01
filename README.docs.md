@@ -6,8 +6,10 @@
 
 Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 2+).
 
-- [`DicoogleClient`](modules/_types_dicoogle_client_d_.dicoogleclient.html) is a function for retrieving a Dicoogle access object.
-- [`DicoogleAccess`](interfaces/_types_dicoogle_client_d_.dicoogleclient.dicoogleaccess.html) is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`](interfaces/_types_dicoogle_client_d_.dicoogleclient.dicoogleaccess.html) documentation page for a list of all methods and namespaces within.
+- [`dicoogleClient`](modules/_index_.html#dicoogleclient) is a function for retrieving a Dicoogle access object.
+- [`DicoogleAccess`] is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`] documentation page for a list of all methods and namespaces within.
+
+[`DicoogleAccess`]: classes/_index_.dicoogleaccess.html
 
 ## Installing
 
@@ -27,10 +29,10 @@ import DicoogleClient = require('dicoogle-client');
 
 ### On the browser, no module system
 
-When _not_ using Node.js or a bundler, simply include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
+When _not_ using Node.js or any module system, include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
 
 ```HTML
-<script src='/path/to/my/libs/dicoogle-client.min.js'></script>
+<script src='path/to/my/libs/dicoogle-client.min.js'></script>
 ```
 
 ### In ES2015

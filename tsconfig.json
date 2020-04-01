@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "alwaysStrict": false,
+        "module": "commonjs",
+        "target": "ES2015",
+        "outDir": "lib",
+        "rootDir": "src",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "declaration": true
+    },
+    "include": [
+        "src/"
+    ],
+    "typeAcquisition": {
+        "enable": true
+    }
+}

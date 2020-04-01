@@ -16,3 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * @param uid the UUID
+ * @returns whether it's a DICOM UUID
+ */
+export function isDicomUUID(uid: string): boolean {
+    return uid.length <= 64 && uid.match(/^\d+(\.\d+)*$/) !== null;
+}

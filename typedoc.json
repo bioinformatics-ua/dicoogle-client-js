@@ -1,0 +1,9 @@
+{
+    "includeDeclarations": true,
+    "out": "./docs/",
+    "target": "ES6",
+    "excludePrivate": true,
+    "excludeExternals": true,
+    "name": "Dicoogle JavaScript Client",
+    "readme": "./README.docs.md"
+}

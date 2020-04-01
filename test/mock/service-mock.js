@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2017  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ *
+ * This file is part of Dicoogle/dicoogle-client-js.
+ *
+ * Dicoogle/dicoogle-client-js is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Dicoogle/dicoogle-client-js is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 const dicoogleClient = require('../../src');
 const nock = require('nock');
 const URL = require('url');
@@ -279,27 +298,27 @@ module.exports = function createDicoogleMock() {
 
             // mock index on specific provider
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-\/]+/, plugin: /.*/ })
+            .query({ uri: /[a-z0-9\-/]+/, plugin: /.*/ })
             .reply(200)
 
             // mock index on all providers
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-\/]+/ })
+            .query({ uri: /[a-z0-9\-/]+/ })
             .reply(200)
 
             // mock unindex on all providers
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-\/]+/ })
+            .query({ uri: /[a-z0-9\-/]+/ })
             .reply(200)
 
             // mock unindex on specific provider
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-\/]+/, provider: /.*/ })
+            .query({ uri: /[a-z0-9\-/]+/, provider: /.*/ })
             .reply(200)
 
             // mock remove
             .post('/management/tasks/remove')
-            .query({ uri: /[a-z0-9\-\/]+/ })
+            .query({ uri: /[a-z0-9\-/]+/ })
             .reply(200)
 
             // mock dump
@@ -365,7 +384,7 @@ module.exports = function createDicoogleMock() {
 
         nock(BASE_URL)
             .post('/management/dicom/query')
-            .query(false)
+            .query({})
             .reply(400, {
                 error: "Incomplete configurations"
             })
@@ -411,15 +430,17 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/management/settings/storage/dicom')
             .reply(200, REMOTE_STORAGES);
 
-            // adding
+        // adding a server (without public property)
         nock(BASE_URL).post('/management/settings/storage/dicom')
             .query({
                 type: 'add',
                 aetitle: /[A-Z0-9_ ]+/,
                 ip: /.+/,
-                port: /[0-9]+/
+                port: /[0-9]+/,
+                description: /.*/
             })
             .reply(200, { added: true });
+        // first response should have 3 servers
         nock(BASE_URL).get('/management/settings/storage/dicom')
             .reply(200, REMOTE_STORAGES.concat({
                 AETitle: 'A_NEW_STORAGE',
@@ -428,9 +449,42 @@ module.exports = function createDicoogleMock() {
                 description: '',
                 isPublic: false
             }))
+        // adding a server (with public property)
+        nock(BASE_URL).post('/management/settings/storage/dicom')
+            .query({
+                type: 'add',
+                aetitle: /[A-Z0-9_ ]+/,
+                ip: /.+/,
+                port: /[0-9]+/,
+                description: /.*/,
+                public: 'true'
+            })
+            .reply(200, { added: true });
+        // second response should have 4 servers
+        nock(BASE_URL).get('/management/settings/storage/dicom')
+        .reply(200, REMOTE_STORAGES.concat([{
+            AETitle: 'A_NEW_STORAGE',
+            ipAddrs: '10.0.0.144',
+            port: 6646,
+            description: '',
+            isPublic: false
+        }, {
+            aetitle: 'ONE_MORE_SERV',
+            ip: '10.0.0.145',
+            port: 6666,
+            description: 'our public store',
+            public: true
+        }]));
 
-            // removing by whole object
-            .post('/management/settings/storage/dicom')
+        // adding with not enough info
+        nock(BASE_URL).post('/management/settings/storage/dicom')
+        .query(q => {
+            return q.type === 'add' && (!q.aetitle || !q.ip || !q.port || !q.description);
+        })
+        .reply(500, {error: 'Parameters missing'});
+
+        // removing by whole object
+        nock(BASE_URL).post('/management/settings/storage/dicom')
             .query({
                 type: 'remove',
                 aetitle: /[A-Z0-9_ ]+/,
@@ -455,7 +509,7 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/management/settings/index')
             .once().reply(200, () => JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
         nock(BASE_URL).get('/management/settings/index')
-            .reply(200, () => INDEXER_SETTINGS);               // with patched Dicoogle
+            .reply(200, () => INDEXER_SETTINGS); // with patched Dicoogle
         // getters
         nock(BASE_URL)
             .get('/management/settings/index/path')
@@ -512,7 +566,7 @@ module.exports = function createDicoogleMock() {
         nock(BASE_URL).get('/management/settings/transfer')
             .once().reply(200, JSON.stringify(TRANSFER_SETTINGS)) // in Dicoogle 2.3.1
             .get('/management/settings/transfer')
-            .reply(200, TRANSFER_SETTINGS);                       // with patched Dicoogle
+            .reply(200, TRANSFER_SETTINGS); // with patched Dicoogle
 
         nock(BASE_URL).post('/management/settings/transfer')
             .query({uid: /(\d\.?)+/, option: /\S*/, value: true})
