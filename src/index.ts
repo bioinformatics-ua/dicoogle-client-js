@@ -25,6 +25,7 @@ import {Socket} from './socket';
 import {StorageService, QueryRetrieveService} from './service';
 import {Tasks} from './tasks';
 import {isDicomUUID} from './util';
+import { SuperAgent, SuperAgentRequest } from 'superagent';
 
 // private variables of the module
 /**@private
@@ -61,7 +62,9 @@ const ServiceSettings = Object.freeze({
 
 /** Options for the `login` method.  */
 interface DicoogleClientOptions {
+  /** The same user's token of a previous session, used only for restoring previous (but recent) sessions. */
   token?: string
+  /** Whether to use HTTPS instead of HTTP, if no scheme is specified in the url. */
   secure?: boolean
 }
 
@@ -259,6 +262,8 @@ interface WebUIPlugin {
   settings?: any
 }
 
+type password = string;
+
 /** Main entrypoint to the Dicoogle web API.
  */
 class DicoogleAccess {
@@ -281,14 +286,27 @@ class DicoogleAccess {
 
   /**
    * Perform a text query.
-   * @param {string} query text query
-   * @param {SearchOptions} [options] a hash of options related to the search
-   * @param {function(error:any, outcome:SearchOutcome)} callback the callback function providing the outcome
+   * @param query text query
+   * @param callback the callback function providing the outcome
    */
-  search(query, options: SearchOptions = {}, callback) {
-      if (!callback && typeof options === 'function') {
-        callback = options;
+  search(query: string, callback: (error: any, outcome: SearchOutcome) => void);
+
+  /**
+   * Perform a text query.
+   * @param query text query
+   * @param options a set of options related to the search
+   * @param callback the callback function providing the outcome
+   */
+  search(query: string, options: SearchOptions, callback: (error: any, outcome: SearchOutcome) => void);
+
+  search(query: string, arg1: SearchOptions | ((error: any, outcome: SearchOutcome) => void) = {}, arg2?: (error: any, outcome: SearchOutcome) => void) {
+      let callback, options;
+      if (!arg2 && typeof arg1 === 'function') {
+        callback = arg1;
         options = {};
+      } else {
+        callback = arg2;
+        options = arg1;
       }
       const provider = options.provider || options.providers;
       const keyword = typeof options.keyword === 'boolean' ? options.keyword : !!query.match(/[^\s\\]:\S/);
@@ -329,16 +347,15 @@ class DicoogleAccess {
 
   /**
    * Retrieve an image's meta-data (perform an information dump)
-   * @param {string} uid the SOP instance UID
-   * @param {string|string[]} [provider] a list of provider plugins
-   * @param {function(error:any, {results:object, elapsedTime:number})} callback the callback function
+   * @param uid the SOP instance UID
+   * @param callback the callback function
    */
   dump(uid: string, callback: (error: any, outcome?: {results: object, elapsedTime: number}) => void);
   /**
    * Retrieve an image's meta-data (perform an information dump)
-   * @param {string} uid the SOP instance UID
-   * @param {string|string[]} [provider] a list of provider plugins
-   * @param {function(error:any, {results:object, elapsedTime:number})} callback the callback function
+   * @param uid the SOP instance UID
+   * @param provider a list of provider plugins
+   * @param callback the callback function
    */
   dump(uid: string, provider: string | string[], callback: (error: any, outcome?: {results: object, elapsedTime: number}) => void);
   dump(uid: string, arg1: string | string[] | ((error: any, outcome?: {results: object, elapsedTime: number}) => void), arg2?: (error: any, outcome?: {results: object, elapsedTime: number}) => void) {
@@ -400,7 +417,7 @@ class DicoogleAccess {
   getProviders(callback: (error: any, result?: string[]) => void);
 
   /**
-   * Retrieve a list of query provider plugins
+   * Retrieve a list of provider plugins
    * @param type the type of provider ("query", "index", ...) - defaults to "query"
    * @param callback the callback function
    */
@@ -420,34 +437,42 @@ class DicoogleAccess {
 
   /**
    * Retrieve a list of query provider plugins
-   * @param {function(error:any, result:string[])} callback the callback function
+   * @param callback the callback function
    */
-  getQueryProviders(callback) {
+  getQueryProviders(callback: (error: any, result?: string[]) => void) {
     this.getProviders('query', callback);
   };
 
   /**
    * Retrieve a list of index provider plugins
-   * @param {function(error:any, result:string[])} callback the callback function
+   * @param callback the callback function
    */
-  getIndexProviders(callback) {
+  getIndexProviders(callback: (error: any, result?: string[]) => void) {
     this.getProviders('index', callback);
   };
 
   /** Retrieve a list of storage interface plugins
-   * @param {function(error:any, result:string[])} callback the callback function
+   * @param callback the callback function
    */
-  getStorageProviders(callback) {
+  getStorageProviders(callback: (error: any, result?: string[]) => void) {
     this.getProviders('storage', callback);
   };
 
   /**
    * Request a new indexation task over a given URI. The operation is recursive, indexing anything in the URI's endpoint.
-   * @param {string|string[]} uri a URI or array of URIs representing the root resource of the files to be indexed
-   * @param {string|string[]} [provider] a provider or array of provider names in which the indexation will carry out, all by default
-   * @param {function(error:any)} callback the function to call when the task is successfully issued
+   * @param uri a URI or array of URIs representing the root resource of the files to be indexed
+   * @param callback the function to call when the task is successfully issued
    */
-  index(uri, provider, callback) {
+  index(uri: string | string[], callback: (error: any) => void);
+
+  /**
+   * Request a new indexation task over a given URI. The operation is recursive, indexing anything in the URI's endpoint.
+   * @param uri a URI or array of URIs representing the root resource of the files to be indexed
+   * @param provider a provider or array of provider names in which the indexation will carry out, all by default
+   * @param callback the function to call when the task is successfully issued
+   */
+  index(uri: string | string[], provider: string | string[], callback: (error: any) => void);
+  index(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
@@ -461,17 +486,24 @@ class DicoogleAccess {
   /** Retrieve the Dicoogle server's log text.
    * @param {function(error:any, text:string)} callback the callback function
    */
-  getRawLog(callback) {
+  getRawLog(callback: (error: any, text: string) => void) {
     this.serviceRequest('GET', Endpoints.LOGGER, {}, callback, 'text/plain');
   };
 
   /**
    * Request that the file at the given URI is unindexed. The operation, unlike index(), is not recursive.
-   * @param {string|string[]} uri a URI or array of URIs representing the files to be unindexed
-   * @param {string|string[]} [provider] a provider or array of provider names in which the unindexation will carry out, all by default
-   * @param {function(error:any)} callback the function to call on completion
+   * @param uri a URI or array of URIs representing the files to be unindexed
+   * @param callback the function to call on completion
    */
-  unindex(uri, provider, callback) {
+  unindex(uri: string | string[], callback: (error: any) => void);
+  /**
+   * Request that the file at the given URI is unindexed. The operation, unlike index(), is not recursive.
+   * @param uri a URI or array of URIs representing the files to be unindexed
+   * @param provider a provider or array of provider names in which the unindexation will carry out, all by default
+   * @param callback the function to call on completion
+   */
+  unindex(uri: string | string[], provider: string | string[], callback: (error: any) => void);
+  unindex(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
@@ -484,27 +516,27 @@ class DicoogleAccess {
 
   /** Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
    * Indices will not be updated, hence the files should be unindexed manually if so is intended.
-   * @param {string|string[]} uri a URI or array of URIs representing the files to be removed
-   * @param {function(error:any)} callback the function to call on completion
+   * @param uri a URI or array of URIs representing the files to be removed
+   * @param callback the function to call on completion
    */
-  remove(uri, callback) {
+  remove(uri: string | string[], callback: (error: any) => void) {
     this.serviceRequest('POST', Endpoints.REMOVE, {
       uri
     }, callback);
   };
 
   /** Retrieve the running Dicoogle version.
-   * @param {function(error:any, {version:string})} callback the callback function
+   * @param callback the callback function
    */
-  getVersion(callback) {
+  getVersion(callback: (error: any, outcome: {version: string}) => void) {
     this.serviceRequest('GET', Endpoints.VERSION, {}, callback);
   };
 
   /** Retrieve information about currently installed web UI plugins.
-   * @param {string} slotId the identifiers of slots to contemplate
-   * @param {function(error:any,plugins:WebUIPlugin[])} callback the callback function
+   * @param slotId the identifiers of slots to contemplate
+   * @param callback the callback function
    */
-  getWebUIPlugins(slotId, callback) {
+  getWebUIPlugins(slotId: string, callback: (error: any, plugins?: WebUIPlugin[]) => void) {
     this.serviceRequest('GET', Endpoints.WEBUI, slotId ? {'slot-id': slotId} : {}, (error, outcome) => {
         if (error) {
             callback(error);
@@ -533,9 +565,9 @@ class DicoogleAccess {
    * [EXPERTS] Retrieve the authentication token. This token is ephemeral and may expire after some time.
    * This method is synchronous.
    * Use it only when you know what you are doing.
-   * @returns {string} the user's current authentication token
+   * @returns the user's current authentication token, null if the user is not authenticated
    */
-  getToken() {
+  getToken(): string | null {
     return socket_.getToken();
   };
 
@@ -544,9 +576,9 @@ class DicoogleAccess {
    * Use it only when you know what you are doing. When restoring a previous (but still
    * living) session, please prefer [@link restoreSession] instead.
    * 
-   * @param {string} token the same user's token of a previous session
+   * @param token the same user's token of a previous session
    */
-  setToken(token) {
+  setToken(token: string) {
     if (typeof token === 'string') {
       socket_.setToken(token);
     }
@@ -563,54 +595,52 @@ class DicoogleAccess {
   /**
    * Check whether the user is authenticated to the server. Authenticated clients will hold an
    * authentication token.
-   * @returns {boolean} whether the user is authenticated or not.
+   * @returns whether the user is authenticated or not.
    */
-  isAuthenticated() {
+  isAuthenticated(): boolean {
     return socket_.hasToken();
   };
 
   /**
    * Get the user name of the currently authenticated user.
-   * @returns {string} the unique user name
+   * @returns {string} the unique user name, null if the use is not authenticated
    */
-  getUsername() {
+  getUsername(): string | null {
     return socket_.getUsername();
   };
 
   /**
    * Get the names of the roles assigned to this user.
-   * @returns {string[]} an array of role names, null if the user is not authenticated
+   * @returns an array of role names, null if the user is not authenticated
    */
-  getRoles() {
+  getRoles(): string[] | null {
     return socket_.getRoles();
   };
-
+  
   /**
    * Manually log in to Dicoogle using the given credentials.
-   * @param {string} username the unique user name for the client
-   * @param {password} password the user's password for authentication
-   * @param {function(error:any, {token:string, user:string, roles:string[], admin:boolean})} [callback] the
-   *        callback function providing the authentication token and user information
+   * @param username the unique user name for the client
+   * @param password the user's password for authentication
+   * @param callback the callback function providing the authentication token and user information
    */
-  login(username, password, callback) {
+  login(username: string, password: password, callback?: (error:any, outcome?: {token: string, user: string, roles: string[], admin: boolean}) => void) {
     socket_.login(username, password, callback);
   };
 
   /**
    * Restore a living Dicoogle session identified by the given token.
-   * @param {string} token the same user's token of a previous session
-   * @param {function(error:any, {user:string, roles:string[], admin:boolean})} callback the callback function
-   *        providing user information
+   * @param token the same user's token of a previous session
+   * @param callback the callback function providing user information
    */
-  restoreSession(token, callback) {
+  restoreSession(token: string, callback: (error: any, outcome?: {user: string, roles: string[], admin: boolean}) => void) {
     socket_.restore(token, callback);
   };
 
   /**
    * Log out from the server.
-   * @param {function(error:any)} [callback] the callback function
+   * @param callback the callback function
    */
-  logout(callback) {
+  logout(callback?: (error: any) => void) {
     socket_.logout(callback);
   };
 
@@ -620,7 +650,9 @@ class DicoogleAccess {
    * @param {string} [field] a particular field to retrieve
    * @param {function(error:any, outcome:any)} callback the callback function
    */
-  getIndexerSettings(field, callback) {
+  getIndexerSettings(callback: (error: any, outcome?: IndexerSettings) => void);
+  getIndexerSettings(field: string, callback: (error: any, outcome?: any) => void);
+  getIndexerSettings(field: string | ((error: any, outcome?: IndexerSettings) => void), callback?: (error: any, outcome?: any) => void) {
     if (typeof field === 'function' && !callback) {
       callback = field;
       field = undefined;
@@ -668,12 +700,20 @@ class DicoogleAccess {
     });
   };
 
-  /** Set a particular Indexer setting. A valid field and value is required.
-   * @param {object|string} fields either a dictionary of settings or the name of a particular field to set
-   * @param {string} [value] the value to assign to the field, required if `fields` is a string
-   * @param {function(error:any)} callback the callback function
+  /** Set a portions of the Indexer settings.
+   * @param fields a dictionary of settings and their respective values
+   * @param callback the callback function
    */
-  setIndexerSettings(fields, value, callback) {
+  setIndexerSettings(fields: {[fieldName: string]: any}, callback: (error: any) => void);
+
+  /** Set a particular Indexer setting. A valid field and value is required.
+   * @param fieldName either a dictionary of settings or the name of a particular field to set
+   * @param value the value to assign to the field, required the first argument is a string
+   * @param callback the callback function
+   */
+  setIndexerSettings(fieldName: string, value: string, callback: (error: any) => void);
+
+  setIndexerSettings(fields, value, callback?) {
     if (typeof fields === 'string') {
         const field = fields === 'thumbnail' ? 'saveThumbnail' : fields;
         fields = {};
@@ -698,9 +738,9 @@ class DicoogleAccess {
   };
 
   /** Get the list of current transfer syntax settings available.
-   * @param {function(error:any, outcome:TransferSyntax[])} callback the callback function
+   * @param callback the callback function
    */
-  getTransferSyntaxSettings(callback) {
+  getTransferSyntaxSettings(callback: (error: any, outcome?: TransferSyntax[]) => void) {
     socket_.request('GET', Endpoints.TRANSFER_SETTINGS)
         .end(function (err, res) {
             if (err) {
@@ -712,19 +752,19 @@ class DicoogleAccess {
   }
 
   /** Set (or reset) an option of a particular transfer syntax.
-   * @param {string} uid the unique identifier of the transfer syntax
-   * @param {string} option the name of the option to modify
-   * @param {boolean} value whether to set (true) or reset (false) the option
-   * @param {function(error:any)} callback the callback function
+   * @param uid the unique identifier of the transfer syntax
+   * @param option the name of the option to modify
+   * @param value whether to set (true) or reset (false) the option
+   * @param callback the callback function
    */
-  setTransferSyntaxOption(uid, option, value, callback) {
+  setTransferSyntaxOption(uid: string, option: string, value: boolean, callback: (error: any) => void) {
       this.serviceRequest('POST', Endpoints.TRANSFER_SETTINGS, {uid, option, value}, callback);
   }
 
   /** Retrieve the AE title of the Dicoogle archive.
-   * @param {function(error:any, aetitle:string)} callback the callback function
+   * @param callback the callback function
    */
-  getAETitle(callback) {
+  getAETitle(callback: (error: any, aetitle?: string) => void) {
       this.serviceRequest('GET', Endpoints.DICOM_AETITLE_SETTINGS, {}, function(err, outcome) {
         if (err) {
             callback(err);
@@ -740,24 +780,37 @@ class DicoogleAccess {
   };
 
   /** Redefine the AE title of the Dicoogle archive.
-   * @param {string} aetitle a valid AE title for the PACS archive
-   * @param {function(error:any)} callback the callback function
+   * @param aetitle a valid AE title for the PACS archive
+   * @param callback the callback function
    */
-  setAETitle(aetitle, callback) {
+  setAETitle(aetitle: string, callback: (error: any) => void) {
       this.serviceRequest('PUT', Endpoints.DICOM_AETITLE_SETTINGS, { aetitle }, callback);
   };
+
+  /**
+   * Perform a generic GET request to Dicoogle's services. Users of this method can invoke any REST
+   * service exposed by Dicoogle, including those from plugins. The resulting object is the start
+   * of a SuperAgent request.
+   *
+   * @param uri a URI or array of resource sequences to the service, relative
+   *            to Dicoogle's base URL. There should be no leading slash ('/').
+   * @returns a superagent request object
+   */
+  request(uri: string | string[]): SuperAgentRequest;
 
   /**
    * Perform a generic request to Dicoogle's services. Users of this method can invoke any REST
    * service exposed by Dicoogle, including those from plugins. The resulting object is the start
    * of a SuperAgent request.
    *
-   * @param {?string} method the kind of HTTP method to make, defaults to "GET"
-   * @param {string|string[]} uri a URI or array of resource sequences to the service, relative
-   *                          to Dicoogle's base URL. There should be no leading slash ('/').
-   * @returns {SuperAgent} a superagent request object
+   * @param method the kind of HTTP method to make, defaults to "GET"
+   * @param uri a URI or array of resource sequences to the service, relative
+   *            to Dicoogle's base URL. There should be no leading slash ('/').
+   * @returns a superagent request object
    */
-  request(method = 'GET', uri) {
+  request(method: string, uri: string | string[]): SuperAgentRequest;
+
+  request(method = 'GET', uri?: string | string[]) {
       return socket_.request(method, uri);
   };
 
@@ -772,11 +825,11 @@ class DicoogleAccess {
   /** Obtain a URL pointing to an item's thumbnail.
    * This function is synchronous.
    * 
-   * @param {string} id a SOPInstanceUID or URI of the item
-   * @param {number} [frame] the frame number, if applicable
-   * @returns {string} the full URL to the thumbnail
+   * @param id a SOPInstanceUID or URI of the item
+   * @param frame the frame number, if applicable
+   * @returns the full URL to the thumbnail
    */
-  getThumbnailUrl(id, frame) {
+  getThumbnailUrl(id: string, frame?: number): string {
     let qs = isDicomUUID(id) ? `SOPInstanceUID=${id}` : `uri=${id}`;
     if (typeof frame === 'number') {
         qs += '&frame=' + frame
@@ -787,17 +840,16 @@ class DicoogleAccess {
   /** Obtain a URL pointing to an item's quick preview of the image.
    * This function is synchronous.
    * 
-   * @param {string} id a SOPInstanceUID or URI of the item
-   * @param {number} [frame] the frame number, if applicable
-   * @returns {string} the full URL to the preview
+   * @param id a SOPInstanceUID or URI of the item
+   * @param frame the frame number, if applicable
+   * @returns the full URL to the preview
    */
-  getPreviewUrl(id, frame) {
+  getPreviewUrl(id: string, frame?: number): string {
     let qs = isDicomUUID(id) ? `SOPInstanceUID=${id}` : `uri=${id}`;
     if (typeof frame === 'number') {
         qs += '&frame=' + frame
     }
     return `${socket_.getBase()}/dic2png?${qs}`;
-
   }
 
   /** @private Adapter to legacy service request API.
@@ -827,13 +879,6 @@ class DicoogleAccess {
 
 /** @private singleton module */
 let m: DicoogleAccess = new DicoogleAccess();
-
-/** Object type for containing Dicoogle client options.
- * @typedef {Object} DicoogleClientOptions
- *
- * @property {string} [token] - The same user's token of a previous token, used only for restoring previous (but recent) sessions.
- * @property {boolean} [secure] - Whether to use HTTPS instead of HTTP, if no scheme is specified in the url.
- */
 
 /**
  * Initialize the Dicoogle access object, which can be used multiple times.
