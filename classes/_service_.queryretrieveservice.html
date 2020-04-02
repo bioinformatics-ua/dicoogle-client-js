@@ -90,6 +90,13 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_service_.queryretrieveservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
+						<section class="tsd-index-section tsd-is-inherited tsd-is-private-protected">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_service_.queryretrieveservice.html#_endpoint" class="tsd-kind-icon">_endpoint</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_service_.queryretrieveservice.html#_socket" class="tsd-kind-icon">_socket</a></li>
+							</ul>
+						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
@@ -117,7 +124,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L166">service.js:166</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L186">service.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -131,20 +138,45 @@
 					</ul>
 				</section>
 			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited tsd-is-private-protected">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_endpoint" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _endpoint</h3>
+					<div class="tsd-signature tsd-kind-icon">_endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#_endpoint">_endpoint</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L61">service.ts:61</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_socket" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _socket</h3>
+					<div class="tsd-signature tsd-kind-icon">_socket<span class="tsd-signature-symbol">:</span> <a href="_socket_.socket.html" class="tsd-signature-type">Socket</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#_socket">_socket</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L60">service.ts:60</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="configure" class="tsd-anchor"></a>
 					<h3>configure</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">configure<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">configure<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.serviceconfiguration.html" class="tsd-signature-type">ServiceConfiguration</a>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#configure">configure</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L68">service.js:68</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L85">service.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -155,17 +187,33 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <span class="tsd-signature-type">any</span></h5>
+									<h5>config: <a href="../interfaces/_service_.serviceconfiguration.html" class="tsd-signature-type">ServiceConfiguration</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>a set of properties to configure (currently <code>running</code>, <code>autostart</code> and/or <code>port</code>)</p>
+										<p>a set of properties to configure</p>
 									</div>
 								</li>
 								<li>
-									<h5>callback: <span class="tsd-signature-symbol">{}</span></h5>
+									<h5>callback: <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the callback function</p>
 									</div>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>error: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -177,13 +225,13 @@
 					<a name="getdicomquerysettings" class="tsd-anchor"></a>
 					<h3>get<wbr>Dicom<wbr>Query<wbr>Settings</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Dicom<wbr>Query<wbr>Settings<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Dicom<wbr>Query<wbr>Settings<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, outcome<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-signature-type">DicomQuerySettings</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L174">service.js:174</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L194">service.ts:194</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -194,11 +242,30 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>callback: <span class="tsd-signature-symbol">{}</span></h5>
+									<h5>callback: <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, outcome<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-signature-type">DicomQuerySettings</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the callback function</p>
 									</div>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, outcome<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-signature-type">DicomQuerySettings</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>error: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+														</li>
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> outcome: <a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-signature-type">DicomQuerySettings</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -210,14 +277,14 @@
 					<a name="getstatus" class="tsd-anchor"></a>
 					<h3>get<wbr>Status</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Status<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Status<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, conf<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_service_.servicestatus.html" class="tsd-signature-type">ServiceStatus</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#getstatus">getStatus</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L55">service.js:55</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L72">service.ts:72</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -228,11 +295,30 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>callback: <span class="tsd-signature-symbol">{}</span></h5>
+									<h5>callback: <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, conf<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_service_.servicestatus.html" class="tsd-signature-type">ServiceStatus</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the callback function</p>
 									</div>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, conf<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_service_.servicestatus.html" class="tsd-signature-type">ServiceStatus</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>error: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+														</li>
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> conf: <a href="../interfaces/_service_.servicestatus.html" class="tsd-signature-type">ServiceStatus</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -244,13 +330,13 @@
 					<a name="setdicomquerysettings" class="tsd-anchor"></a>
 					<h3>set<wbr>Dicom<wbr>Query<wbr>Settings</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Dicom<wbr>Query<wbr>Settings<span class="tsd-signature-symbol">(</span>fields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Dicom<wbr>Query<wbr>Settings<span class="tsd-signature-symbol">(</span>fields<span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-signature-type">DicomQuerySettings</a>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L189">service.js:189</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L209">service.ts:209</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -261,17 +347,33 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>fields: <span class="tsd-signature-type">any</span></h5>
+									<h5>fields: <a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-signature-type">DicomQuerySettings</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>a dictionary containing the fields and values as key-value pairs.</p>
 									</div>
 								</li>
 								<li>
-									<h5>callback: <span class="tsd-signature-symbol">{}</span></h5>
+									<h5>callback: <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the callback function</p>
 									</div>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>error: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -283,14 +385,14 @@
 					<a name="start" class="tsd-anchor"></a>
 					<h3>start</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#start">start</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L79">service.js:79</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L96">service.ts:96</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -301,11 +403,27 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>callback: <span class="tsd-signature-symbol">{}</span></h5>
+									<h5>callback: <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the callback function</p>
 									</div>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>error: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -317,14 +435,14 @@
 					<a name="stop" class="tsd-anchor"></a>
 					<h3>stop</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">stop<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">stop<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_service_.baseservice.html">BaseService</a>.<a href="_service_.baseservice.html#stop">stop</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/5de3a22/src/service.js#L89">service.js:89</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c6ddea9/src/service.ts#L106">service.ts:106</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -335,11 +453,27 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>callback: <span class="tsd-signature-symbol">{}</span></h5>
+									<h5>callback: <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the callback function</p>
 									</div>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>error: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -388,6 +522,12 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_service_.queryretrieveservice.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_service_.queryretrieveservice.html#_endpoint" class="tsd-kind-icon">_endpoint</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_service_.queryretrieveservice.html#_socket" class="tsd-kind-icon">_socket</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_service_.queryretrieveservice.html#configure" class="tsd-kind-icon">configure</a>
 							</li>
@@ -412,6 +552,18 @@
 				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="_service_.storageservice.html" class="tsd-kind-icon">Storage<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_service_.dicomquerysettings.html" class="tsd-kind-icon">Dicom<wbr>Query<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_service_.remotestorage.html" class="tsd-kind-icon">Remote<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_service_.serviceconfiguration.html" class="tsd-kind-icon">Service<wbr>Configuration</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_service_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
 					</li>
 				</ul>
 			</nav>
