@@ -18,41 +18,58 @@
  */
 
 import Endpoints from './endpoints';
+import {Socket} from './socket';
 
-/** @typedef {Object} ServiceConfiguration
- * @param {?boolean} running whether the service is currently running
- * @param {?boolean} autostart whether the service starts automatically
- * @param {?number} port the TCP port that the service listens to
- */
+export interface ServiceConfiguration {
+  /// whether the service is currently running
+  running?: boolean
+  /// whether the service starts automatically
+  autostart?: boolean
+  ///the TCP port that the service listens to
+  port?: number
+}
 
-/** @typedef {Object} ServiceStatus
- * @param {boolean} running whether the service is currently running
- * @param {boolean} autostart whether the service starts automatically
- * @param {number} port the TCP port that the service listens to
- */
+export interface ServiceStatus {
+  /// whether the service is currently running
+  running: boolean
+  /// whether the service starts automatically
+  autostart: boolean
+  /// the TCP port that the service listens to
+  port: number
+}
 
-/** @typedef {Object} RemoteStorage
- * @param {string} aetitle
- * @param {string} ip
- * @param {number} port
- * @param {?string} description
- * @param {?boolean} public
- */
+export interface RemoteStorage {
+  /// {string} aetitle
+  aetitle: string
+  /// {string} ip
+  ip: string
+  /// {number} port
+  port: number
+  /// {?string} description
+  description?: string
+  /// {?boolean} public
+  public?: boolean
+}
+
+export interface DicomQuerySettings {
+  [key: string]: string,
+}
 
 class BaseService {
 
-  constructor(socket, endpoint) {
-    /** @private */
+  protected _socket: Socket;
+  protected _endpoint: string;
+
+  constructor(socket: Socket, endpoint: string) {
     this._socket = socket;
-    /** @private */
     this._endpoint = endpoint;
   }
 
   /**
    * Obtain information about this DICOM service.
-   * @param {function(error: Error, conf:ServiceStatus)} callback the callback function
+   * @param callback the callback function
    */
-  getStatus(callback) {
+  getStatus(callback: (error: Error | null, conf?: ServiceStatus) => void) {
     this._socket.request('GET', this._endpoint)
         .type('application/json')
         .end(function(err, resp) {
@@ -62,10 +79,10 @@ class BaseService {
 
   /**
    * Define the base configurations of this service.
-   * @param {ServiceConfiguration} config a set of properties to configure (currently `running`, `autostart` and/or `port`)
-   * @param {function(error: Error)} callback the callback function
+   * @param config a set of properties to configure
+   * @param callback the callback function
    */
-  configure(config, callback) {
+  configure(config: ServiceConfiguration, callback: (error: Error | null) => void) {
     const {running, autostart, port} = config;
     this._socket.request('POST', this._endpoint)
       .query({running, autostart, port})
@@ -74,9 +91,9 @@ class BaseService {
 
   /**
    * Start the DICOM service.
-   * @param {function(error: Error)} callback the callback function
+   * @param callback the callback function
    */
-  start(callback) {
+  start(callback: (error: Error | null) => void) {
     this._socket.request('POST', this._endpoint)
         .query({ running: true })
         .end(callback);
@@ -84,9 +101,9 @@ class BaseService {
 
   /**
    * Stop the DICOM service.
-   * @param {function(error: Error)} callback the callback function
+   * @param callback the callback function
    */
-  stop(callback) {
+  stop(callback: (error: Error | null) => void) {
     this._socket.request('POST', this._endpoint)
         .query({ running: false })
         .end(callback);
@@ -100,9 +117,9 @@ export class StorageService extends BaseService {
     }
 
     /** Retrieve a list of the currently registered remote storage servers.
-     * @param {function(error: Error, storages: RemoteStorage[])} callback the callback function
+     * @param callback the callback function
      */
-    getRemoteServers(callback) {
+    getRemoteServers(callback: (error: Error, storages?: RemoteStorage[]) => void) {
       this._socket.request('GET', Endpoints.DICOM_STORAGE_SETTINGS)
           .end(function(err, resp) {
             if (err) {
@@ -120,10 +137,10 @@ export class StorageService extends BaseService {
     }
 
     /** Add a remote storage server.
-     * @param {RemoteStorage} store the remote storage information object
-     * @param {function(error: Error)} callback the callback function
+     * @param store the remote storage information object
+     * @param callback the callback function
      */
-    addRemoteServer(store, callback) {
+    addRemoteServer(store: RemoteStorage, callback: (error: Error | null) => void) {
       const {aetitle, ip, port, description} = store;
       this._socket.request('POST', Endpoints.DICOM_STORAGE_SETTINGS)
           .query({
@@ -136,20 +153,23 @@ export class StorageService extends BaseService {
 
     /** Remove a remote storage server. On success, the second callback argument will be
      * `true` if and only if the remote storage existed before the call.
-     * @param {string|RemoteStorage} store the storage's AE title or the storage object.
-     * @param {function(error: Error, removed: boolean)} callback the callback function
+     * @param store the storage's AE title or the storage object.
+     * @param callback the callback function
      */
-    removeRemoteServer(store, callback) {
-      const qs = {type: 'remove'};
+    removeRemoteServer(store: string | RemoteStorage, callback: (error: Error | null, removed?: boolean) => void) {
+      let qs;
       if (typeof store === 'string') {
-        qs.aetitle = store;
+        qs = {type: 'remove', aetitle: store};
       } else {
         const {aetitle, ip, port, description} = store;
-        qs.aetitle = aetitle;
-        qs.ip = ip;
-        qs.port = port;
-        qs.description = description;
-        qs.public = store.public;
+        qs = {
+          type: 'remove',
+          aetitle,
+          ip,
+          port,
+          description,
+          public: store.public,
+        };
       }
       this._socket.request('POST', Endpoints.DICOM_STORAGE_SETTINGS)
           .query(qs)
@@ -169,9 +189,9 @@ export class QueryRetrieveService extends BaseService {
     }
 
     /** Get all of the current DICOM Query-Retrieve settings.
-     * @param {function(error: Error, outcome: DicomQuerySettings)} callback the callback function
+     * @param callback the callback function
      */
-    getDicomQuerySettings(callback) {
+    getDicomQuerySettings(callback: (error: Error | null, outcome?: DicomQuerySettings) => void) {
         this._socket.request('GET', Endpoints.DICOM_QUERY_SETTINGS)
           .end(function(err, resp) {
             if (err) {
@@ -183,10 +203,10 @@ export class QueryRetrieveService extends BaseService {
     }
 
     /** Set a group of DICOM Query/Retrieve settings. The given object should contain valid field-value pairs.
-     * @param {DicomQuerySettings} fields a dictionary containing the fields and values as key-value pairs.
-     * @param {function(error: Error)} callback the callback function
+     * @param fields a dictionary containing the fields and values as key-value pairs.
+     * @param callback the callback function
      */
-    setDicomQuerySettings(fields, callback) {
+    setDicomQuerySettings(fields: DicomQuerySettings, callback: (error: Error | null) => void) {
       this._socket.request('POST', Endpoints.DICOM_QUERY_SETTINGS)
           .query(fields)
           .end(callback);
