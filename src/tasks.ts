@@ -19,6 +19,7 @@
 
 import Endpoints from './endpoints';
 import {Socket} from './socket';
+import {andCall, andCallVoid} from './util';
 
 export interface TaskInfo {
     /** the UUID of the task */
@@ -41,7 +42,6 @@ export class Tasks {
   private _socket: Socket;
 
   constructor(socket) {
-    /** @private */
     this._socket = socket;
   }
 
@@ -49,16 +49,16 @@ export class Tasks {
    * Obtain information about Dicoogle's running (or terminated) tasks.
    * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
    */
-  public list(callback: (error: Error, outcome: {tasks: TaskInfo[], count: number}) => void) {
-    this._socket.request('GET', Endpoints.TASKS)
-        .type('application/json')
-        .end(function(err, resp) {
-            const {body} = resp;
-            callback(err, body ? {
-              tasks: body.results,
-              count: body.count
-            } : null);
-        });
+  public list(callback?: (error: Error, outcome: {tasks: TaskInfo[], count: number}) => void) {
+    return andCall(this._socket.get(Endpoints.TASKS)
+      .type('application/json')
+      .then((resp) => {
+        const {body} = resp;
+        return body ? {
+          tasks: body.results,
+          count: body.count
+        } : null;
+      }), callback);
   }
 
   /**
@@ -66,12 +66,12 @@ export class Tasks {
    * @param uid the task's unique ID
    * @param callback the callback function
    */
-  public close(uid: string, callback: (error: Error) => void) {
-    this._socket.request('POST', Endpoints.TASKS).query({
-          uid,
-          action: 'delete',
-          type: 'close'
-        }).end(callback);
+  public close(uid: string, callback?: (error: Error) => void): Promise<void> {
+    return andCallVoid(this._socket.post(Endpoints.TASKS).query({
+      uid,
+      action: 'delete',
+      type: 'close'
+    }), callback);
   }
 
   /**
@@ -79,12 +79,11 @@ export class Tasks {
    * @param uid the task's unique ID
    * @param callback the callback function
    */
-  public stop(uid: string, callback: (error: Error) => void) {
-    this._socket.request('POST', Endpoints.TASKS).query({
-          uid,
-          action: 'delete',
-          type: 'stop'
-        }).end(callback);
+  public stop(uid: string, callback?: (error: Error) => void): Promise<void> {
+    return andCallVoid(this._socket.post(Endpoints.TASKS).query({
+      uid,
+      action: 'delete',
+      type: 'stop'
+    }), callback);
   }
-
 }

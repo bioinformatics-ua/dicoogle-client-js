@@ -20,6 +20,9 @@
 import superagent from 'superagent'
 import {SuperAgentRequest} from 'superagent';
 import Endpoints from './endpoints';
+import {andCall, andCallVoid} from './util';
+
+type password = string;
 
 export class Socket {
     private _user: string;
@@ -52,90 +55,55 @@ export class Socket {
         }
     }
 
-    public login(username: string, password, callback) {
-
-        this.request('POST', Endpoints.LOGIN)
+    public login(username: string, password: password): Promise<{token: string, user: string, roles: string[], admin: boolean}> {
+        return this.request('POST', Endpoints.LOGIN)
             .type('application/x-www-form-urlencoded')
             .send({username, password})
-            .end((err, res) => {
-                if (err) {
-                    if (typeof callback === 'function') {
-                        callback(err);
-                    }
-                    return;
-                }
+            .then(res => {
                 const data = res.body;
                 this._token = data.token;
                 this._user = data.user;
                 this._roles = data.roles;
-                if (typeof callback === 'function') {
-                    callback(null, data);
-                }
+                return data;                
             });
     }
 
-    restore(token: string, callback: (error?: Error, data?: any) => void) {
-        this.get(Endpoints.LOGIN)
+    restore(token: string): Promise<any> {
+        return this.get(Endpoints.LOGIN)
             .set('Authorization', token)
-            .end((err, res) => {
-                if (err) {
-                    if (typeof callback === 'function') {
-                        callback(err);
-                    }
-                    return;
-                }
+            .then((res) => {
                 const data = res.body;
                 this._token = token;
                 this._user = data.user;
                 this._roles = data.roles;
-                if (typeof callback === 'function') {
-                    callback(null, data);
-                }
+                return data;
             });
     }
 
-    public logout(callback: (error?: any) => void) {
-        this.post(Endpoints.LOGOUT)
+    public logout(): Promise<void> {
+        return this.post(Endpoints.LOGOUT)
             .set('Authorization', this._token)
-            .end(err => {
-                if (!err) {
-                    this.reset();
-                    if (typeof callback === 'function') {
-                        callback();
-                    }
-                } else {
-                    this._logout_fallback(callback);
-                }
-            });
+            .then(() => {
+                this.reset();
+            }).catch((_err) => this._logout_fallback());
     }
 
     /** This is a fallback implementation of logout that uses GET instead of POST,
      * as in version 2.3.0 of Dicoogle.
      */
-    private _logout_fallback(callback: (error:any) => void) {
-        this.request('GET', Endpoints.LOGOUT)
-            .end(err => {
-                if (!err) {
-                    this.reset();
-                }
-                if (typeof callback === 'function') {
-                    callback(err);
-                }
+    private _logout_fallback(): Promise<void> {
+        return this.request('GET', Endpoints.LOGOUT)
+            .then(() => {
+                this.reset();
             });
     }
 
-    /** Create a GET request to Dicoogle.
-     * @param uri - the URI to the intended service, relative to Dicoogle's base URL
-     * @returns a superagent object for a new request to this service
-     */
-    public request(uri: string | string[]): SuperAgentRequest;
     /** Create a request to Dicoogle.
      * @param method - the intended HTTP method ('GET', 'POST', ...)
      * @param uri - the URI to the intended service, relative to Dicoogle's base URL
      * @returns a superagent object for a new request to this service
      */
-    public request(method: string, uri: string | string[]): SuperAgentRequest;
-    public request(method: any, uri?: string | string[]): SuperAgentRequest {
+    public request(method: string = 'GET', uri?: string | string[]): SuperAgentRequest {
         const req = superagent(method, [this._url].concat(uri).join('/'))
         if (this._token) {
             req.set('Authorization', this._token);

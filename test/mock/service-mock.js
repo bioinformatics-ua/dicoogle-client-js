@@ -469,11 +469,11 @@ module.exports = function createDicoogleMock() {
             description: '',
             isPublic: false
         }, {
-            aetitle: 'ONE_MORE_SERV',
-            ip: '10.0.0.145',
+            AETitle: 'ONE_MORE_SERV',
+            ipAddrs: '10.0.0.145',
             port: 6666,
             description: 'our public store',
-            public: true
+            isPublic: true
         }]));
 
         // adding with not enough info
@@ -600,7 +600,7 @@ module.exports = function createDicoogleMock() {
             .reply(200, function() {
                 // apply side-effect
                 const qstring = URL.parse(this.req.path).query;
-                AETitle = qs.parse(qstring).aetitle.trim();
+                AETitle = String(qs.parse(qstring).aetitle).trim();
                 return 'success';
             });
 
