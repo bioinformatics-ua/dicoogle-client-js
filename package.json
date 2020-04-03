@@ -67,7 +67,7 @@
     "prepare": "gulp default",
     "clean": "gulp clean",
     "document": "typedoc ./src/",
-    "test": "cross-env NODE_ENV=test mocha -r ts-node/register --exclude test/test-base-promise.js && cross-env NODE_ENV=test mocha -r ts-node/register test/test-base-promise.js",
+    "test": "cross-env NODE_ENV=test mocha -r ts-node/register --exclude test/test-base-promise.js &&& cross-env NODE_ENV=test mocha -r ts-node/register test/test-base-promise.js",
     "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha -r ts-node/register",
     "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
   },
