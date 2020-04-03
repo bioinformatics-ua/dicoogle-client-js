@@ -22,14 +22,13 @@ const nock = require('nock');
 const URL = require('url');
 const qs = require('querystring');
 
-let nockDone = false;
-
 /** Use nock to intercept Dicoogle client requests.
+ * @param {number} [port]
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
-module.exports = function createDicoogleMock() {
-    const BASE_URL = "http://127.0.0.1:8080";
-    if (!nockDone) {
+module.exports = function createDicoogleMock(port = 8080) {
+    const BASE_URL = `http://127.0.0.1:${port}`;
+    
         // prepare Dicoogle server mock
         const DICOOGLE_VERSION = '2.4.1-TEST';
 
@@ -161,6 +160,8 @@ module.exports = function createDicoogleMock() {
                 nErrors: 3
             }
         ];
+
+        nock.cleanAll();
 
             // mock get running tasks
         nock(BASE_URL).get('/index/task')
@@ -603,9 +604,6 @@ module.exports = function createDicoogleMock() {
                 AETitle = String(qs.parse(qstring).aetitle).trim();
                 return 'success';
             });
-
-        nockDone = true;
-    }
 
     return dicoogleClient(BASE_URL);
 };

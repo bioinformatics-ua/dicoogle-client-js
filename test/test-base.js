@@ -39,7 +39,7 @@ function createCheckVersion(done) {
 
 describe('Dicoogle Client, callback API (under Node.js)', function() {
   var Dicoogle;
-  beforeEach(function initBaseURL() {
+  before(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
   });

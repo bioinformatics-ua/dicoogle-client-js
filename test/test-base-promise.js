@@ -32,9 +32,9 @@ function assertDicomUUID(uid) {
 describe('Dicoogle Client, Promise API (under Node.js)', function() {
   /** @type {ReturnType<dicoogleClient>} */
   let dicoogle;
-  beforeEach(function initBaseURL() {
-    dicoogle = createMockedDicoogle();
-    assert.strictEqual(dicoogle.getBase(), 'http://127.0.0.1:8080');
+  before(function initBaseURL() {
+    dicoogle = createMockedDicoogle(8181);
+    assert.strictEqual(dicoogle.getBase(), 'http://127.0.0.1:8181');
   });
 
 
