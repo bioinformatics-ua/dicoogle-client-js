@@ -23,12 +23,15 @@ const nock = require('nock');
 let nockDone = false;
 
 /** Use nock to intercept Dicoogle client requests.
+ * @param {number} [port]
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
-module.exports = function createDicoogleMock() {
-    const BASE_URL = "http://127.0.0.1:8484";
+module.exports = function createDicoogleMock(port = 8484) {
+    const BASE_URL = `http://127.0.0.1:${port}`;
+
+    // prepare Dicoogle server mock
     if (!nockDone) {
-        // prepare Dicoogle server mock
+        nock.cleanAll();
         nock(BASE_URL, { // mock /login with admin account
                 
                 reqheaders: {

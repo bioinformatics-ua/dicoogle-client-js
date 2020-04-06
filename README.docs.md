@@ -18,13 +18,13 @@ Documentation was built from our TypeScript definitions, and should be automatic
 In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
 
 ```javascript
-const DicoogleClient = require('dicoogle-client');
+const dicoogleClient = require('dicoogle-client');
 ```
 
 When using TypeScript:
 
 ```typescript
-import DicoogleClient = require('dicoogle-client');
+import dicoogleClient = require('dicoogle-client');
 ```
 
 ### On the browser, no module system
@@ -42,21 +42,21 @@ When using ES2015 modules or TypeScript with ES2015, you should import the defau
 
 ## Basic Usage
 
-Once `DicoogleClient` is fetched, invoke it as a function with the Dicoogle server's endpoint to obtain an access object. The object is a singleton that can be used multiple times.
+Once `dicoogleClient` is fetched, invoke it as a function with the Dicoogle server's endpoint to obtain an access object. The object is a singleton that can be used multiple times.
 Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.
 
 ```JavaScript
-const Dicoogle = DicoogleClient("localhost:8080");
+const dicoogle = dicoogleClient("localhost:8080");
 
 // if required, login to the system before using
-Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
+dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
   if (error) {
     console.error(error);
     return;
   }
 
   // Ok! Start using Dicoogle!
-  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, (error, outcome) => {
+  dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, (error, outcome) => {
     if (error) {
       console.error(error);
       return;
@@ -66,6 +66,22 @@ Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
     // ...
   });
 });
+```
+
+A Promise-based API is available since version 5.0.0. Therefore, you can write
+the following code inside an async function:
+
+
+```JavaScript
+const dicoogle = dicoogleClient("localhost:8080");
+
+// if required, login to the system before using
+await dicoogle.login('admin', 'mysecretpassword');
+
+// Ok! Start using Dicoogle!
+let {elapsedTime, results} = await dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'});
+
+// use outcome ...
 ```
 
 ## Examples
