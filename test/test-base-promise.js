@@ -342,6 +342,35 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     });
   });
 
+  describe('User management service', () => {
+    it('#list should provide the list of users', async () => {
+      let users = await dicoogle.users.list();
+      assert.isArray(users);
+      for (const u of users) {
+        assert.property(u, 'username');
+      }
+    });
+
+    it('#add and #remove should add and remove users', async () => {
+      // add a new user
+      let addSuccess = await dicoogle.users.add('drze', 'verygoodsecret', false);
+      assert.isTrue(addSuccess);
+
+      // check that the user now exists
+      let users;
+      users = await dicoogle.users.list();
+      assert.deepInclude(users, {username: 'drze'});
+
+      // now remove the user
+      let removeSuccess = await dicoogle.users.remove('drze');
+      assert.isTrue(removeSuccess);
+
+      // check the list again
+      users = await dicoogle.users.list();
+      assert.notDeepInclude(users, {username: 'drze'});
+    });
+  });
+
   describe('Storage service', function() {
     describe('#storage.getStatus()', function() {
       it("should inform of DICOM Storage service status with no error", async function() {
@@ -551,6 +580,6 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
       assert.isObject(data);
       assert.propertyVal(data, 'version', DICOOGLE_VERSION);
     });
-  })
+  });
 });
 

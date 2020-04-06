@@ -24,6 +24,7 @@ import Endpoints from './endpoints';
 import {Socket} from './socket';
 import {StorageService, QueryRetrieveService} from './service';
 import {Tasks} from './tasks';
+import {UserService} from './users';
 import {andCall, andCallVoid, isDicomUUID} from './util';
 import {SuperAgentRequest} from 'superagent';
 
@@ -277,6 +278,8 @@ class DicoogleAccess {
   public storage: StorageService;
   /** Query/Retrieve service namespace */
   public queryRetrieve: QueryRetrieveService;
+  /** users service namespace */
+  public users: UserService;
 
   /**
    * Perform a text query.
@@ -893,6 +896,7 @@ function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): Dico
     m.tasks = new Tasks(socket_);
     m.storage = new StorageService(socket_);
     m.queryRetrieve = new QueryRetrieveService(socket_);
+    m.users = new UserService(socket_);
 
     return m;
 }

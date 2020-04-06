@@ -23,7 +23,7 @@ const URL = require('url');
 const qs = require('querystring');
 
 /** Use nock to intercept Dicoogle client requests.
- * @param {number} [port]
+ * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
 module.exports = function createDicoogleMock(port = 8080) {
@@ -604,6 +604,35 @@ module.exports = function createDicoogleMock(port = 8080) {
                 AETitle = String(qs.parse(qstring).aetitle).trim();
                 return 'success';
             });
+        
+        nock(BASE_URL)
+            .get('/user')
+            .reply(200, {users: [
+                { username: "dicoogle" },
+                { username: "other" }
+            ]})
+            .put('/user')
+            .query(({username, password, admin}) => {
+                return username === 'drze' &&
+                    typeof password === 'string' &&
+                    password.length > 0 &&
+                    (admin === undefined || admin === 'true' || admin === 'false');
+            })
+            .reply(200, {success: true})
+            .get('/user')
+            .reply(200, {users: [
+                { username: "dicoogle" },
+                { username: "drze" },
+                { username: "other" }
+            ]})
+            .delete('/user')
+            .query({username: 'drze'})
+            .reply(200, {success: true})
+            .get('/user')
+            .reply(200, {users: [
+                { username: "dicoogle" },
+                { username: "other" }
+            ]});
 
     return dicoogleClient(BASE_URL);
 };
