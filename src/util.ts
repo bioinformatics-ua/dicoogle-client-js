@@ -24,3 +24,21 @@
 export function isDicomUUID(uid: string): boolean {
     return uid.length <= 64 && uid.match(/^\d+(\.\d+)*$/) !== null;
 }
+
+export function andCall<T>(promise: Promise<T>, callback?: (error: any, outcome?: T) => void): Promise<T> {
+    if (callback) {
+        promise.then(
+            (value) => callback(null, value),
+            (err) => callback(err))
+    }
+    return promise;
+}
+  
+export function andCallVoid(promise: Promise<any>, callback?: (error: any) => void): Promise<void> {
+    if (callback) {
+        promise.then(
+            () => callback(null),
+            (err) => callback(err))
+    }
+    return promise;
+}
