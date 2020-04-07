@@ -283,7 +283,7 @@ class DicoogleAccess {
    * @param query text query
    * @param callback the callback function providing the outcome
    */
-  search(query: string, callback?: (error: any, outcome: SearchOutcome) => void);
+  search(query: string, callback?: (error: any, outcome: SearchOutcome) => void): Promise<SearchOutcome>;
 
   /**
    * Perform a text query.
@@ -291,9 +291,9 @@ class DicoogleAccess {
    * @param options a set of options related to the search
    * @param callback the callback function providing the outcome
    */
-  search(query: string, options: SearchOptions, callback?: (error: any, outcome: SearchOutcome) => void);
+  search(query: string, options: SearchOptions, callback?: (error: any, outcome: SearchOutcome) => void): Promise<SearchOutcome>;
 
-  search(query: string, arg1: SearchOptions | ((error: any, outcome: SearchOutcome) => void) = {}, arg2?: (error: any, outcome: SearchOutcome) => void) {
+  search(query: string, arg1: SearchOptions | ((error: any, outcome: SearchOutcome) => void) = {}, arg2?: (error: any, outcome: SearchOutcome) => void): Promise<SearchOutcome> {
       let callback, options;
       if (!arg2 && (typeof arg1 === 'function' || arg1 === undefined)) {
         callback = arg1;
@@ -384,7 +384,9 @@ class DicoogleAccess {
    * @param options additional options
    * @param callback the callback function providing the UID of the file
    */
-  issueExport(query: string, fields: string | string[], options: ExportOptions = {}, callback?: (error: any, uid?: string) => void): Promise<string> {
+  issueExport(query: string, fields: string | string[], callback?: (error: any, uid?: string) => void): Promise<string>;
+  issueExport(query: string, fields: string | string[], options: ExportOptions, callback?: (error: any, uid?: string) => void): Promise<string>;
+  issueExport(query: string, fields: string | string[], options?, callback?): Promise<string> {
     if (typeof options === 'function' && !callback) {
       callback = options;
       options = {};
@@ -466,7 +468,7 @@ class DicoogleAccess {
    * @param uri a URI or array of URIs representing the root resource of the files to be indexed
    * @param callback the function to call when the task is successfully issued
    */
-  index(uri: string | string[], callback?: (error: any) => void);
+  index(uri: string | string[], callback?: (error: any) => void): Promise<void>;
 
   /**
    * Request a new indexation task over a given URI. The operation is recursive, indexing anything in the URI's endpoint.
@@ -474,7 +476,7 @@ class DicoogleAccess {
    * @param provider a provider or array of provider names in which the indexation will carry out, all by default
    * @param callback the function to call when the task is successfully issued
    */
-  index(uri: string | string[], provider: string | string[], callback?: (error: any) => void);
+  index(uri: string | string[], provider: string | string[], callback?: (error: any) => void): Promise<void>;
   index(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
@@ -544,7 +546,7 @@ class DicoogleAccess {
    * @param slotId the identifiers of slots to contemplate
    * @param callback the callback function
    */
-  getWebUIPlugins(slotId: string, callback?: (error: any, plugins?: WebUIPlugin[]) => void) {
+  getWebUIPlugins(slotId: string, callback?: (error: any, plugins?: WebUIPlugin[]) => void): Promise<WebUIPlugin[]> {
     return andCall(this.request(Endpoints.WEBUI)
       .query(slotId ? {'slot-id': slotId} : {})
       .then((res) => {
@@ -657,7 +659,7 @@ class DicoogleAccess {
    * @param {function(error:any, outcome:any)} callback the callback function
    */
   getIndexerSettings(callback?: (error: any, outcome?: IndexerSettings) => void): Promise<IndexerSettings>;
-  getIndexerSettings(field: string, callback?: (error: any, outcome?: any) => void): Promise<any>;
+  getIndexerSettings<T>(field: string, callback?: (error: any, outcome?: T) => void): Promise<T>;
   getIndexerSettings(field: string | ((error: any, outcome?: IndexerSettings) => void), callback?: (error: any, outcome?: any) => void) {
     if (typeof field === 'function' && !callback) {
       callback = field;
@@ -768,7 +770,7 @@ class DicoogleAccess {
   /** Retrieve the AE title of the Dicoogle archive.
    * @param callback the callback function
    */
-  getAETitle(callback?: (error: any, aetitle?: string) => void) {
+  getAETitle(callback?: (error: any, aetitle?: string) => void): Promise<string> {
       return andCall(this.request(Endpoints.DICOM_AETITLE_SETTINGS)
         .then((res) => {
           let outcome = res.body;
