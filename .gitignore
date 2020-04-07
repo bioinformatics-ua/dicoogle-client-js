@@ -3,6 +3,4 @@ node_modules/
 .nyc_output/
 dist/
 lib/
-doc/
-docs/
 coverage/
