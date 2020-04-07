@@ -23,7 +23,7 @@ const nock = require('nock');
 let nockDone = false;
 
 /** Use nock to intercept Dicoogle client requests.
- * @param {number} [port]
+ * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
 module.exports = function createDicoogleMock(port = 8484) {

@@ -38,6 +38,7 @@ function createCheckVersion(done) {
 }
 
 describe('Dicoogle Client, callback API (under Node.js)', function() {
+  /** @type {ReturnType<dicoogleClient>} */
   var Dicoogle;
   before(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
