@@ -391,6 +391,7 @@ class DicoogleAccess {
       callback = options;
       options = {};
     }
+    options = options ?? {};
     fields = [].concat(fields);
     let qs: any = {
       query, fields: JSON.stringify(fields)
