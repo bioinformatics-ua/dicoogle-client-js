@@ -487,6 +487,54 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
     });
   });
 
+  describe('User management service', () => {
+    it('#list should provide the list of users', (done) => {
+      try {
+        Dicoogle.users.list((err, users) => {
+          assert.ifError(err);
+          assert.isArray(users);
+          for (const u of users) {
+            assert.property(u, 'username');
+          }
+          done()
+        });
+      } catch (err) {
+        done(err);
+      }
+    });
+
+    it('#add and #remove should add and remove users', (done) => {
+      try {
+        // add a new user
+        Dicoogle.users.add('drze', 'verygoodsecret', false, (err, success) => {
+          assert.ifError(err);
+          assert.isTrue(success);
+
+          // check that the user now exists
+          Dicoogle.users.list((err, users) => {
+            assert.ifError(err);
+            assert.deepInclude(users, {username: 'drze'});
+
+            // now remove the user
+            Dicoogle.users.remove('drze', (err, success) => {
+              assert.ifError(err);
+              assert.isTrue(success);
+
+              // check the list again
+              Dicoogle.users.list((err, users) => {
+                assert.ifError(err);
+                assert.notDeepInclude(users, {username: 'drze'});
+                done()
+              });
+            });
+          });
+        });
+      } catch (err) {
+        done(err);
+      }
+    });
+  });
+
   describe('Storage service', function() {
     describe('#storage.getStatus()', function() {
         it("should inform of DICOM Storage service status with no error", function(done) {

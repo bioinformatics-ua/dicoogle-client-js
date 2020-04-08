@@ -39,6 +39,7 @@ const Endpoints = Object.freeze({
     UNINDEX: "management/tasks/unindex",
     REMOVE: "management/tasks/remove",
     TASKS: "index/task",
+    USER: "user",
     VERSION: "ext/version",
     LOGGER: "logger",
     LOGIN: "login",

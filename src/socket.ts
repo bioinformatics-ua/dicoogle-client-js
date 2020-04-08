@@ -127,6 +127,14 @@ export class Socket {
         return this.request('POST', uri);
     }
 
+    /** Create a PUT request to Dicoogle.
+     * @param uri - the URI to the intended service, relative to Dicoogle's base URL
+     * @returns a superagent object for a new request to this service
+     */
+    public put(uri: string | string[]): SuperAgentRequest {
+        return this.request('PUT', uri);
+    }
+
     public getToken(): string | null {
         return this._token;
     }
