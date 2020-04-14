@@ -21,6 +21,8 @@ import Endpoints from './endpoints';
 import {Socket} from './socket';
 import {andCall, andCallVoid} from './util';
 
+/** And entry describing a task in Dicoogle, which can be complete or in progress.
+ */
 export interface TaskInfo {
     /** the UUID of the task */
     taskUid: string
@@ -52,7 +54,7 @@ export class Tasks {
 
   /**
    * Obtain information about Dicoogle's running (or terminated) tasks.
-   * @param {function(error:any, {tasks:TaskInfo[], count:number})} callback the callback function
+   * @param callback the callback function
    */
   public list(callback?: (error: Error, outcome: TaskOutcome) => void): Promise<TaskOutcome> {
     return andCall(this._socket.get(Endpoints.TASKS)
