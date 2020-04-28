@@ -63,7 +63,7 @@ Install this package globally (`npm install -g dicoogle-client`), then use `dico
 
 ## Further Notice
 
-This library is compatible with versions of Dicoogle in the range `>=2.0.0 <2.5.0`. This client library may be updated as future versions of Dicoogle are released.
+This library is compatible with versions of Dicoogle in the range `>=2.0.0 <2.6.0`, with partial compatibility for Dicoogle 3 development versions. This client library may be updated as future versions of Dicoogle are released.
 
 ## License
 
