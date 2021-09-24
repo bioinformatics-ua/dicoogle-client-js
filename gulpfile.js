@@ -73,7 +73,8 @@ function bundle() {
           NODE_ENV: "production"
         }
       ]
-    ]
+    ],
+    standalone: 'DicoogleClient'
   });
   return b
     .bundle()
