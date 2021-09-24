@@ -22,6 +22,24 @@ const nock = require('nock');
 const URL = require('url');
 const qs = require('querystring');
 
+function validateURI(uri) {
+    // due to a possible bug somewhere,
+    // sometimes URIs are joined together with commas
+    if (uri.includes(',')) {
+        return uri.split(',').every(validateURI);
+    }
+
+    if (typeof uri !== 'string') {
+        return false;
+    }
+    try {
+        URL.parse(uri);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
 /** Use nock to intercept Dicoogle client requests.
  * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
@@ -34,7 +52,7 @@ module.exports = function createDicoogleMock(port = 8080) {
 
         const SEARCH_RESULTS = [
             {
-                uri: '/opt/dataset/file1',
+                uri: 'file:/opt/dataset/file1',
                 fields: {
                     "Modality": "MR",
                     "StudyInstanceUID": "1.2.3.4.5.6.7777777",
@@ -48,7 +66,7 @@ module.exports = function createDicoogleMock(port = 8080) {
                 }
             },
             {
-                uri: '/opt/dataset/file2',
+                uri: 'file:/opt/dataset/file2',
                 fields: {
                     "Modality": "MR",
                     "StudyInstanceUID": "1.2.3.4.5.6.7777777",
@@ -79,10 +97,10 @@ module.exports = function createDicoogleMock(port = 8080) {
                         serieDescription: "",
                         serieModality: "CR",
                         images: [{
-                            uri: '/opt/dataset/file1',
+                            uri: 'file:/opt/dataset/file1',
                             "sopInstanceUID": "1.2.3.4.5.6.7777777.4444.1"
                         }, {
-                                uri: '/opt/dataset/file2',
+                                uri: 'file:/opt/dataset/file2',
                                 "sopInstanceUID": "1.2.3.4.5.6.7777777.4444.2"
                             }]
                     }]
@@ -299,27 +317,54 @@ module.exports = function createDicoogleMock(port = 8080) {
 
             // mock index on specific provider
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-/]+/, plugin: /.*/ })
+            .query(({ uri, plugin }) => {
+                return validateURI(uri) && /\w+/.test(plugin);
+            })
             .reply(200)
 
             // mock index on all providers
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-/]+/ })
+            .query(({ uri }) => validateURI(uri))
             .reply(200)
 
-            // mock unindex on all providers
+            // mock unindex on all providers (via query string)
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-/]+/ })
+            .query(({ uri }) => validateURI(uri))
             .reply(200)
 
-            // mock unindex on specific provider
+            // mock unindex on all providers (via form data)
+            .post('/management/tasks/unindex', body => {
+                let params = new URLSearchParams(body);
+                let uris = params.getAll('uri');
+                return uris.length > 0 && uris.every(validateURI);
+            })
+            .reply(200)
+
+            // mock unindex on specific provider (via query string)
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-/]+/, provider: /.*/ })
+            .query(({ uri, plugin }) => {
+                return validateURI(uri) && /\w+/.test(plugin);
+            })
             .reply(200)
 
-            // mock remove
+            // mock unindex on specific provider (via form data)
+            .post('/management/tasks/unindex', body => {
+                let uris = new URLSearchParams(body).getAll('uri');
+                return uris.length > 0 && uris.every(validateURI);
+            })
+            .query({ provider: /\w+/ })
+            .reply(200)
+        
+            // mock remove (via query string)
             .post('/management/tasks/remove')
-            .query({ uri: /[a-z0-9\-/]+/ })
+            .query(({ uri }) => validateURI(uri))
+            .reply(200)
+
+            // mock remove (via form data)
+            .post('/management/tasks/remove', body => {
+                let uris = new URLSearchParams(body).getAll('uri');
+                return uris.length > 0 && uris.every(validateURI);
+            })
             .reply(200)
 
             // mock dump

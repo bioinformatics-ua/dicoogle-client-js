@@ -204,7 +204,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
     describe('#index() on all providers', function() {
       it("should say ok with no error", async function() {
-        await dicoogle.index('/opt/another-dataset');
+        await dicoogle.index('file:/opt/another-dataset');
       });
     });
   });
@@ -212,20 +212,40 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Unindex', function() {
     describe('#unindex() on one provider', function() {
       it("should say ok with no error", async function() {
-        await dicoogle.unindex('/opt/another-dataset/1_1.dcm', 'lucene');
+        await dicoogle.unindex('file:/opt/another-dataset/1_1.dcm', 'lucene');
       });
     });
 
     describe('#unindex() on all providers', function() {
       it("should say ok with no error", async function() {
-        await dicoogle.unindex('/opt/another-dataset/1_1.dcm');
+        await dicoogle.unindex('file:/opt/another-dataset/1_1.dcm');
+      });
+    });
+
+    describe('#unindex() multiple URIs', function() {
+      it("should say ok with no error", async function() {
+        await dicoogle.unindex([
+          'file:/opt/another-dataset/1_1.dcm',
+          'file:/opt/another-dataset/1_2.dcm',
+        ]);
       });
     });
   });
 
-  describe('#remove() a file', function() {
-    it("should say ok with no error", async function() {
-      await dicoogle.remove('/opt/another-dataset/1_1.dcm');
+  describe("Remove", function() {
+    describe('#remove() a file', function() {
+      it("should say ok with no error", async function() {
+        await dicoogle.remove('file:/opt/another-dataset/1_1.dcm');
+      });
+    });
+    describe('#remove() multiple files', function() {
+      it("should say ok with no error", async function() {
+        await dicoogle.remove([
+          'file:/opt/another-dataset/1_1.dcm',
+          'file:/opt/another-dataset/1_2.dcm',
+          'file:/opt/another-dataset/1_3.dcm',
+        ]);
+      });
     });
   });
 
