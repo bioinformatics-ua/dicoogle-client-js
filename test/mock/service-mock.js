@@ -23,21 +23,10 @@ const URL = require('url');
 const qs = require('querystring');
 
 function validateURI(uri) {
-    // due to a possible bug somewhere,
-    // sometimes URIs are joined together with commas
-    if (uri.includes(',')) {
-        return uri.split(',').every(validateURI);
-    }
-
     if (typeof uri !== 'string') {
         return false;
     }
-    try {
-        URL.parse(uri);
-        return true;
-    } catch (e) {
-        return false;
-    }
+    return /^(file:)?[\.-\w\/\%\?\&\=]+$/.test(uri);
 }
 
 /** Use nock to intercept Dicoogle client requests.
@@ -333,9 +322,7 @@ module.exports = function createDicoogleMock(port = 8080) {
             .reply(200)
 
             // mock unindex on all providers (via form data)
-            .post('/management/tasks/unindex', body => {
-                let params = new URLSearchParams(body);
-                let uris = params.getAll('uri');
+            .post('/management/tasks/unindex', ({ uri: uris }) => {
                 return uris.length > 0 && uris.every(validateURI);
             })
             .reply(200)
@@ -348,8 +335,7 @@ module.exports = function createDicoogleMock(port = 8080) {
             .reply(200)
 
             // mock unindex on specific provider (via form data)
-            .post('/management/tasks/unindex', body => {
-                let uris = new URLSearchParams(body).getAll('uri');
+            .post('/management/tasks/unindex', ({ uri: uris }) => {
                 return uris.length > 0 && uris.every(validateURI);
             })
             .query({ provider: /\w+/ })
@@ -361,8 +347,7 @@ module.exports = function createDicoogleMock(port = 8080) {
             .reply(200)
 
             // mock remove (via form data)
-            .post('/management/tasks/remove', body => {
-                let uris = new URLSearchParams(body).getAll('uri');
+            .post('/management/tasks/remove', ({ uri: uris }) => {
                 return uris.length > 0 && uris.every(validateURI);
             })
             .reply(200)
