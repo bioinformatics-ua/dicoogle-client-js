@@ -25,7 +25,7 @@ export function isDicomUUID(uid: string): boolean {
     return uid.length <= 64 && uid.match(/^\d+(\.\d+)*$/) !== null;
 }
 
-export function andCall<T>(promise: Promise<T>, callback?: (error: any, outcome?: T) => void): Promise<T> {
+export function andCall<T>(promise: Promise<T>, callback: (error: any, outcome?: T) => void | undefined): Promise<T> {
     if (callback) {
         promise.then(
             (value) => callback(null, value),
@@ -34,7 +34,7 @@ export function andCall<T>(promise: Promise<T>, callback?: (error: any, outcome?
     return promise;
 }
   
-export function andCallVoid(promise: Promise<any>, callback?: (error: any) => void): Promise<void> {
+export function andCallVoid(promise: Promise<any>, callback: (error: any) => void | undefined): Promise<void> {
     if (callback) {
         promise.then(
             () => callback(null),

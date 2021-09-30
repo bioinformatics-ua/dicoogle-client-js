@@ -282,7 +282,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
   describe('Index', function() {
     describe('#index() on one provider', function() {
         it("should say ok with no error", function (done) {
-            Dicoogle.index('/opt/another-dataset', 'lucene', function(error) {
+            Dicoogle.index('file:/opt/another-dataset', 'lucene', function(error) {
                 assert.equal(error, null);
                 done();
             });
@@ -302,7 +302,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
   describe('Unindex', function() {
     describe('#unindex() on one provider', function() {
         it("should say ok with no error", function (done) {
-            Dicoogle.unindex('/opt/another-dataset/1_1.dcm', 'lucene', function(error) {
+            Dicoogle.unindex('file:/opt/another-dataset/1_1.dcm', 'lucene', function(error) {
                 assert.equal(error, null);
                 done();
             });
@@ -311,20 +311,46 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
 
     describe('#unindex() on all providers', function() {
         it("should say ok with no error", function (done) {
-            Dicoogle.unindex('/opt/another-dataset/1_1.dcm', function(error) {
+            Dicoogle.unindex('file:/opt/another-dataset/1_1.dcm', function(error) {
                 assert.equal(error, null);
                 done();
             });
         });
     });
+
+    describe('#unindex() multiple URIs', function() {
+      it("should say ok with no error", function (done) {
+          Dicoogle.unindex([
+            'file:/opt/another-dataset/1_1.dcm',
+            'file:/opt/another-dataset/1_2.dcm',
+          ], function(error) {
+              assert.equal(error, null);
+              done();
+          });
+      });
+    });
   });
 
-  describe('#remove() a file', function() {
-    it("should say ok with no error", function (done) {
-        Dicoogle.remove('/opt/another-dataset/1_1.dcm', function(error) {
-            assert.equal(error, null);
-            done();
-        });
+  describe("Remove", function() {
+    describe('#remove() a file', function() {
+      it("should say ok with no error", function (done) {
+          Dicoogle.remove('file:/opt/another-dataset/1_1.dcm', function(error) {
+              assert.equal(error, null);
+              done();
+          });
+      });
+    });
+    describe('#remove() multiple files', function() {
+      it("should say ok with no error", function (done) {
+          Dicoogle.remove([
+            'file:/opt/another-dataset/1_1.dcm',
+            'file:/opt/another-dataset/1_2.dcm',
+            'file:/opt/another-dataset/1_3.dcm',
+          ], function(error) {
+              assert.equal(error, null);
+              done();
+          });
+      });
     });
   });
 

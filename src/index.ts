@@ -515,16 +515,27 @@ class DicoogleAccess {
    * @param callback the function to call on completion
    */
   unindex(uri: string | string[], provider: string | string[], callback?: (error: any) => void): Promise<void>;
-  unindex(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
+  unindex(uri: string | string[], provider?: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
     }
-    return andCallVoid(this.request('POST', Endpoints.UNINDEX)
-      .query({
-        uri,
-        provider
-      }), callback);
+
+    if (Array.isArray(uri) && uri.length > 1) {
+      // send URIs as form data to prevent URI from being too long
+      let body = uri.map(uri => 'uri=' + encodeURIComponent(uri)).join('&');
+
+      return andCallVoid(this.request('POST', Endpoints.UNINDEX)
+        .type('form')
+        .query({provider})
+        .send(body), callback);
+    } else {
+      return andCallVoid(this.request('POST', Endpoints.UNINDEX)
+        .query({
+          uri,
+          provider
+        }), callback);
+    }
   };
 
   /** Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
@@ -533,10 +544,17 @@ class DicoogleAccess {
    * @param callback the function to call on completion
    */
   remove(uri: string | string[], callback?: (error: any) => void): Promise<void> {
-    return andCallVoid(this.request('POST', Endpoints.REMOVE)
-      .query({
-        uri
-      }), callback);
+    if (Array.isArray(uri) && uri.length > 1) {
+      // send URIs as form data to prevent URI from being too long
+      return andCallVoid(this.request('POST', Endpoints.REMOVE)
+        .type('form')
+        .send(uri.map(uri => 'uri=' + encodeURIComponent(uri)).join('&')), callback);
+    } else {
+      return andCallVoid(this.request('POST', Endpoints.REMOVE)
+        .query({
+          uri
+        }), callback);
+    }
   };
 
   /** Retrieve the running Dicoogle version.
