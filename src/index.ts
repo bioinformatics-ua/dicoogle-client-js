@@ -515,7 +515,7 @@ class DicoogleAccess {
    * @param callback the function to call on completion
    */
   unindex(uri: string | string[], provider: string | string[], callback?: (error: any) => void): Promise<void>;
-  unindex(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
+  unindex(uri: string | string[], provider?: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
