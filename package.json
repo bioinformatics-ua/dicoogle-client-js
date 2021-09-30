@@ -75,6 +75,7 @@
     "type": "git",
     "url": "https://github.com/bioinformatics-ua/dicoogle-client-js.git"
   },
+  "homepage": "https://www.dicoogle.com",
   "nyc": {
     "extension": [
       ".js",
