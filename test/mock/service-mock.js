@@ -26,7 +26,7 @@ function validateURI(uri) {
     if (typeof uri !== 'string') {
         return false;
     }
-    return /^(file:)?[\.-\w\/\%\?\&\=]+$/.test(uri);
+    return /^(file:)?[.-\w/%?&=]+$/.test(uri);
 }
 
 /** Use nock to intercept Dicoogle client requests.
