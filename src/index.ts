@@ -257,6 +257,50 @@ interface WebUIPlugin {
   settings?: any
 }
 
+type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
+
+interface CommonPluginInfo {
+  name: string
+  type: string
+  enabled: boolean
+}
+
+interface StoragePluginInfo extends CommonPluginInfo {
+  type: "storage"
+  scheme: string
+  default: null | boolean
+}
+
+interface QueryPluginInfo extends CommonPluginInfo {
+  type: "query"
+  dim: null | boolean
+}
+
+interface IndexPluginInfo extends CommonPluginInfo {
+  type: "index"
+  dim: null | boolean
+}
+
+interface ServletPluginInfo extends CommonPluginInfo {
+  type: "servlet"
+  endpoints?: null | string[]
+}
+
+interface DeadPluginInfo {
+  name: string
+  cause: {
+    class: string
+    message: string
+  }
+}
+
+/** Response to plugin information. */
+interface PluginsResponse {
+  plugins: PluginInfo[]
+  sets: string[]
+  dead: DeadPluginInfo[]
+}
+
 type password = string;
 
 /** Main entrypoint to the Dicoogle web API.
@@ -589,6 +633,16 @@ class DicoogleAccess {
           return p;
         });
     }), callback);
+  }
+
+  /** Obtain a detailed description of all plugins installed.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param callback the callback function
+   */
+  getPlugins(callback?: (error: any, response?: PluginsResponse) => void): Promise<PluginsResponse> {
+    return andCall(this.request(Endpoints.PLUGINS).then(res => res.body), callback);
   }
 
   /**

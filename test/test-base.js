@@ -423,6 +423,36 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       });
   });
 
+  describe('Plugin info', function() {
+    it("#getPlugins(); should give all plugin information", function(done) {
+      Dicoogle.getPlugins(function (error, resp) {
+        assert.equal(error, null);
+        assert.isObject(resp, 'resp is an object');
+        assert.isArray(resp.plugins, 'resp.plugins is an array');
+        assert.isArray(resp.sets, 'resp.sets is an array');
+        assert.isArray(resp.dead, 'resp.dead is an array');
+        let {plugins, sets, dead} = resp;
+        assert(plugins.length > 0, 'list of plugins not empty');
+        for (const p of plugins) {
+            assert.isObject(p, 'plugin is an object');
+            assert.isString(p.name, 'plugin name ok');
+            assert.isString(p.type, 'plugin type ok');
+        }
+        for (const s of sets) {
+          assert.isString(s, 'set is a string');
+        }
+        for (const d of dead) {
+          assert.isObject(d, 'dead plugin is an object');
+          assert.isString(d.name, 'dead plugin name ok');
+          assert.isObject(d.cause, 'dead plugin cause is an object');
+          assert.isString(d.cause.class, 'dead plugin cause.class is a string');
+          assert.isString(d.cause.message, 'dead plugin cause is a string');
+        }
+        done();
+      });
+    });
+  });
+
   function checkServiceInfo(error, data) {
     assert.equal(error, null);
     assert.isBoolean(data.running, 'running must be a boolean');

@@ -128,6 +128,45 @@ module.exports = function createDicoogleMock(port = 8080) {
             ];
         /* eslint-enable */
 
+        const PLUGINS = [
+            {
+                name: 'file-storage',
+                type: 'storage',
+                scheme: 'file',
+                default: true,
+                enabled: true
+            },
+            {
+                name: 'lucene',
+                type: 'query',
+                dim: true,
+                enabled: true
+            },
+            {
+                name: 'lucene',
+                type: 'index',
+                dim: true,
+                enabled: true
+            },
+            {
+                name: 'cbir',
+                type: 'query',
+                dim: false,
+                enabled: true
+            },
+            {
+                name: 'cbir',
+                type: 'index',
+                dim: false,
+                enabled: true
+            },
+            {
+                name: 'extra',
+                type: 'servlet',
+                enabled: true
+            },
+        ];
+
         const LOGGER_TEXT = `2016-05-24T15:05:42,872 | Creating plugin controller
 2016-05-24T15:05:46,383 | Loaded web plugins
 2016-05-24T15:05:46,445 | Loaded Local Plugins
@@ -392,7 +431,21 @@ module.exports = function createDicoogleMock(port = 8080) {
                 plugins: WEBUI_PLUGINS.filter(p => p.dicoogle['slot-id'] === 'menu')
             })
             .get('/webui')
-            .reply(200, {plugins: WEBUI_PLUGINS});
+            .reply(200, {plugins: WEBUI_PLUGINS})
+
+            // mock plugins
+            .get('/plugins')
+            .reply(200, {
+                plugins: PLUGINS,
+                sets: ['filestorage', 'luceneset', 'cbir', 'extra'],
+                dead: [{
+                    name: 'broken',
+                    cause: {
+                        class: 'RuntimeException',
+                        message: 'broken plugin',
+                    }
+                }]
+            });
 
             // mock QR service
         nock(BASE_URL)
