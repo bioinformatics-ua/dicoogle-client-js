@@ -44,7 +44,8 @@ const Endpoints = Object.freeze({
     LOGGER: "logger",
     LOGIN: "login",
     LOGOUT: "logout",
-    WEBUI: "webui"
+    WEBUI: "webui",
+    PLUGINS: "plugins",
 });
 
 export default Endpoints;
