@@ -257,18 +257,18 @@ interface WebUIPlugin {
   settings?: any
 }
 
-type PluginInfo = StoragePluginInfo | QueryPluginInfo | ServletPluginInfo | CommonPluginInfo;
+type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
 
 interface CommonPluginInfo {
   name: string
   type: string
   enabled: boolean
-  scheme: string
 }
 
 interface StoragePluginInfo extends CommonPluginInfo {
   type: "storage"
   scheme: string
+  default: null | boolean
 }
 
 interface QueryPluginInfo extends CommonPluginInfo {
@@ -276,9 +276,14 @@ interface QueryPluginInfo extends CommonPluginInfo {
   dim: null | boolean
 }
 
+interface IndexPluginInfo extends CommonPluginInfo {
+  type: "index"
+  dim: null | boolean
+}
+
 interface ServletPluginInfo extends CommonPluginInfo {
   type: "servlet"
-  endpoints: null | string[]
+  endpoints?: null | string[]
 }
 
 interface DeadPluginInfo {
