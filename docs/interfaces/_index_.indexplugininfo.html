@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SearchSeriesResult | Dicoogle JavaScript Client</title>
+	<title>IndexPluginInfo | Dicoogle JavaScript Client</title>
 	<meta name="description" content="Documentation for Dicoogle JavaScript Client">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../modules/_index_.html">&quot;index&quot;</a>
 				</li>
 				<li>
-					<a href="_index_.searchseriesresult.html">SearchSeriesResult</a>
+					<a href="_index_.indexplugininfo.html">IndexPluginInfo</a>
 				</li>
 			</ul>
-			<h1>Interface SearchSeriesResult</h1>
+			<h1>Interface IndexPluginInfo</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">SearchSeriesResult</span>
+						<a href="_index_.commonplugininfo.html" class="tsd-signature-type">CommonPluginInfo</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">IndexPluginInfo</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -82,11 +87,10 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.searchseriesresult.html#images" class="tsd-kind-icon">images</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.searchseriesresult.html#seriedescription" class="tsd-kind-icon">serie<wbr>Description</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.searchseriesresult.html#serieinstanceuid" class="tsd-kind-icon">serie<wbr>InstanceUID</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.searchseriesresult.html#seriemodality" class="tsd-kind-icon">serie<wbr>Modality</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.searchseriesresult.html#serienumber" class="tsd-kind-icon">serie<wbr>Number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.indexplugininfo.html#dim" class="tsd-kind-icon">dim</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_index_.indexplugininfo.html#enabled" class="tsd-kind-icon">enabled</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_index_.indexplugininfo.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-not-exported"><a href="_index_.indexplugininfo.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,52 +99,45 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="images" class="tsd-anchor"></a>
-					<h3>images</h3>
-					<div class="tsd-signature tsd-kind-icon">images<span class="tsd-signature-symbol">:</span> <a href="_index_.searchimageresult.html" class="tsd-signature-type">SearchImageResult</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="dim" class="tsd-anchor"></a>
+					<h3>dim</h3>
+					<div class="tsd-signature tsd-kind-icon">dim<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L189">index.ts:189</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L281">index.ts:281</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="seriedescription" class="tsd-anchor"></a>
-					<h3>serie<wbr>Description</h3>
-					<div class="tsd-signature tsd-kind-icon">serie<wbr>Description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+					<a name="enabled" class="tsd-anchor"></a>
+					<h3>enabled</h3>
+					<div class="tsd-signature tsd-kind-icon">enabled<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_index_.commonplugininfo.html">CommonPluginInfo</a>.<a href="_index_.commonplugininfo.html#enabled">enabled</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L187">index.ts:187</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L265">index.ts:265</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="serieinstanceuid" class="tsd-anchor"></a>
-					<h3>serie<wbr>InstanceUID</h3>
-					<div class="tsd-signature tsd-kind-icon">serie<wbr>InstanceUID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_index_.commonplugininfo.html">CommonPluginInfo</a>.<a href="_index_.commonplugininfo.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L186">index.ts:186</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L263">index.ts:263</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="seriemodality" class="tsd-anchor"></a>
-					<h3>serie<wbr>Modality</h3>
-					<div class="tsd-signature tsd-kind-icon">serie<wbr>Modality<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-not-exported">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"index"</span></div>
 					<aside class="tsd-sources">
+						<p>Overrides <a href="_index_.commonplugininfo.html">CommonPluginInfo</a>.<a href="_index_.commonplugininfo.html#type">type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L188">index.ts:188</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="serienumber" class="tsd-anchor"></a>
-					<h3>serie<wbr>Number</h3>
-					<div class="tsd-signature tsd-kind-icon">serie<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L185">index.ts:185</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L280">index.ts:280</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -195,9 +192,27 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.exportoptions.html" class="tsd-kind-icon">Export<wbr>Options</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.indexplugininfo.html" class="tsd-kind-icon">Index<wbr>Plugin<wbr>Info</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_index_.indexplugininfo.html#dim" class="tsd-kind-icon">dim</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+								<a href="_index_.indexplugininfo.html#enabled" class="tsd-kind-icon">enabled</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+								<a href="_index_.indexplugininfo.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-not-exported">
+								<a href="_index_.indexplugininfo.html#type" class="tsd-kind-icon">type</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.indexersettings.html" class="tsd-kind-icon">Indexer<wbr>Settings</a>
 					</li>
@@ -231,30 +246,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.searchresult.html" class="tsd-kind-icon">Search<wbr>Result</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.searchseriesresult.html" class="tsd-kind-icon">Search<wbr>Series<wbr>Result</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.searchseriesresult.html#images" class="tsd-kind-icon">images</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.searchseriesresult.html#seriedescription" class="tsd-kind-icon">serie<wbr>Description</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.searchseriesresult.html#serieinstanceuid" class="tsd-kind-icon">serie<wbr>InstanceUID</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.searchseriesresult.html#seriemodality" class="tsd-kind-icon">serie<wbr>Modality</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.searchseriesresult.html#serienumber" class="tsd-kind-icon">serie<wbr>Number</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.searchstudyresult.html" class="tsd-kind-icon">Search<wbr>Study<wbr>Result</a>
 					</li>
