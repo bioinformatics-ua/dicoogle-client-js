@@ -30,7 +30,7 @@ const source = require("vinyl-source-stream");
 const sourcemaps = require("gulp-sourcemaps");
 const ts = require("gulp-typescript");
 const tsProject = ts.createProject("tsconfig.json");
-const uglify = require("gulp-uglify");
+const terser = require("gulp-terser");
 
 var _licenseText = null;
 function licenseText() {
@@ -73,13 +73,14 @@ function bundle() {
           NODE_ENV: "production"
         }
       ]
-    ]
+    ],
+    standalone: 'DicoogleClient'
   });
   return b
     .bundle()
     .pipe(source("dicoogle-client.min.js"))
     .pipe(buffer())
-    .pipe(uglify())
+    .pipe(terser())
     .pipe(header(licenseText()))
     .pipe(gulp.dest("dist"));
 }

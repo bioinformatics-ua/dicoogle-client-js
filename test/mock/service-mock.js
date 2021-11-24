@@ -22,8 +22,15 @@ const nock = require('nock');
 const URL = require('url');
 const qs = require('querystring');
 
+function validateURI(uri) {
+    if (typeof uri !== 'string') {
+        return false;
+    }
+    return /^(file:)?[.-\w/%?&=]+$/.test(uri);
+}
+
 /** Use nock to intercept Dicoogle client requests.
- * @param {number} [port]
+ * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
 module.exports = function createDicoogleMock(port = 8080) {
@@ -34,7 +41,7 @@ module.exports = function createDicoogleMock(port = 8080) {
 
         const SEARCH_RESULTS = [
             {
-                uri: '/opt/dataset/file1',
+                uri: 'file:/opt/dataset/file1',
                 fields: {
                     "Modality": "MR",
                     "StudyInstanceUID": "1.2.3.4.5.6.7777777",
@@ -48,7 +55,7 @@ module.exports = function createDicoogleMock(port = 8080) {
                 }
             },
             {
-                uri: '/opt/dataset/file2',
+                uri: 'file:/opt/dataset/file2',
                 fields: {
                     "Modality": "MR",
                     "StudyInstanceUID": "1.2.3.4.5.6.7777777",
@@ -79,10 +86,10 @@ module.exports = function createDicoogleMock(port = 8080) {
                         serieDescription: "",
                         serieModality: "CR",
                         images: [{
-                            uri: '/opt/dataset/file1',
+                            uri: 'file:/opt/dataset/file1',
                             "sopInstanceUID": "1.2.3.4.5.6.7777777.4444.1"
                         }, {
-                                uri: '/opt/dataset/file2',
+                                uri: 'file:/opt/dataset/file2',
                                 "sopInstanceUID": "1.2.3.4.5.6.7777777.4444.2"
                             }]
                     }]
@@ -120,6 +127,45 @@ module.exports = function createDicoogleMock(port = 8080) {
             {"name":"dicoogle-demo-plugin","version":"0.1.0","dicoogle":{"slot-id":"menu","caption":"Web Plugin Sample","module-file":"module.js"}}
             ];
         /* eslint-enable */
+
+        const PLUGINS = [
+            {
+                name: 'file-storage',
+                type: 'storage',
+                scheme: 'file',
+                default: true,
+                enabled: true
+            },
+            {
+                name: 'lucene',
+                type: 'query',
+                dim: true,
+                enabled: true
+            },
+            {
+                name: 'lucene',
+                type: 'index',
+                dim: true,
+                enabled: true
+            },
+            {
+                name: 'cbir',
+                type: 'query',
+                dim: false,
+                enabled: true
+            },
+            {
+                name: 'cbir',
+                type: 'index',
+                dim: false,
+                enabled: true
+            },
+            {
+                name: 'extra',
+                type: 'servlet',
+                enabled: true
+            },
+        ];
 
         const LOGGER_TEXT = `2016-05-24T15:05:42,872 | Creating plugin controller
 2016-05-24T15:05:46,383 | Loaded web plugins
@@ -299,27 +345,50 @@ module.exports = function createDicoogleMock(port = 8080) {
 
             // mock index on specific provider
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-/]+/, plugin: /.*/ })
+            .query(({ uri, plugin }) => {
+                return validateURI(uri) && /\w+/.test(plugin);
+            })
             .reply(200)
 
             // mock index on all providers
             .post('/management/tasks/index')
-            .query({ uri: /[a-z0-9\-/]+/ })
+            .query(({ uri }) => validateURI(uri))
             .reply(200)
 
-            // mock unindex on all providers
+            // mock unindex on all providers (via query string)
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-/]+/ })
+            .query(({ uri }) => validateURI(uri))
             .reply(200)
 
-            // mock unindex on specific provider
+            // mock unindex on all providers (via form data)
+            .post('/management/tasks/unindex', ({ uri: uris }) => {
+                return uris.length > 0 && uris.every(validateURI);
+            })
+            .reply(200)
+
+            // mock unindex on specific provider (via query string)
             .post('/management/tasks/unindex')
-            .query({ uri: /[a-z0-9\-/]+/, provider: /.*/ })
+            .query(({ uri, plugin }) => {
+                return validateURI(uri) && /\w+/.test(plugin);
+            })
             .reply(200)
 
-            // mock remove
+            // mock unindex on specific provider (via form data)
+            .post('/management/tasks/unindex', ({ uri: uris }) => {
+                return uris.length > 0 && uris.every(validateURI);
+            })
+            .query({ provider: /\w+/ })
+            .reply(200)
+        
+            // mock remove (via query string)
             .post('/management/tasks/remove')
-            .query({ uri: /[a-z0-9\-/]+/ })
+            .query(({ uri }) => validateURI(uri))
+            .reply(200)
+
+            // mock remove (via form data)
+            .post('/management/tasks/remove', ({ uri: uris }) => {
+                return uris.length > 0 && uris.every(validateURI);
+            })
             .reply(200)
 
             // mock dump
@@ -362,7 +431,21 @@ module.exports = function createDicoogleMock(port = 8080) {
                 plugins: WEBUI_PLUGINS.filter(p => p.dicoogle['slot-id'] === 'menu')
             })
             .get('/webui')
-            .reply(200, {plugins: WEBUI_PLUGINS});
+            .reply(200, {plugins: WEBUI_PLUGINS})
+
+            // mock plugins
+            .get('/plugins')
+            .reply(200, {
+                plugins: PLUGINS,
+                sets: ['filestorage', 'luceneset', 'cbir', 'extra'],
+                dead: [{
+                    name: 'broken',
+                    cause: {
+                        class: 'RuntimeException',
+                        message: 'broken plugin',
+                    }
+                }]
+            });
 
             // mock QR service
         nock(BASE_URL)
@@ -604,6 +687,35 @@ module.exports = function createDicoogleMock(port = 8080) {
                 AETitle = String(qs.parse(qstring).aetitle).trim();
                 return 'success';
             });
+        
+        nock(BASE_URL)
+            .get('/user')
+            .reply(200, {users: [
+                { username: "dicoogle" },
+                { username: "other" }
+            ]})
+            .put('/user')
+            .query(({username, password, admin}) => {
+                return username === 'drze' &&
+                    typeof password === 'string' &&
+                    password.length > 0 &&
+                    (admin === undefined || admin === 'true' || admin === 'false');
+            })
+            .reply(200, {success: true})
+            .get('/user')
+            .reply(200, {users: [
+                { username: "dicoogle" },
+                { username: "drze" },
+                { username: "other" }
+            ]})
+            .delete('/user')
+            .query({username: 'drze'})
+            .reply(200, {success: true})
+            .get('/user')
+            .reply(200, {users: [
+                { username: "dicoogle" },
+                { username: "other" }
+            ]});
 
     return dicoogleClient(BASE_URL);
 };

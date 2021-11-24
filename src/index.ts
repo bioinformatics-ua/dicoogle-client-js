@@ -24,6 +24,7 @@ import Endpoints from './endpoints';
 import {Socket} from './socket';
 import {StorageService, QueryRetrieveService} from './service';
 import {Tasks} from './tasks';
+import {UserService} from './users';
 import {andCall, andCallVoid, isDicomUUID} from './util';
 import {SuperAgentRequest} from 'superagent';
 
@@ -256,6 +257,50 @@ interface WebUIPlugin {
   settings?: any
 }
 
+type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
+
+interface CommonPluginInfo {
+  name: string
+  type: string
+  enabled: boolean
+}
+
+interface StoragePluginInfo extends CommonPluginInfo {
+  type: "storage"
+  scheme: string
+  default: null | boolean
+}
+
+interface QueryPluginInfo extends CommonPluginInfo {
+  type: "query"
+  dim: null | boolean
+}
+
+interface IndexPluginInfo extends CommonPluginInfo {
+  type: "index"
+  dim: null | boolean
+}
+
+interface ServletPluginInfo extends CommonPluginInfo {
+  type: "servlet"
+  endpoints?: null | string[]
+}
+
+interface DeadPluginInfo {
+  name: string
+  cause: {
+    class: string
+    message: string
+  }
+}
+
+/** Response to plugin information. */
+interface PluginsResponse {
+  plugins: PluginInfo[]
+  sets: string[]
+  dead: DeadPluginInfo[]
+}
+
 type password = string;
 
 /** Main entrypoint to the Dicoogle web API.
@@ -277,13 +322,15 @@ class DicoogleAccess {
   public storage: StorageService;
   /** Query/Retrieve service namespace */
   public queryRetrieve: QueryRetrieveService;
+  /** users service namespace */
+  public users: UserService;
 
   /**
    * Perform a text query.
    * @param query text query
    * @param callback the callback function providing the outcome
    */
-  search(query: string, callback?: (error: any, outcome: SearchOutcome) => void);
+  search(query: string, callback?: (error: any, outcome: SearchOutcome) => void): Promise<SearchOutcome>;
 
   /**
    * Perform a text query.
@@ -291,9 +338,9 @@ class DicoogleAccess {
    * @param options a set of options related to the search
    * @param callback the callback function providing the outcome
    */
-  search(query: string, options: SearchOptions, callback?: (error: any, outcome: SearchOutcome) => void);
+  search(query: string, options: SearchOptions, callback?: (error: any, outcome: SearchOutcome) => void): Promise<SearchOutcome>;
 
-  search(query: string, arg1: SearchOptions | ((error: any, outcome: SearchOutcome) => void) = {}, arg2?: (error: any, outcome: SearchOutcome) => void) {
+  search(query: string, arg1: SearchOptions | ((error: any, outcome: SearchOutcome) => void) = {}, arg2?: (error: any, outcome: SearchOutcome) => void): Promise<SearchOutcome> {
       let callback, options;
       if (!arg2 && (typeof arg1 === 'function' || arg1 === undefined)) {
         callback = arg1;
@@ -384,11 +431,14 @@ class DicoogleAccess {
    * @param options additional options
    * @param callback the callback function providing the UID of the file
    */
-  issueExport(query: string, fields: string | string[], options: ExportOptions = {}, callback?: (error: any, uid?: string) => void): Promise<string> {
+  issueExport(query: string, fields: string | string[], callback?: (error: any, uid?: string) => void): Promise<string>;
+  issueExport(query: string, fields: string | string[], options: ExportOptions, callback?: (error: any, uid?: string) => void): Promise<string>;
+  issueExport(query: string, fields: string | string[], options?, callback?): Promise<string> {
     if (typeof options === 'function' && !callback) {
       callback = options;
       options = {};
     }
+    options = options ?? {};
     fields = [].concat(fields);
     let qs: any = {
       query, fields: JSON.stringify(fields)
@@ -466,7 +516,7 @@ class DicoogleAccess {
    * @param uri a URI or array of URIs representing the root resource of the files to be indexed
    * @param callback the function to call when the task is successfully issued
    */
-  index(uri: string | string[], callback?: (error: any) => void);
+  index(uri: string | string[], callback?: (error: any) => void): Promise<void>;
 
   /**
    * Request a new indexation task over a given URI. The operation is recursive, indexing anything in the URI's endpoint.
@@ -474,7 +524,7 @@ class DicoogleAccess {
    * @param provider a provider or array of provider names in which the indexation will carry out, all by default
    * @param callback the function to call when the task is successfully issued
    */
-  index(uri: string | string[], provider: string | string[], callback?: (error: any) => void);
+  index(uri: string | string[], provider: string | string[], callback?: (error: any) => void): Promise<void>;
   index(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
@@ -509,16 +559,27 @@ class DicoogleAccess {
    * @param callback the function to call on completion
    */
   unindex(uri: string | string[], provider: string | string[], callback?: (error: any) => void): Promise<void>;
-  unindex(uri: string | string[], provider: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
+  unindex(uri: string | string[], provider?: string | string[] | ((error: any) => void), callback?: (error: any) => void) {
     if (typeof provider === 'function' && !callback) {
       callback = provider;
       provider = undefined;
     }
-    return andCallVoid(this.request('POST', Endpoints.UNINDEX)
-      .query({
-        uri,
-        provider
-      }), callback);
+
+    if (Array.isArray(uri) && uri.length > 1) {
+      // send URIs as form data to prevent URI from being too long
+      let body = uri.map(uri => 'uri=' + encodeURIComponent(uri)).join('&');
+
+      return andCallVoid(this.request('POST', Endpoints.UNINDEX)
+        .type('form')
+        .query({provider})
+        .send(body), callback);
+    } else {
+      return andCallVoid(this.request('POST', Endpoints.UNINDEX)
+        .query({
+          uri,
+          provider
+        }), callback);
+    }
   };
 
   /** Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
@@ -527,10 +588,17 @@ class DicoogleAccess {
    * @param callback the function to call on completion
    */
   remove(uri: string | string[], callback?: (error: any) => void): Promise<void> {
-    return andCallVoid(this.request('POST', Endpoints.REMOVE)
-      .query({
-        uri
-      }), callback);
+    if (Array.isArray(uri) && uri.length > 1) {
+      // send URIs as form data to prevent URI from being too long
+      return andCallVoid(this.request('POST', Endpoints.REMOVE)
+        .type('form')
+        .send(uri.map(uri => 'uri=' + encodeURIComponent(uri)).join('&')), callback);
+    } else {
+      return andCallVoid(this.request('POST', Endpoints.REMOVE)
+        .query({
+          uri
+        }), callback);
+    }
   };
 
   /** Retrieve the running Dicoogle version.
@@ -544,7 +612,7 @@ class DicoogleAccess {
    * @param slotId the identifiers of slots to contemplate
    * @param callback the callback function
    */
-  getWebUIPlugins(slotId: string, callback?: (error: any, plugins?: WebUIPlugin[]) => void) {
+  getWebUIPlugins(slotId: string, callback?: (error: any, plugins?: WebUIPlugin[]) => void): Promise<WebUIPlugin[]> {
     return andCall(this.request(Endpoints.WEBUI)
       .query(slotId ? {'slot-id': slotId} : {})
       .then((res) => {
@@ -565,6 +633,16 @@ class DicoogleAccess {
           return p;
         });
     }), callback);
+  }
+
+  /** Obtain a detailed description of all plugins installed.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param callback the callback function
+   */
+  getPlugins(callback?: (error: any, response?: PluginsResponse) => void): Promise<PluginsResponse> {
+    return andCall(this.request(Endpoints.PLUGINS).then(res => res.body), callback);
   }
 
   /**
@@ -657,7 +735,7 @@ class DicoogleAccess {
    * @param {function(error:any, outcome:any)} callback the callback function
    */
   getIndexerSettings(callback?: (error: any, outcome?: IndexerSettings) => void): Promise<IndexerSettings>;
-  getIndexerSettings(field: string, callback?: (error: any, outcome?: any) => void): Promise<any>;
+  getIndexerSettings<T>(field: string, callback?: (error: any, outcome?: T) => void): Promise<T>;
   getIndexerSettings(field: string | ((error: any, outcome?: IndexerSettings) => void), callback?: (error: any, outcome?: any) => void) {
     if (typeof field === 'function' && !callback) {
       callback = field;
@@ -768,7 +846,7 @@ class DicoogleAccess {
   /** Retrieve the AE title of the Dicoogle archive.
    * @param callback the callback function
    */
-  getAETitle(callback?: (error: any, aetitle?: string) => void) {
+  getAETitle(callback?: (error: any, aetitle?: string) => void): Promise<string> {
       return andCall(this.request(Endpoints.DICOM_AETITLE_SETTINGS)
         .then((res) => {
           let outcome = res.body;
@@ -890,6 +968,7 @@ function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): Dico
     m.tasks = new Tasks(socket_);
     m.storage = new StorageService(socket_);
     m.queryRetrieve = new QueryRetrieveService(socket_);
+    m.users = new UserService(socket_);
 
     return m;
 }

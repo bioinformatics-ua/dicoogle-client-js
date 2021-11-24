@@ -21,7 +21,7 @@
     "global-strict": 0,
     "new-cap": 0,
     "camelcase": 0,
-    "comma-dangle": 1,
+    "comma-dangle": 0,
     "no-unused-vars": 1,
     "comma-spacing": 1,
     "space-infix-ops": 1,

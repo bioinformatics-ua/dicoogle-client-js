@@ -204,7 +204,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
     describe('#index() on all providers', function() {
       it("should say ok with no error", async function() {
-        await dicoogle.index('/opt/another-dataset');
+        await dicoogle.index('file:/opt/another-dataset');
       });
     });
   });
@@ -212,20 +212,40 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Unindex', function() {
     describe('#unindex() on one provider', function() {
       it("should say ok with no error", async function() {
-        await dicoogle.unindex('/opt/another-dataset/1_1.dcm', 'lucene');
+        await dicoogle.unindex('file:/opt/another-dataset/1_1.dcm', 'lucene');
       });
     });
 
     describe('#unindex() on all providers', function() {
       it("should say ok with no error", async function() {
-        await dicoogle.unindex('/opt/another-dataset/1_1.dcm');
+        await dicoogle.unindex('file:/opt/another-dataset/1_1.dcm');
+      });
+    });
+
+    describe('#unindex() multiple URIs', function() {
+      it("should say ok with no error", async function() {
+        await dicoogle.unindex([
+          'file:/opt/another-dataset/1_1.dcm',
+          'file:/opt/another-dataset/1_2.dcm',
+        ]);
       });
     });
   });
 
-  describe('#remove() a file', function() {
-    it("should say ok with no error", async function() {
-      await dicoogle.remove('/opt/another-dataset/1_1.dcm');
+  describe("Remove", function() {
+    describe('#remove() a file', function() {
+      it("should say ok with no error", async function() {
+        await dicoogle.remove('file:/opt/another-dataset/1_1.dcm');
+      });
+    });
+    describe('#remove() multiple files', function() {
+      it("should say ok with no error", async function() {
+        await dicoogle.remove([
+          'file:/opt/another-dataset/1_1.dcm',
+          'file:/opt/another-dataset/1_2.dcm',
+          'file:/opt/another-dataset/1_3.dcm',
+        ]);
+      });
     });
   });
 
@@ -278,6 +298,33 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
           assert.isString(p.slotId, 'plugin slot-id ok');
         }
       });
+  });
+
+  describe('Plugin info', function() {
+    it("#getPlugins(); should give all plugin information", async function() {
+      let resp = await dicoogle.getPlugins();
+      assert.isObject(resp, 'resp is an object');
+      assert.isArray(resp.plugins, 'resp.plugins is an array');
+      assert.isArray(resp.sets, 'resp.sets is an array');
+      assert.isArray(resp.dead, 'resp.dead is an array');
+      let {plugins, sets, dead} = resp;
+      assert(plugins.length > 0, 'list of plugins not empty');
+      for (const p of plugins) {
+          assert.isObject(p, 'plugin is an object');
+          assert.isString(p.name, 'plugin name ok');
+          assert.isString(p.type, 'plugin type ok');
+      }
+      for (const s of sets) {
+        assert.isString(s, 'set is a string');
+      }
+      for (const d of dead) {
+        assert.isObject(d, 'dead plugin is an object');
+        assert.isString(d.name, 'dead plugin name ok');
+        assert.isObject(d.cause, 'dead plugin cause is an object');
+        assert.isString(d.cause.class, 'dead plugin cause.class is a string');
+        assert.isString(d.cause.message, 'dead plugin cause is a string');
+      }
+    });
   });
 
   function checkServiceInfo(data) {
@@ -339,6 +386,35 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
           await dicoogle.queryRetrieve.setDicomQuerySettings({responseTimeout: 1000});
         });
       });
+    });
+  });
+
+  describe('User management service', () => {
+    it('#list should provide the list of users', async () => {
+      let users = await dicoogle.users.list();
+      assert.isArray(users);
+      for (const u of users) {
+        assert.property(u, 'username');
+      }
+    });
+
+    it('#add and #remove should add and remove users', async () => {
+      // add a new user
+      let addSuccess = await dicoogle.users.add('drze', 'verygoodsecret', false);
+      assert.isTrue(addSuccess);
+
+      // check that the user now exists
+      let users;
+      users = await dicoogle.users.list();
+      assert.deepInclude(users, {username: 'drze'});
+
+      // now remove the user
+      let removeSuccess = await dicoogle.users.remove('drze');
+      assert.isTrue(removeSuccess);
+
+      // check the list again
+      users = await dicoogle.users.list();
+      assert.notDeepInclude(users, {username: 'drze'});
     });
   });
 
@@ -551,6 +627,6 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
       assert.isObject(data);
       assert.propertyVal(data, 'version', DICOOGLE_VERSION);
     });
-  })
+  });
 });
 
