@@ -451,6 +451,21 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         done();
       });
     });
+    it("#getPlugins(type); should give plugin information only of that type", function(done) {
+      Dicoogle.getPlugins('index', function (error, resp) {
+        assert.equal(error, null);
+        assert.isObject(resp, 'resp is an object');
+        assert.isArray(resp.plugins, 'resp.plugins is an array');
+        let {plugins} = resp;
+        assert(plugins.length > 0, 'list of plugins not empty');
+        for (const p of plugins) {
+            assert.isObject(p, 'plugin is an object');
+            assert.isString(p.name, 'plugin name ok');
+            assert.equal(p.type, 'index', 'plugin type matches requested type');
+        }
+        done();
+      });
+    });
   });
 
   function checkServiceInfo(error, data) {

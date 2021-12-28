@@ -257,7 +257,15 @@ interface WebUIPlugin {
   settings?: any
 }
 
+/** 
+ * An object describing a plugin installed in Dicoogle.
+ */
 type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
+
+/** 
+ * A string identifying the type of plugin to request via `getPlugins`
+ */
+type PluginType = "query" | "index" | "storage" | "servlet" | "set" | "dead";
 
 interface CommonPluginInfo {
   name: string
@@ -641,8 +649,32 @@ class DicoogleAccess {
    * 
    * @param callback the callback function
    */
-  getPlugins(callback?: (error: any, response?: PluginsResponse) => void): Promise<PluginsResponse> {
-    return andCall(this.request(Endpoints.PLUGINS).then(res => res.body), callback);
+  getPlugins(callback?: (error: any, response?: PluginsResponse) => void): Promise<PluginsResponse>;
+
+  /** Obtain a detailed description of plugins of the given type or category.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param type the type of plugins to include in the response
+   * @param callback the callback function
+   */
+  getPlugins(type: PluginType, callback?: (error: any, response?: Partial<PluginsResponse>) => void): Promise<Partial<PluginsResponse>>;
+
+  getPlugins(type: PluginType | ((error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void), callback?: (error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void): Promise<PluginsResponse | Partial<PluginsResponse>> {
+
+    let req: SuperAgentRequest;
+    if (typeof type === 'string') {
+
+      req = this.request([Endpoints.PLUGINS, type]);
+    } else {
+      if (typeof type === 'function' && !callback) {
+        callback = type;
+      }
+  
+      req = this.request(Endpoints.PLUGINS);
+    }
+
+    return andCall(req.then(res => res.body), callback);
   }
 
   /**

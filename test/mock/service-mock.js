@@ -445,6 +445,12 @@ module.exports = function createDicoogleMock(port = 8080) {
                         message: 'broken plugin',
                     }
                 }]
+            })
+
+            // mock plugins/index
+            .get('/plugins/index')
+            .reply(200, {
+                plugins: PLUGINS.filter(p => p.type === 'index')
             });
 
             // mock QR service
