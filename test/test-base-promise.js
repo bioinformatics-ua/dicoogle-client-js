@@ -325,6 +325,19 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         assert.isString(d.cause.message, 'dead plugin cause is a string');
       }
     });
+
+    it("#getPlugins(type); should give plugin information only of that type", async function() {
+      let resp = await dicoogle.getPlugins('index');
+      assert.isObject(resp, 'resp is an object');
+      assert.isArray(resp.plugins, 'resp.plugins is an array');
+      let {plugins} = resp;
+      assert(plugins.length > 0, 'list of plugins not empty');
+      for (const p of plugins) {
+          assert.isObject(p, 'plugin is an object');
+          assert.isString(p.name, 'plugin name ok');
+          assert.equal(p.type, 'index', 'plugin type matches requested type');
+      }
+    });
   });
 
   function checkServiceInfo(data) {
