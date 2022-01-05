@@ -21,7 +21,7 @@
  * Dicoogle Service Wrapper
  */
 import Endpoints from './endpoints';
-import {Socket} from './socket';
+import {Socket, UserInfo} from './socket';
 import {StorageService, QueryRetrieveService} from './service';
 import {Tasks} from './tasks';
 import {UserService} from './users';
@@ -202,15 +202,6 @@ interface DumpOutcome {
   results: SearchResult
   /** The time spent performing the search in the server, in milliseconds */
   elapsedTime: number
-}
-
-interface UserInfo {
-  /** The user's unique name */
-  user: string
-  /** The current user's assigned roles */
-  roles: string[]
-  /** Whether this user is an administrator */
-  admin: boolean
 }
 
 interface LoginOutcome extends UserInfo {
@@ -786,7 +777,7 @@ class DicoogleAccess {
    * @param token the same user's token of a previous session
    * @param callback the callback function providing user information
    */
-  restoreSession(token: string, callback?: (error: any, outcome?: LoginOutcome) => void): Promise<LoginOutcome> {
+  restoreSession(token: string, callback?: (error: any, outcome?: UserInfo) => void): Promise<UserInfo> {
     return andCall(socket_.restore(token), callback);
   };
 
