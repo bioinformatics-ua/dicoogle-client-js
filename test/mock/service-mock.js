@@ -458,6 +458,11 @@ module.exports = function createDicoogleMock(port = 8080) {
                 }]
             })
 
+            // mock plugins/index/cbir enable & disable
+            .post(/\/plugins\/index\/cbir\/(enable|disable)/)
+            .times(2)
+            .reply(200, {})
+
             // mock plugins/index
             .get('/plugins/index')
             .reply(200, {

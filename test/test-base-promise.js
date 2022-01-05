@@ -347,6 +347,14 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
           assert.equal(p.type, 'index', 'plugin type matches requested type');
       }
     });
+
+    it("#enablePlugin(name); should enable the plugin", async function() {
+      await dicoogle.enablePlugin('index', 'cbir');
+    });
+
+    it("#disablePlugin(name); should disable the plugin", async function() {
+      await dicoogle.disablePlugin('index', 'cbir');
+    });
   });
 
   function checkServiceInfo(data) {
