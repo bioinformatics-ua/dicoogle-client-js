@@ -20,10 +20,18 @@
 import superagent from 'superagent'
 import {SuperAgentRequest} from 'superagent';
 import Endpoints from './endpoints';
-import {andCall, andCallVoid} from './util';
 
 type password = string;
 
+export interface UserInfo {
+    /** The user's unique name */
+    user: string
+    /** The current user's assigned roles */
+    roles: string[]
+    /** Whether this user is an administrator */
+    admin: boolean
+}
+  
 export class Socket {
     private _user: string;
     private _roles: string[];
@@ -68,7 +76,7 @@ export class Socket {
             });
     }
 
-    restore(token: string): Promise<any> {
+    restore(token: string): Promise<UserInfo> {
         return this.get(Endpoints.LOGIN)
             .set('Authorization', token)
             .then((res) => {
