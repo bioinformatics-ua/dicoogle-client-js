@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ServiceStatus | Dicoogle JavaScript Client</title>
+	<title>UserInfo | Dicoogle JavaScript Client</title>
 	<meta name="description" content="Documentation for Dicoogle JavaScript Client">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_service_.html">&quot;service&quot;</a>
+					<a href="../modules/_socket_.html">&quot;socket&quot;</a>
 				</li>
 				<li>
-					<a href="_service_.servicestatus.html">ServiceStatus</a>
+					<a href="_socket_.userinfo.html">UserInfo</a>
 				</li>
 			</ul>
-			<h1>Interface ServiceStatus</h1>
+			<h1>Interface UserInfo</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ServiceStatus</span>
+						<span class="target">UserInfo</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_index_.loginoutcome.html" class="tsd-signature-type">LoginOutcome</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -82,9 +87,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#autostart" class="tsd-kind-icon">autostart</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#port" class="tsd-kind-icon">port</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#running" class="tsd-kind-icon">running</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_socket_.userinfo.html#admin" class="tsd-kind-icon">admin</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_socket_.userinfo.html#roles" class="tsd-kind-icon">roles</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_socket_.userinfo.html#user" class="tsd-kind-icon">user</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,34 +98,49 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="autostart" class="tsd-anchor"></a>
-					<h3>autostart</h3>
-					<div class="tsd-signature tsd-kind-icon">autostart<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="admin" class="tsd-anchor"></a>
+					<h3>admin</h3>
+					<div class="tsd-signature tsd-kind-icon">admin<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/service.ts#L37">service.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/socket.ts#L32">socket.ts:32</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Whether this user is an administrator</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="port" class="tsd-anchor"></a>
-					<h3>port</h3>
-					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="roles" class="tsd-anchor"></a>
+					<h3>roles</h3>
+					<div class="tsd-signature tsd-kind-icon">roles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/service.ts#L39">service.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/socket.ts#L30">socket.ts:30</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The current user&#39;s assigned roles</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="running" class="tsd-anchor"></a>
-					<h3>running</h3>
-					<div class="tsd-signature tsd-kind-icon">running<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="user" class="tsd-anchor"></a>
+					<h3>user</h3>
+					<div class="tsd-signature tsd-kind-icon">user<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/service.ts#L35">service.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/socket.ts#L28">socket.ts:28</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The user&#39;s unique name</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -139,10 +159,10 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/_presets_.html">&quot;presets&quot;</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/_service_.html">&quot;service&quot;</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/_socket_.html">&quot;socket&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -158,42 +178,30 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../classes/_service_.baseservice.html" class="tsd-kind-icon">Base<wbr>Service</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_service_.queryretrieveservice.html" class="tsd-kind-icon">Query<wbr>Retrieve<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_service_.storageservice.html" class="tsd-kind-icon">Storage<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_.dicomquerysettings.html" class="tsd-kind-icon">Dicom<wbr>Query<wbr>Settings</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_.remotestorage.html" class="tsd-kind-icon">Remote<wbr>Storage</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_.serviceconfiguration.html" class="tsd-kind-icon">Service<wbr>Configuration</a>
+						<a href="../classes/_socket_.socket.html" class="tsd-kind-icon">Socket</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_service_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
+						<a href="_socket_.userinfo.html" class="tsd-kind-icon">User<wbr>Info</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.servicestatus.html#autostart" class="tsd-kind-icon">autostart</a>
+								<a href="_socket_.userinfo.html#admin" class="tsd-kind-icon">admin</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.servicestatus.html#port" class="tsd-kind-icon">port</a>
+								<a href="_socket_.userinfo.html#roles" class="tsd-kind-icon">roles</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.servicestatus.html#running" class="tsd-kind-icon">running</a>
+								<a href="_socket_.userinfo.html#user" class="tsd-kind-icon">user</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_socket_.html#password" class="tsd-kind-icon">password</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

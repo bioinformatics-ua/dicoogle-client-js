@@ -100,7 +100,6 @@
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_index_.storageplugininfo.html" class="tsd-kind-icon">Storage<wbr>Plugin<wbr>Info</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_index_.transferoption.html" class="tsd-kind-icon">Transfer<wbr>Option</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_index_.transfersyntax.html" class="tsd-kind-icon">Transfer<wbr>Syntax</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_index_.userinfo.html" class="tsd-kind-icon">User<wbr>Info</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported"><a href="../interfaces/_index_.webuiplugin.html" class="tsd-kind-icon">WebUIPlugin</a></li>
 							</ul>
 						</section>
@@ -109,6 +108,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_index_.html#dimlevel" class="tsd-kind-icon">DIMLevel</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_index_.html#plugininfo" class="tsd-kind-icon">Plugin<wbr>Info</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_index_.html#plugininfotype" class="tsd-kind-icon">Plugin<wbr>Info<wbr>Type</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_index_.html#plugintype" class="tsd-kind-icon">Plugin<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_index_.html#password" class="tsd-kind-icon">password</a></li>
 							</ul>
 						</section>
@@ -136,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">DIMLevel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"patient"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"study"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"series"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"image"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L144">index.ts:144</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L145">index.ts:145</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -146,9 +147,48 @@
 					<div class="tsd-signature tsd-kind-icon">Plugin<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_index_.storageplugininfo.html" class="tsd-signature-type">StoragePluginInfo</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_index_.queryplugininfo.html" class="tsd-signature-type">QueryPluginInfo</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_index_.indexplugininfo.html" class="tsd-signature-type">IndexPluginInfo</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_index_.servletplugininfo.html" class="tsd-signature-type">ServletPluginInfo</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L260">index.ts:260</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L255">index.ts:255</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An object describing a plugin installed in Dicoogle.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
+					<a name="plugininfotype" class="tsd-anchor"></a>
+					<h3>Plugin<wbr>Info<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">Plugin<wbr>Info<wbr>Type<span class="tsd-signature-symbol">:</span> <a href="_index_.html#plugintype" class="tsd-signature-type">PluginType</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"set"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"dead"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L269">index.ts:269</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A string identifying the type of plugin to request via <code>getPlugins</code>.
+								It accounts for plugin types that exist in Dicoogle,
+							as well as plugin sets and dead plugins.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
+					<a name="plugintype" class="tsd-anchor"></a>
+					<h3>Plugin<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">Plugin<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"query"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"index"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"storage"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"servlet"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L262">index.ts:262</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A string identifying the specific type of plugin
+								which can be installed in Dicoogle.
+							It does not account for plugin sets or dead plugins.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
 					<a name="password" class="tsd-anchor"></a>
@@ -156,7 +196,7 @@
 					<div class="tsd-signature tsd-kind-icon">password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L304">index.ts:304</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L313">index.ts:313</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -169,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">Indexer<wbr>Settings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol"> = Object.freeze({/** The path to the directory to watch. type: string */PATH: &#x27;path&#x27;,/** Whether to index zip files. type: boolean */ZIP: &#x27;zip&#x27;,/** The percentage of indexation effort (from 0 to 100). type: number */EFFORT: &#x27;effort&#x27;,/** Whether to save and index thumbnails. type: boolean */INDEX_THUMBNAIL: &#x27;thumbnail&#x27;,/** The size of generated thumbnails in pixels. type: number */THUMBNAIL_SIZE: &#x27;thumbnailSize&#x27;,/** Listen for changes in the directory for automatic indexation. type: boolean */WATCHER: &#x27;watcher&#x27;})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L39">index.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L40">index.ts:40</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -189,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">Service<wbr>Settings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol"> = Object.freeze({/** The service&#x27;s port. type: number (integer) */PORT: &#x27;path&#x27;,/** Whether to start the service on server launch. type: boolean */AUTOSTART: &#x27;autostart&#x27;})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L57">index.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L58">index.ts:58</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -216,7 +256,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/c871b26/src/index.ts#L952">index.ts:952</a></li>
+									<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/index.ts#L1013">index.ts:1013</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -257,6 +297,9 @@
 					</li>
 					<li class="current tsd-kind-module">
 						<a href="_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_presets_.html">&quot;presets&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="_service_.html">&quot;service&quot;</a>
@@ -350,9 +393,6 @@
 						<a href="../interfaces/_index_.transfersyntax.html" class="tsd-kind-icon">Transfer<wbr>Syntax</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.userinfo.html" class="tsd-kind-icon">User<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
 						<a href="../interfaces/_index_.webuiplugin.html" class="tsd-kind-icon">WebUIPlugin</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
@@ -360,6 +400,12 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.html#plugininfo" class="tsd-kind-icon">Plugin<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_index_.html#plugininfotype" class="tsd-kind-icon">Plugin<wbr>Info<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_index_.html#plugintype" class="tsd-kind-icon">Plugin<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_index_.html#password" class="tsd-kind-icon">password</a>
