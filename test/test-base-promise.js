@@ -274,6 +274,15 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     });
   });
 
+  describe('presets#fieldList()', function() {
+    it("should return an array", async function() {
+      let fields = await dicoogle.presets.fieldList();
+      assert.isArray(fields, 'fields must be an array');
+      for (const field of fields) {
+        assert.isString(field, 'field must be a string');
+      }
+    });
+  });
 
   describe('Web UI Plugins', function() {
       it("#getWebUIPlugins(); should give all plugins", async function() {

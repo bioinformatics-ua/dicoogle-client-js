@@ -391,6 +391,18 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
     });
   });
 
+  describe('presets#fieldList()', function() {
+    it("should return an array", function(done) {
+      Dicoogle.presets.fieldList(function(error, fields) {
+        assert.equal(error, null);
+        assert.isArray(fields, 'fields must be an array');
+        for (const field of fields) {
+          assert.isString(field, 'field must be a string');
+        }
+        done();
+      });
+    });
+  });
 
   describe('Web UI Plugins', function() {
       it("#getWebUIPlugins(); should give all plugins", function(done) {

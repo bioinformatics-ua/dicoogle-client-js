@@ -399,6 +399,17 @@ module.exports = function createDicoogleMock(port = 8080) {
                 elapsedTime: 80
             })
 
+            // mock export field list
+            .get('/export/list')
+            .reply(200, [
+                'BaselineCorrection',
+                'PatientName',
+                'AccessionNumber',
+                'SOPInstanceUID',
+                'ImageType',
+                'BitsAllocated'
+            ])
+
             // mock issue export
             .post('/exportFile')
             .query({

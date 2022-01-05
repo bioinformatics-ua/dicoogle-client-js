@@ -78,6 +78,52 @@ module.exports = function createDicoogleMock(port = 8484) {
             .query(true)
             .reply(200, ["cbir", "lucene"]);
 
+        nock(BASE_URL) // mock get export presets (with required authorization)
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+            .get(/\/presets(\/admin)?/)
+            .reply(200, [{
+                name: "export1",
+                fields: [
+                    'PatientID',
+                    'PatientName',
+                    'StudyInstanceUID',
+                    'SOPInstanceUID',
+                ]
+            }]);
+
+        nock(BASE_URL) // mock save export preset (with required authorization)
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+            .post('/presets/admin/export2', () => true)
+            .reply(200);
+
+        nock(BASE_URL) // mock get export presets (after save of export2)
+            .matchHeader('Authorization', '9ebdff77-dffc-4904-a954-74f72ba77483')
+            .get(/\/presets(\/admin)?/)
+            .reply(200, [{
+                name: "export1",
+                fields: [
+                    'PatientID',
+                    'PatientName',
+                    'StudyInstanceUID',
+                    'SOPInstanceUID',
+                ]
+            }, {
+                name: "export2",
+                fields: [
+                    'StudyInstanceUID',
+                    'StudyDate',
+                    'SOPInstanceUID',
+                ]
+            }]);
+
+        nock(BASE_URL) // mock save export preset (no authorization)
+            .post('/presets/admin/export2')
+            .reply(401);
+
+        nock(BASE_URL) // mock get export presets (no authorization)
+            .get(/\/presets(\/admin)?/)
+            .reply(401);
+
         nock(BASE_URL) // mock get providers (no token)
             .get('/providers')
             .query(true)

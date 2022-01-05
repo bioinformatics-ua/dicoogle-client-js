@@ -27,6 +27,7 @@ import {Tasks} from './tasks';
 import {UserService} from './users';
 import {andCall, andCallVoid, isDicomUUID} from './util';
 import {SuperAgentRequest} from 'superagent';
+import { Presets } from './presets';
 
 // private variables of the module
 /**@private
@@ -332,6 +333,8 @@ class DicoogleAccess {
   public queryRetrieve: QueryRetrieveService;
   /** users service namespace */
   public users: UserService;
+  /** Export presets namespace */
+  public presets: Presets;
 
   /**
    * Perform a text query.
@@ -1001,6 +1004,7 @@ function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): Dico
     m.storage = new StorageService(socket_);
     m.queryRetrieve = new QueryRetrieveService(socket_);
     m.users = new UserService(socket_);
+    m.presets = new Presets(socket_);
 
     return m;
 }
