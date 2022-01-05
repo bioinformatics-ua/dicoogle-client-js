@@ -264,9 +264,18 @@ interface WebUIPlugin {
 type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
 
 /** 
- * A string identifying the type of plugin to request via `getPlugins`
+ * A string identifying the specific type of plugin
+ * which can be installed in Dicoogle.
+ * It does not account for plugin sets or dead plugins.
  */
-type PluginType = "query" | "index" | "storage" | "servlet" | "set" | "dead";
+type PluginType = "query" | "index" | "storage" | "servlet";
+
+/** 
+ * A string identifying the type of plugin to request via `getPlugins`.
+ * It accounts for plugin types that exist in Dicoogle,
+ * as well as plugin sets and dead plugins.
+ */
+type PluginInfoType = PluginType | "set" | "dead";
 
 interface CommonPluginInfo {
   name: string
@@ -658,12 +667,12 @@ class DicoogleAccess {
    * 
    * **Note:** Requires Dicoogle 3.
    * 
-   * @param type the type of plugins to include in the response
+   * @param type the type of plugins or information to include in the response
    * @param callback the callback function
    */
-  getPlugins(type: PluginType, callback?: (error: any, response?: Partial<PluginsResponse>) => void): Promise<Partial<PluginsResponse>>;
+  getPlugins(type: PluginInfoType, callback?: (error: any, response?: Partial<PluginsResponse>) => void): Promise<Partial<PluginsResponse>>;
 
-  getPlugins(type: PluginType | ((error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void), callback?: (error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void): Promise<PluginsResponse | Partial<PluginsResponse>> {
+  getPlugins(type: PluginInfoType | ((error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void), callback?: (error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void): Promise<PluginsResponse | Partial<PluginsResponse>> {
 
     let req: SuperAgentRequest;
     if (typeof type === 'string') {
@@ -678,6 +687,32 @@ class DicoogleAccess {
     }
 
     return andCall(req.then(res => res.body), callback);
+  }
+
+  /** Enable a plugin.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param type the type of plugin
+   * @param name the name of the plugin
+   * @param callback the callback function
+   */
+  enablePlugin(type: PluginType, name: string, callback?: (error?: Error) => void): Promise<void> {
+    return andCall(this.request('POST', [Endpoints.PLUGINS, type, name, 'enable'])
+      .then((_) => {}), callback);
+  }
+
+  /** Disable a plugin.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param type the type of plugin
+   * @param name the name of the plugin
+   * @param callback the callback function
+   */
+  disablePlugin(type: PluginType, name: string, callback?: (error?: Error) => void): Promise<void> {
+    return andCall(this.request('POST', [Endpoints.PLUGINS, type, name, 'disable'])
+      .then((_) => {}), callback);
   }
 
   /**

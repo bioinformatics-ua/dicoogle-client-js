@@ -478,6 +478,20 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         done();
       });
     });
+
+    it("#enablePlugin(name); should enable the plugin", function(done) {
+      Dicoogle.enablePlugin('index', 'cbir', function (error) {
+        assert.equal(error, null);
+        done();
+      });
+    });
+
+    it("#disablePlugin(name); should disable the plugin", function(done) {
+      Dicoogle.disablePlugin('index', 'cbir', function (error) {
+        assert.equal(error, null);
+        done();
+      });
+    });
   });
 
   function checkServiceInfo(error, data) {
