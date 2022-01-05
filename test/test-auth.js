@@ -30,7 +30,7 @@ describe('Dicoogle Authentication', function() {
   }
   beforeEach(initBaseURL);
 
-  describe('Before Authentication', function() {
+  describe('Without Authentication', function() {
     it("#getQueryProviders() without authorization should give an error", function(done) {
       Dicoogle.getQueryProviders(function(error, providers) {
         assert(error, 'should have an error');
@@ -40,7 +40,7 @@ describe('Dicoogle Authentication', function() {
     });
   });
 
-  describe('Authentication', function() {
+  describe('With Authentication', function() {
     it("#login() as admin ; should give user name, roles, admin and session token", function(done) {
       Dicoogle.login('admin', 'itsasecret', function(error, data) {
         assert.equal(error, null, 'should give no error');
@@ -52,9 +52,7 @@ describe('Dicoogle Authentication', function() {
         done();
       });
     });
-  });
 
-  describe('After Authentication', function() {
     it("#isAuthenticated() -> true", function() {
         assert.strictEqual(Dicoogle.isAuthenticated(), true);
     });
@@ -64,6 +62,35 @@ describe('Dicoogle Authentication', function() {
         assert.equal(error, null, 'should give no error');
         assert.isArray(providers);
         done();
+      });
+    });
+
+    it("presets#get() should give you a list of presets", function(done) {
+      assert.isTrue(Dicoogle.isAuthenticated());
+      Dicoogle.presets.get(function(error, presets) {
+        assert.equal(error, null, 'should give no error');
+        assert.isArray(presets);
+        assert.equal(presets.length, 1);
+        done();
+      });
+    });
+
+    it("presets#save() should add a new preset to that list", function(done) {
+      assert.isTrue(Dicoogle.isAuthenticated());
+      Dicoogle.presets.save('admin', 'export2', [
+        'StudyInstanceUID',
+        'StudyDate',
+        'SOPInstanceUID',
+      ], function(error) {
+        assert.equal(error, null, 'should give no error');
+
+        // check that the new preset is there
+        Dicoogle.presets.get('admin', function(error, presets) {
+          assert.equal(error, null, 'should give no error');
+          assert.isArray(presets);
+          assert.equal(presets.length, 2);
+          done();
+        });
       });
     });
 
