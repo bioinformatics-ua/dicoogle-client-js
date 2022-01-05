@@ -274,6 +274,15 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     });
   });
 
+  describe('presets#fieldList()', function() {
+    it("should return an array", async function() {
+      let fields = await dicoogle.presets.fieldList();
+      assert.isArray(fields, 'fields must be an array');
+      for (const field of fields) {
+        assert.isString(field, 'field must be a string');
+      }
+    });
+  });
 
   describe('Web UI Plugins', function() {
       it("#getWebUIPlugins(); should give all plugins", async function() {
@@ -324,6 +333,27 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         assert.isString(d.cause.class, 'dead plugin cause.class is a string');
         assert.isString(d.cause.message, 'dead plugin cause is a string');
       }
+    });
+
+    it("#getPlugins(type); should give plugin information only of that type", async function() {
+      let resp = await dicoogle.getPlugins('index');
+      assert.isObject(resp, 'resp is an object');
+      assert.isArray(resp.plugins, 'resp.plugins is an array');
+      let {plugins} = resp;
+      assert(plugins.length > 0, 'list of plugins not empty');
+      for (const p of plugins) {
+          assert.isObject(p, 'plugin is an object');
+          assert.isString(p.name, 'plugin name ok');
+          assert.equal(p.type, 'index', 'plugin type matches requested type');
+      }
+    });
+
+    it("#enablePlugin(name); should enable the plugin", async function() {
+      await dicoogle.enablePlugin('index', 'cbir');
+    });
+
+    it("#disablePlugin(name); should disable the plugin", async function() {
+      await dicoogle.disablePlugin('index', 'cbir');
     });
   });
 

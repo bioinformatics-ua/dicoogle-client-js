@@ -2,10 +2,10 @@
   "name": "dicoogle-client",
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
-    "Eduardo Pinho <eduardopinho@ua.pt>"
+    "Eduardo Pinho <eduardopinho@bmd-software.com>"
   ],
   "contributors": [
-    "Eduardo Pinho <eduardopinho@ua.pt>",
+    "Eduardo Pinho <eduardopinho@bmd-software.com>",
     "Luís Bastião Silva <bastiao@bmd-software.com>"
   ],
   "description": "Dicoogle client API for JavaScript applications",
@@ -14,7 +14,7 @@
     "client",
     "api"
   ],
-  "version": "5.1.0",
+  "version": "5.2.0",
   "engines": {
     "node": ">=10.0.0"
   },
@@ -34,7 +34,7 @@
   },
   "license": "GPL-3.0+",
   "dependencies": {
-    "@types/superagent": "^4.1.13",
+    "@types/superagent": "^4.1.14",
     "superagent": "^5.3.1"
   },
   "devDependencies": {

@@ -399,6 +399,17 @@ module.exports = function createDicoogleMock(port = 8080) {
                 elapsedTime: 80
             })
 
+            // mock export field list
+            .get('/export/list')
+            .reply(200, [
+                'BaselineCorrection',
+                'PatientName',
+                'AccessionNumber',
+                'SOPInstanceUID',
+                'ImageType',
+                'BitsAllocated'
+            ])
+
             // mock issue export
             .post('/exportFile')
             .query({
@@ -445,6 +456,17 @@ module.exports = function createDicoogleMock(port = 8080) {
                         message: 'broken plugin',
                     }
                 }]
+            })
+
+            // mock plugins/index/cbir enable & disable
+            .post(/\/plugins\/index\/cbir\/(enable|disable)/)
+            .times(2)
+            .reply(200, {})
+
+            // mock plugins/index
+            .get('/plugins/index')
+            .reply(200, {
+                plugins: PLUGINS.filter(p => p.type === 'index')
             });
 
             // mock QR service

@@ -21,12 +21,13 @@
  * Dicoogle Service Wrapper
  */
 import Endpoints from './endpoints';
-import {Socket} from './socket';
+import {Socket, UserInfo} from './socket';
 import {StorageService, QueryRetrieveService} from './service';
 import {Tasks} from './tasks';
 import {UserService} from './users';
 import {andCall, andCallVoid, isDicomUUID} from './util';
 import {SuperAgentRequest} from 'superagent';
+import { Presets } from './presets';
 
 // private variables of the module
 /**@private
@@ -203,15 +204,6 @@ interface DumpOutcome {
   elapsedTime: number
 }
 
-interface UserInfo {
-  /** The user's unique name */
-  user: string
-  /** The current user's assigned roles */
-  roles: string[]
-  /** Whether this user is an administrator */
-  admin: boolean
-}
-
 interface LoginOutcome extends UserInfo {
   /** The current session token */
   token: string
@@ -257,7 +249,24 @@ interface WebUIPlugin {
   settings?: any
 }
 
+/** 
+ * An object describing a plugin installed in Dicoogle.
+ */
 type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
+
+/** 
+ * A string identifying the specific type of plugin
+ * which can be installed in Dicoogle.
+ * It does not account for plugin sets or dead plugins.
+ */
+type PluginType = "query" | "index" | "storage" | "servlet";
+
+/** 
+ * A string identifying the type of plugin to request via `getPlugins`.
+ * It accounts for plugin types that exist in Dicoogle,
+ * as well as plugin sets and dead plugins.
+ */
+type PluginInfoType = PluginType | "set" | "dead";
 
 interface CommonPluginInfo {
   name: string
@@ -324,6 +333,8 @@ class DicoogleAccess {
   public queryRetrieve: QueryRetrieveService;
   /** users service namespace */
   public users: UserService;
+  /** Export presets namespace */
+  public presets: Presets;
 
   /**
    * Perform a text query.
@@ -641,8 +652,58 @@ class DicoogleAccess {
    * 
    * @param callback the callback function
    */
-  getPlugins(callback?: (error: any, response?: PluginsResponse) => void): Promise<PluginsResponse> {
-    return andCall(this.request(Endpoints.PLUGINS).then(res => res.body), callback);
+  getPlugins(callback?: (error: any, response?: PluginsResponse) => void): Promise<PluginsResponse>;
+
+  /** Obtain a detailed description of plugins of the given type or category.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param type the type of plugins or information to include in the response
+   * @param callback the callback function
+   */
+  getPlugins(type: PluginInfoType, callback?: (error: any, response?: Partial<PluginsResponse>) => void): Promise<Partial<PluginsResponse>>;
+
+  getPlugins(type: PluginInfoType | ((error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void), callback?: (error: any, response?: PluginsResponse | Partial<PluginsResponse>) => void): Promise<PluginsResponse | Partial<PluginsResponse>> {
+
+    let req: SuperAgentRequest;
+    if (typeof type === 'string') {
+
+      req = this.request([Endpoints.PLUGINS, type]);
+    } else {
+      if (typeof type === 'function' && !callback) {
+        callback = type;
+      }
+  
+      req = this.request(Endpoints.PLUGINS);
+    }
+
+    return andCall(req.then(res => res.body), callback);
+  }
+
+  /** Enable a plugin.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param type the type of plugin
+   * @param name the name of the plugin
+   * @param callback the callback function
+   */
+  enablePlugin(type: PluginType, name: string, callback?: (error?: Error) => void): Promise<void> {
+    return andCall(this.request('POST', [Endpoints.PLUGINS, type, name, 'enable'])
+      .then((_) => {}), callback);
+  }
+
+  /** Disable a plugin.
+   * 
+   * **Note:** Requires Dicoogle 3.
+   * 
+   * @param type the type of plugin
+   * @param name the name of the plugin
+   * @param callback the callback function
+   */
+  disablePlugin(type: PluginType, name: string, callback?: (error?: Error) => void): Promise<void> {
+    return andCall(this.request('POST', [Endpoints.PLUGINS, type, name, 'disable'])
+      .then((_) => {}), callback);
   }
 
   /**
@@ -716,7 +777,7 @@ class DicoogleAccess {
    * @param token the same user's token of a previous session
    * @param callback the callback function providing user information
    */
-  restoreSession(token: string, callback?: (error: any, outcome?: LoginOutcome) => void): Promise<LoginOutcome> {
+  restoreSession(token: string, callback?: (error: any, outcome?: UserInfo) => void): Promise<UserInfo> {
     return andCall(socket_.restore(token), callback);
   };
 
@@ -969,6 +1030,7 @@ function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): Dico
     m.storage = new StorageService(socket_);
     m.queryRetrieve = new QueryRetrieveService(socket_);
     m.users = new UserService(socket_);
+    m.presets = new Presets(socket_);
 
     return m;
 }
