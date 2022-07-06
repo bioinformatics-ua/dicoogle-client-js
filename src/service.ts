@@ -23,33 +23,33 @@ import {andCall, andCallVoid} from './util';
 
 export interface ServiceConfiguration {
   /// whether the service is currently running
-  running?: boolean
+  running?: boolean,
   /// whether the service starts automatically
-  autostart?: boolean
+  autostart?: boolean,
   ///the TCP port that the service listens to
-  port?: number
+  port?: number,
 }
 
 export interface ServiceStatus {
   /// whether the service is currently running
-  running: boolean
+  running: boolean,
   /// whether the service starts automatically
-  autostart: boolean
+  autostart: boolean,
   /// the TCP port that the service listens to
-  port: number
+  port: number,
 }
 
 export interface RemoteStorage {
   /// {string} aetitle
-  aetitle: string
+  aetitle: string,
   /// {string} ip
-  ip: string
+  ip: string,
   /// {number} port
-  port: number
+  port: number,
   /// {?string} description
-  description?: string
+  description?: string,
   /// {?boolean} public
-  public?: boolean
+  public?: boolean,
 }
 
 export interface DicomQuerySettings {

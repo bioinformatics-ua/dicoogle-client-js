@@ -63,4 +63,3 @@ export class UserService {
             .then((res) => res.body.success), callback);
     }
 }
-  

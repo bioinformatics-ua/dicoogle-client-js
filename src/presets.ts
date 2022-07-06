@@ -92,12 +92,12 @@ export class Presets {
      */
     public save(username: string, name: string, fields: string[], callback?: (error?: Error) => void): Promise<void> {
         // send URIs as form data to prevent URI from being too long
-        let body = fields.map(field => 'field=' + encodeURIComponent(field)).join('&');
+        const body = fields.map(field => 'field=' + encodeURIComponent(field)).join('&');
 
         return andCall(this._socket.post([Endpoints.PRESETS, username, name])
             .type('form')
             .send(body)
-            .then((_) => {}
+            .then((_) => { /* discard response */ }
         ), callback);
     }
 
