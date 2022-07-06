@@ -25,11 +25,11 @@ type password = string;
 
 export interface UserInfo {
     /** The user's unique name */
-    user: string
+    user: string,
     /** The current user's assigned roles */
-    roles: string[]
+    roles: string[],
     /** Whether this user is an administrator */
-    admin: boolean
+    admin: boolean,
 }
   
 export class Socket {

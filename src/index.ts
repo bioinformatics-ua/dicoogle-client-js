@@ -49,7 +49,7 @@ const IndexerSettings = Object.freeze({
     /** The size of generated thumbnails in pixels. type: number */
     THUMBNAIL_SIZE: 'thumbnailSize',
     /** Listen for changes in the directory for automatic indexation. type: boolean */
-    WATCHER: 'watcher'
+    WATCHER: 'watcher',
 });
 
 /** Service settings fields
@@ -59,15 +59,15 @@ const ServiceSettings = Object.freeze({
     /** The service's port. type: number (integer) */
     PORT: 'path',
     /** Whether to start the service on server launch. type: boolean */
-    AUTOSTART: 'autostart'
+    AUTOSTART: 'autostart',
 });
 
 /** Options for the `login` method.  */
 interface DicoogleClientOptions {
   /** The same user's token of a previous session, used only for restoring previous (but recent) sessions. */
-  token?: string
+  token?: string,
   /** Whether to use HTTPS instead of HTTP, if no scheme is specified in the url. */
-  secure?: boolean
+  secure?: boolean,
 }
 
 /** Options for the `search` method. */
@@ -75,30 +75,30 @@ interface SearchOptions {
   /** Force whether the query is keyword-based, defaults to automatic detection.
    * _Note:_ This field is deprecated in Dicoogle 3.
    */
-  keyword?: boolean
+  keyword?: boolean,
   /** Whether to perform an automatic query expansion. This is usually only necessary
    * for query providers without free text query support.
    * _Note:_ Available since Dicoogle 3.
    */
-  expand?: boolean
+  expand?: boolean,
   /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
-  provider?: string | string[]
+  provider?: string | string[],
   /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
    * @deprecated Please use `provider` instead.
    */
-  providers?: string | string[]
+  providers?: string | string[],
   /** A set of field names to be passed to the query providers when requesting the query.
    * When empty, the server will provide a default set based on a few DICOM attributes.
    */
-  field?: string | string[]
+  field?: string | string[],
   /** Activate pagination by defining the size of the page.
    * _Note:_ Available since Dicoogle 2.4.0
    */
-  psize?: number;
+  psize?: number,
   /** When paginating, define the offset of the page to retrieve.
    * _Note:_ Available since Dicoogle 2.4.0
    */
-  offset?: number;
+  offset?: number,
 }
 
 /** Options for the `searchDIM` method. */
@@ -106,147 +106,147 @@ interface SearchDIMOptions {
   /** Force whether the query is keyword-based, defaults to automatic detection.
    * _Note:_ This field is deprecated in Dicoogle 3.
    */
-  keyword?: boolean
+  keyword?: boolean,
   /** Whether to perform an automatic query expansion. This is usually only necessary
    * for query providers without free text query support.
    * _Note:_ Available since Dicoogle 3.
    */
-  expand?: boolean
+  expand?: boolean,
   /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
-  provider?: string | string[]
+  provider?: string | string[],
   /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s)
    * @deprecated Please use `provider` instead.
    */
-  providers?: string | string[]
+  providers?: string | string[],
   /** A set of field names to be passed to the query providers when requesting the query.
    * When empty, the server will provide a default set based on a few DICOM attributes.
    */
-  field?: string | string[]
+  field?: string | string[],
   /** Activate pagination by defining the size of the page (in number of patients).
    * _Note:_ Available since Dicoogle 2.4.0
    */
-  psize?: number;
+  psize?: number,
   /** When paginating, define the offset of the page to retrieve (in number of patients). */
-  offset?: number;
+  offset?: number,
   /** Define the depth of retrieval based on the DIM level.
    * _Note:_ Available since Dicoogle 2.4.0
    */
-  depth?: DIMLevel;
+  depth?: DIMLevel,
 }
 
 /** Options for the `issueExport` method. */
 interface ExportOptions {
   /** Force whether the query is keyword-based, defaults to automatic detection */
-  keyword?: boolean
+  keyword?: boolean,
   /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
-  provider?: string | string[]
+  provider?: string | string[],
 }
 
 type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
 interface SearchResult {
-  [attribute: string]: any
-  uri: string
-  score?: number
+  [attribute: string]: any,
+  uri: string,
+  score?: number,
 }
 
 interface SearchOutcome {
   /** The list of results */
-  results: SearchResult[]
+  results: SearchResult[],
   /** The time spent performing the search in the server, in milliseconds */
-  elapsedTime: number
+  elapsedTime: number,
 }
 
 interface SearchDIMOutcome {
   /** The list of results */
-  results: SearchPatientResult[]
+  results: SearchPatientResult[],
   /** The time spent performing the search in the server, in milliseconds */
-  elapsedTime: number
+  elapsedTime: number,
 }
 
 interface SearchPatientResult {
-  id: string
-  name: string
-  gender: string
-  nStudies: number
-  birthdate: string
-  studies: SearchStudyResult[]
+  id: string,
+  name: string,
+  gender: string,
+  nStudies: number,
+  birthdate: string,
+  studies: SearchStudyResult[],
 }
 
 interface SearchStudyResult {
-  studyDate: string
-  studyDescription: string
-  studyInstanceUID: string
-  institutionName: string
-  modalities: string | string[]
-  series: SearchSeriesResult[]
+  studyDate: string,
+  studyDescription: string,
+  studyInstanceUID: string,
+  institutionName: string,
+  modalities: string | string[],
+  series: SearchSeriesResult[],
 }
 
 interface SearchSeriesResult {
-  serieNumber: number
-  serieInstanceUID: string
-  serieDescription: string
-  serieModality: string
-  images: SearchImageResult[]
+  serieNumber: number,
+  serieInstanceUID: string,
+  serieDescription: string,
+  serieModality: string,
+  images: SearchImageResult[],
 }
 
 interface SearchImageResult {
-  sopInstanceUID: string
-  uri: string
-  rawPath: string
-  filename: string
+  sopInstanceUID: string,
+  uri: string,
+  rawPath: string,
+  filename: string,
 }
 
 interface DumpOutcome {
   /** The contents of the requested item */
-  results: SearchResult
+  results: SearchResult,
   /** The time spent performing the search in the server, in milliseconds */
-  elapsedTime: number
+  elapsedTime: number,
 }
 
 interface LoginOutcome extends UserInfo {
   /** The current session token */
-  token: string
+  token: string,
 }
 
 /** Indexer settings fields
  */
 interface IndexerSettings {
   /** The path to the directory to watch. */
-  path?: string
+  path?: string,
   /** Whether to index zip files. */
-  zip?: boolean
+  zip?: boolean,
   /** The percentage of indexing effort (from 0 to 100). */
-  effort?: number
+  effort?: number,
   /** Whether to index thumbnails. */
-  thumbnail?: boolean
+  thumbnail?: boolean,
   /** The size of generated thumbnails in pixels. */
-  thumbnailSize?: number
+  thumbnailSize?: number,
   /** Listen for changes in the directory for automatic indexing. */
-  watcher?: boolean
+  watcher?: boolean,
 }
 
 interface TransferSyntax {
-  uid: string
-  sop_name: string
-  options: TransferOption[]
+  uid: string,
+  sop_name: string,
+  options: TransferOption[],
 }
 
 interface TransferOption {
-  name: string
-  value: boolean
+  name: string,
+  value: boolean,
 }
 
 /** Abridged information about a web UI plugin. */
 interface WebUIPlugin {
-  name: string
-  version: string
-  description?: string
-  slotId: string
-  moduleFile?: string
-  caption?: string
-  roles?: string[]
-  settings?: any
+  name: string,
+  version: string,
+  description?: string,
+  slotId: string,
+  moduleFile?: string,
+  caption?: string,
+  roles?: string[],
+  settings?: any,
 }
 
 /** 
@@ -269,45 +269,45 @@ type PluginType = "query" | "index" | "storage" | "servlet";
 type PluginInfoType = PluginType | "set" | "dead";
 
 interface CommonPluginInfo {
-  name: string
-  type: string
-  enabled: boolean
+  name: string,
+  type: string,
+  enabled: boolean,
 }
 
 interface StoragePluginInfo extends CommonPluginInfo {
-  type: "storage"
-  scheme: string
-  default: null | boolean
+  type: "storage",
+  scheme: string,
+  default: null | boolean,
 }
 
 interface QueryPluginInfo extends CommonPluginInfo {
-  type: "query"
-  dim: null | boolean
+  type: "query",
+  dim: null | boolean,
 }
 
 interface IndexPluginInfo extends CommonPluginInfo {
-  type: "index"
-  dim: null | boolean
+  type: "index",
+  dim: null | boolean,
 }
 
 interface ServletPluginInfo extends CommonPluginInfo {
-  type: "servlet"
-  endpoints?: null | string[]
+  type: "servlet",
+  endpoints?: null | string[],
 }
 
 interface DeadPluginInfo {
-  name: string
+  name: string,
   cause: {
-    class: string
-    message: string
+    class: string,
+    message: string,
   }
 }
 
 /** Response to plugin information. */
 interface PluginsResponse {
-  plugins: PluginInfo[]
-  sets: string[]
-  dead: DeadPluginInfo[]
+  plugins: PluginInfo[],
+  sets: string[],
+  dead: DeadPluginInfo[],
 }
 
 type password = string;
