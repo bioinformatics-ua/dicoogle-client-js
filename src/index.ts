@@ -32,7 +32,7 @@ import { Presets } from './presets';
 // private variables of the module
 /**@private
  */
-var socket_: Socket;
+let socket_: Socket;
 
 /** Indexer settings fields
  * @enum {string}
@@ -319,8 +319,10 @@ class DicoogleAccess {
   /**
    * @private Please use the `dicoogleClient` function
    */
-  constructor() {}
-    
+  constructor() {
+    // do nothing
+  }
+
   public Endpoints = Endpoints;
   public IndexerSettings = IndexerSettings;
   public ServiceSettings = ServiceSettings;
@@ -372,7 +374,7 @@ class DicoogleAccess {
           psize,
           offset
         }).then(res => res.body), callback);
-  };
+  }
 
   /**
    * Perform a text query with DIM-formatted outcome.
@@ -405,7 +407,7 @@ class DicoogleAccess {
           offset,
           depth
         }).then(res => res.body), callback);
-  };
+  }
 
   /**
    * Retrieve an image's meta-data (perform an information dump)
@@ -433,7 +435,7 @@ class DicoogleAccess {
       this.request('GET', Endpoints.DUMP).query({
         uid, provider
       }).then(res => res.body), callback);
-  };
+  }
 
   /** Request a CSV file of the results.
    * @param query the query to perform
@@ -451,7 +453,7 @@ class DicoogleAccess {
     }
     options = options ?? {};
     fields = [].concat(fields);
-    let qs: any = {
+    const qs: any = {
       query, fields: JSON.stringify(fields)
     };
     if (typeof options.keyword === 'boolean') {
@@ -497,7 +499,7 @@ class DicoogleAccess {
     return andCall(this.request(Endpoints.PROVIDERS)
       .query({ type })
       .then(res => res.body), callback);
-  };
+  }
 
   /**
    * Retrieve a list of query provider plugins
@@ -505,7 +507,7 @@ class DicoogleAccess {
    */
   getQueryProviders(callback?: (error: any, result?: string[]) => void): Promise<string[]> {
     return this.getProviders('query', callback);
-  };
+  }
 
   /**
    * Retrieve a list of index provider plugins
@@ -513,14 +515,14 @@ class DicoogleAccess {
    */
   getIndexProviders(callback?: (error: any, result?: string[]) => void): Promise<string[]> {
     return this.getProviders('index', callback);
-  };
+  }
 
   /** Retrieve a list of storage interface plugins
    * @param callback the callback function
    */
   getStorageProviders(callback?: (error: any, result?: string[]) => void): Promise<string[]> {
     return this.getProviders('storage', callback);
-  };
+  }
 
   /**
    * Request a new indexing task over a given URI. The operation is recursive, indexing anything in the URI's endpoint.
@@ -545,7 +547,7 @@ class DicoogleAccess {
       uri,
       plugin: provider
     }), callback);
-  };
+  }
 
   /** Retrieve the Dicoogle server's log text.
    * @param callback the callback function
@@ -555,7 +557,7 @@ class DicoogleAccess {
       this.request(Endpoints.LOGGER)
         .type('text/plain')
         .then(res => res.text), callback);
-  };
+  }
 
   /**
    * Request that the file at the given URI is unindexed. The operation, unlike index(), is not recursive.
@@ -578,7 +580,7 @@ class DicoogleAccess {
 
     if (Array.isArray(uri) && uri.length > 1) {
       // send URIs as form data to prevent URI from being too long
-      let body = uri.map(uri => 'uri=' + encodeURIComponent(uri)).join('&');
+      const body = uri.map(uri => 'uri=' + encodeURIComponent(uri)).join('&');
 
       return andCallVoid(this.request('POST', Endpoints.UNINDEX)
         .type('form')
@@ -591,7 +593,7 @@ class DicoogleAccess {
           provider
         }), callback);
     }
-  };
+  }
 
   /** Request that the file at the given URI is permanently removed. The operation, unlike index(), is not recursive.
    * Indices will not be updated, hence the files should be unindexed manually if so is intended.
@@ -610,14 +612,14 @@ class DicoogleAccess {
           uri
         }), callback);
     }
-  };
+  }
 
   /** Retrieve the running Dicoogle version.
    * @param callback the callback function
    */
   getVersion(callback?: (error: any, outcome: {version: string}) => void): Promise<{version: string}> {
     return andCall(this.request(Endpoints.VERSION).then(res => res.body), callback);
-  };
+  }
 
   /** Retrieve information about currently installed web UI plugins.
    * @param slotId the identifiers of slots to contemplate
@@ -627,7 +629,7 @@ class DicoogleAccess {
     return andCall(this.request(Endpoints.WEBUI)
       .query(slotId ? {'slot-id': slotId} : {})
       .then((res) => {
-        let outcome = res.body;
+        const outcome = res.body;
         if (!outcome || !outcome.plugins) {
           return Promise.reject(new Error("invalid output from server"));
         }
@@ -690,7 +692,7 @@ class DicoogleAccess {
    */
   enablePlugin(type: PluginType, name: string, callback?: (error?: Error) => void): Promise<void> {
     return andCall(this.request('POST', [Endpoints.PLUGINS, type, name, 'enable'])
-      .then((_) => {}), callback);
+      .then((_) => { /* discard response */ }), callback);
   }
 
   /** Disable a plugin.
@@ -703,7 +705,7 @@ class DicoogleAccess {
    */
   disablePlugin(type: PluginType, name: string, callback?: (error?: Error) => void): Promise<void> {
     return andCall(this.request('POST', [Endpoints.PLUGINS, type, name, 'disable'])
-      .then((_) => {}), callback);
+      .then((_) => { /* discard response */ }), callback);
   }
 
   /**
@@ -714,7 +716,7 @@ class DicoogleAccess {
    */
   getToken(): string | null {
     return socket_.getToken();
-  };
+  }
 
   /**
    * [EXPERTS] Assign the module's session token internally. This method is synchronous.
@@ -727,7 +729,7 @@ class DicoogleAccess {
     if (typeof token === 'string') {
       socket_.setToken(token);
     }
-  };
+  }
 
   /**
    * [EXPERTS] Clear this object's user session information. This method is synchronous.
@@ -735,7 +737,7 @@ class DicoogleAccess {
    */
   reset() {
     socket_.reset();
-  };
+  }
 
   /**
    * Check whether the user is authenticated to the server. Authenticated clients will hold an
@@ -744,7 +746,7 @@ class DicoogleAccess {
    */
   isAuthenticated(): boolean {
     return socket_.hasToken();
-  };
+  }
 
   /**
    * Get the user name of the currently authenticated user.
@@ -752,7 +754,7 @@ class DicoogleAccess {
    */
   getUsername(): string | null {
     return socket_.getUsername();
-  };
+  }
 
   /**
    * Get the names of the roles assigned to this user.
@@ -760,7 +762,7 @@ class DicoogleAccess {
    */
   getRoles(): string[] | null {
     return socket_.getRoles();
-  };
+  }
   
   /**
    * Manually log in to Dicoogle using the given credentials.
@@ -770,7 +772,7 @@ class DicoogleAccess {
    */
   login(username: string, password: password, callback?: (error:any, outcome?: LoginOutcome) => void): Promise<LoginOutcome> {
     return andCall(socket_.login(username, password), callback);
-  };
+  }
 
   /**
    * Restore a living Dicoogle session identified by the given token.
@@ -779,7 +781,7 @@ class DicoogleAccess {
    */
   restoreSession(token: string, callback?: (error: any, outcome?: UserInfo) => void): Promise<UserInfo> {
     return andCall(socket_.restore(token), callback);
-  };
+  }
 
   /**
    * Log out from the server.
@@ -787,7 +789,7 @@ class DicoogleAccess {
    */
   logout(callback?: (error: any) => void): Promise<void> {
     return andCall(socket_.logout(), callback);
-  };
+  }
 
   /** Get the current Indexer settings. Unless a specific field is mentioned, all
    * indexer settings will be provided. The type of the given outcome depends on
@@ -839,7 +841,7 @@ class DicoogleAccess {
         }
         return out;
     }), callback);
-  };
+  }
 
   /** Set a portions of the Indexer settings.
    * @param fields a dictionary of settings and their respective values
@@ -867,7 +869,7 @@ class DicoogleAccess {
     if (process.env.NODE_ENV !== 'production') {
         const values = Object.keys(IndexerSettings).map(k => IndexerSettings[k]);
         values.push('saveThumbnail')
-        for (let field in fields) {
+        for (const field in fields) {
             if (values.indexOf(field) === -1) {
                 /* eslint-disable no-console */
                 console.error(`Warning: Attempting to set unrecognized indexer setting '${field}'.`);
@@ -878,7 +880,7 @@ class DicoogleAccess {
 
     return andCallVoid(this.request('POST', Endpoints.INDEXER_SETTINGS)
       .query(fields), callback);
-  };
+  }
 
   /** Get the list of current transfer syntax settings available.
    * @param callback the callback function
@@ -910,14 +912,14 @@ class DicoogleAccess {
   getAETitle(callback?: (error: any, aetitle?: string) => void): Promise<string> {
       return andCall(this.request(Endpoints.DICOM_AETITLE_SETTINGS)
         .then((res) => {
-          let outcome = res.body;
+          const outcome = res.body;
           const ae = outcome && outcome.aetitle;
           if (!ae) {
             return Promise.reject(new Error("Missing server content"));
           }
           return ae;
         }), callback);
-  };
+  }
 
   /** Redefine the AE title of the Dicoogle archive.
    * @param aetitle a valid AE title for the PACS archive
@@ -928,7 +930,7 @@ class DicoogleAccess {
       this.request('PUT', Endpoints.DICOM_AETITLE_SETTINGS)
         .query({ aetitle }
       ), callback);
-  };
+  }
 
   /**
    * Perform a generic GET request to Dicoogle's services. Users of this method can invoke any REST
@@ -959,7 +961,7 @@ class DicoogleAccess {
       method = 'GET';
     }
     return socket_.request(method, uri);
-  };
+  }
 
   /** Obtain the base URL of all Dicoogle services.
    * This method is synchronous.
@@ -1001,7 +1003,7 @@ class DicoogleAccess {
 }
 
 /** @private singleton module */
-let m: DicoogleAccess = new DicoogleAccess();
+const m: DicoogleAccess = new DicoogleAccess();
 
 /**
  * Initialize the Dicoogle access object, which can be used multiple times.

@@ -111,7 +111,7 @@ export class Socket {
      * @param uri - the URI to the intended service, relative to Dicoogle's base URL
      * @returns a superagent object for a new request to this service
      */
-    public request(method: string = 'GET', uri?: string | string[]): SuperAgentRequest {
+    public request(method = 'GET', uri?: string | string[]): SuperAgentRequest {
         const req = superagent(method, [this._url].concat(uri).join('/'))
         if (this._token) {
             req.set('Authorization', this._token);
