@@ -21,15 +21,11 @@
 
 const browserify = require("browserify");
 const buffer = require("vinyl-buffer");
-const eslint = require("gulp-eslint");
 const fs = require("fs");
 const gulp = require("gulp");
 const header = require("gulp-header");
-const rm = require("gulp-rm");
 const source = require("vinyl-source-stream");
 const sourcemaps = require("gulp-sourcemaps");
-const ts = require("gulp-typescript");
-const tsProject = ts.createProject("tsconfig.json");
 const terser = require("gulp-terser");
 
 var _licenseText = null;
@@ -39,26 +35,6 @@ function licenseText() {
   }
   return _licenseText;
 }
-
-function lint() {
-  return gulp
-    .src(["src/*.js", "test/*.js", "test/mock/*.js"])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-}
-exports.lint = lint;
-
-function main() {
-  return tsProject
-    .src()
-    .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(tsProject())
-    .pipe(sourcemaps.write("./"))
-    .pipe(gulp.dest("lib"));
-}
-exports.main = main;
 
 function bundle() {
   // set up the browserify instance on a task basis
@@ -85,11 +61,3 @@ function bundle() {
     .pipe(gulp.dest("dist"));
 }
 exports.bundle = bundle;
-
-function clean() {
-  return gulp.src(["dist/*", "lib/*", "coverage/**", ".nyc_output/**", "docs/**"], { read: false }).pipe(rm());
-}
-exports.clean = clean;
-
-exports.default = gulp.series(lint, main);
-gulp.task("default", exports.default);
