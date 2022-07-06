@@ -25,7 +25,8 @@ const fs = require("fs");
 const gulp = require("gulp");
 const header = require("gulp-header");
 const source = require("vinyl-source-stream");
-const terser = require("gulp-terser");
+const gulpTerser = require("gulp-terser");
+const terser = require("terser");
 
 var _licenseText = null;
 function licenseText() {
@@ -55,8 +56,8 @@ function bundle() {
     .bundle()
     .pipe(source("dicoogle-client.min.js"))
     .pipe(buffer())
-    .pipe(terser())
-    .pipe(header(licenseText()))
+    .pipe(gulpTerser())
+    .pipe(header(licenseText({}, terser.minify)))
     .pipe(gulp.dest("dist"));
 }
 exports.bundle = bundle;
