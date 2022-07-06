@@ -34,13 +34,13 @@
   },
   "license": "GPL-3.0+",
   "dependencies": {
-    "@types/superagent": "^4.1.14",
+    "@types/superagent": "^4.1.15",
     "superagent": "^5.3.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "browserify": "^16.5.2",
-    "chai": "^4.3.4",
+    "chai": "^4.3.6",
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
     "envify": "^4.0.0",
