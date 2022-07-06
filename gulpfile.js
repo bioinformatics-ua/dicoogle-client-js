@@ -42,7 +42,7 @@ function licenseText() {
 
 function lint() {
   return gulp
-    .src(["src/*.js", "test/*.js", "test/mock/*.js", "bin/*.js"])
+    .src(["src/*.js", "test/*.js", "test/mock/*.js"])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());

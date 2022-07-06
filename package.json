@@ -38,12 +38,14 @@
     "superagent": "^5.3.1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
     "browserify": "^17.0.0",
     "chai": "^4.3.6",
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
     "envify": "^4.0.0",
+    "eslint": "^8.19.0",
     "gulp": "^4.0.2",
     "gulp-eslint": "^6.0.0",
     "gulp-header": "^2.0.9",
