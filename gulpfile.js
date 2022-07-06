@@ -25,7 +25,6 @@ const fs = require("fs");
 const gulp = require("gulp");
 const header = require("gulp-header");
 const source = require("vinyl-source-stream");
-const sourcemaps = require("gulp-sourcemaps");
 const terser = require("gulp-terser");
 
 var _licenseText = null;
