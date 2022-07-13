@@ -358,7 +358,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   });
 
   function checkServiceInfo(data) {
-    assert.isBoolean(data.running, 'running must be a boolean');
+    assert.isBoolean(data.isRunning, 'isRunning must be a boolean');
     assert.isBoolean(data.autostart, 'autostart must be a boolean');
     assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
   }
@@ -374,18 +374,18 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
       it("should give no error", async function() {
         await dicoogle.queryRetrieve.stop();
       });
-      it("and running = false", async function() {
+      it("and isRunning = false", async function() {
         let data = await dicoogle.queryRetrieve.getStatus();
-        assert.strictEqual(data.running, false);
+        assert.strictEqual(data.isRunning, false);
       });
     });
     describe('#queryRetrieve.start()', function() {
         it("should give no error", async function() {
           await dicoogle.queryRetrieve.start();
         });
-        it("and running = true", async function() {
+        it("and isRunning = true", async function() {
           let data = await dicoogle.queryRetrieve.getStatus();
-          assert.strictEqual(data.running, true);
+          assert.strictEqual(data.isRunning, true);
         });
     });
     describe('queryRetrieve#configure()', function() {
@@ -459,27 +459,30 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
       it("should give no error", async function() {
         await dicoogle.storage.stop();
       });
-      it("and running = false", async function() {
+      it("and isRunning = false", async function() {
         let data = await dicoogle.storage.getStatus();
-        assert.strictEqual(data.running, false);
+        assert.strictEqual(data.isRunning, false);
       });
     });
     describe('storage#start()', function() {
       it("should give no error", async function() {
         await dicoogle.storage.start();
       });
-      it("and running = true", async function() {
+      it("and isRunning = true", async function() {
         let data = await dicoogle.storage.getStatus();
-        assert.strictEqual(data.running, true);
+        assert.strictEqual(data.isRunning, true);
       });
     });
 
     describe('storage#configure()', function() {
       it("should give no error", async function() {
-        await dicoogle.storage.configure({
+        let outcome = await dicoogle.storage.configure({
           autostart: true,
           port: 7777
         });
+        assert.strictEqual(outcome.success, true);
+        assert.strictEqual(outcome.autostart, true);
+        assert.strictEqual(outcome.port, 7777);
       });
       it("and {autostart, port} changes", async function() {
         let data = await dicoogle.storage.getStatus();

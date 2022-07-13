@@ -21,22 +21,34 @@ import Endpoints from './endpoints';
 import {Socket} from './socket';
 import {andCall, andCallVoid} from './util';
 
+/** Configuration object for a DICOM service. */
 export interface ServiceConfiguration {
-  /// whether the service is currently running
+  /** whether to enable or disable the service */
   running?: boolean,
-  /// whether the service starts automatically
+  /** whether the service should start automatically */
   autostart?: boolean,
-  ///the TCP port that the service listens to
+  /** the TCP port that the service should listen to */
   port?: number,
 }
 
+/** Full status of the DICOM service. */
 export interface ServiceStatus {
-  /// whether the service is currently running
-  running: boolean,
-  /// whether the service starts automatically
+  /** whether the service is currently running */
+  isRunning: boolean,
+  /** whether the service starts automatically */
   autostart: boolean,
-  /// the TCP port that the service listens to
+  /** the TCP port that the service listens to */
   port: number,
+}
+
+/** A DICOM service change outcome object,
+ * obtained when changing one or more properties of a service.
+ * 
+ * If successful, the properties changed will be replicated in this object.
+ */
+export interface ServiceChangeOutcome extends ServiceConfiguration {
+  /** whether the DICOM service update was successful */
+  success: boolean,
 }
 
 export interface RemoteStorage {
@@ -81,10 +93,11 @@ class BaseService {
    * @param config a set of properties to configure
    * @param callback the callback function
    */
-  configure(config: ServiceConfiguration, callback?: (error: Error | null) => void): Promise<void> {
+  configure(config: ServiceConfiguration, callback?: (error: Error | null) => void): Promise<ServiceChangeOutcome> {
     const {running, autostart, port} = config;
-    return andCallVoid(this._socket.post(this._endpoint)
-      .query({running, autostart, port}), callback);
+    return andCall(this._socket.post(this._endpoint)
+      .query({running, autostart, port})
+      .then((resp) => resp.body), callback);
   }
 
   /**
