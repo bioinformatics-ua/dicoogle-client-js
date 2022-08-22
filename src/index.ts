@@ -144,8 +144,17 @@ interface ExportOptions {
 
 type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
+/** An entry in the list of search results. */
 interface SearchResult {
-  [attribute: string]: any,
+  /** A dictionary of DICOM fields of this item,
+   * indexed by DICOM tag keyword such as `SOPInstanceUID` and `Modality`.
+   * 
+   * Which fields are present depends on the list of requested fields.
+   */
+  fields: {
+    [attribute: string]: string,
+  },
+  /** The unique URI which identifies the item in storage. */
   uri: string,
   score?: number,
 }
