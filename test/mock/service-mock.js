@@ -178,12 +178,12 @@ module.exports = function createDicoogleMock(port = 8080) {
 
         let AETitle = 'TESTSRV';
         let Storage = {
-            running: true,
+            isRunning: true,
             autostart: false,
             port: 6666
         };
         let QR = {
-            running: true,
+            isRunning: true,
             autostart: false,
             port: 1045
         };
@@ -478,14 +478,20 @@ module.exports = function createDicoogleMock(port = 8080) {
             .post('/management/dicom/query')
             .query({ running: 'false' })
             .reply(200, function() {
-                QR.running = false;
-                return "success";
+                QR.isRunning = false;
+                return {
+                    success: true,
+                    running: false
+                };
             })
             .post('/management/dicom/query')
             .query({ running: true })
             .reply(200, function() {
-                QR.running = true;
-                return "success";
+                QR.isRunning = true;
+                return {
+                    success: true,
+                    running: true
+                };
             });
 
         nock(BASE_URL)
@@ -502,7 +508,11 @@ module.exports = function createDicoogleMock(port = 8080) {
             .reply(200, function() {
                 QR.autostart = true;
                 QR.port = 7777;
-                return "success";
+                return {
+                    success: true,
+                    autostart: true,
+                    port: 7777
+                };
             })
 
 
@@ -515,21 +525,31 @@ module.exports = function createDicoogleMock(port = 8080) {
             .post('/management/dicom/storage')
             .query({ running: false })
             .reply(200, function() {
-                Storage.running = false;
-                return "success";
+                Storage.isRunning = false;
+                return {
+                    success: true,
+                    running: true
+                };
             })
             .post('/management/dicom/storage')
             .query({ running: true })
             .reply(200, function() {
-                Storage.running = true;
-                return "success";
+                Storage.isRunning = true;
+                return {
+                    success: true,
+                    running: true
+                };
             })
             .post('/management/dicom/storage')
             .query({ autostart: true, port: 7777 })
             .reply(200, function() {
                 Storage.autostart = true;
                 Storage.port = 7777;
-                return "success";
+                return {
+                    success: true,
+                    autostart: true,
+                    port: 7777
+                };
             });
 
         // mock storage servers

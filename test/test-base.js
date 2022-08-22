@@ -496,7 +496,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
 
   function checkServiceInfo(error, data) {
     assert.equal(error, null);
-    assert.isBoolean(data.running, 'running must be a boolean');
+    assert.isBoolean(data.isRunning, 'isRunning must be a boolean');
     assert.isBoolean(data.autostart, 'autostart must be a boolean');
     assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
   }
@@ -517,10 +517,10 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             });
         });
-        it("and running = false", function(done) {
+        it("and isRunning = false", function(done) {
             Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.running, false);
+                assert.strictEqual(data.isRunning, false);
                 done();
             });
         });
@@ -532,10 +532,10 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             })
         });
-        it("and running = true", function(done) {
+        it("and isRunning = true", function(done) {
             Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.running, true);
+                assert.strictEqual(data.isRunning, true);
                 done();
             })
         });
@@ -545,8 +545,11 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
             Dicoogle.queryRetrieve.configure({
                 autostart: true,
                 port: 7777
-            }, function (error) {
+            }, function (error, outcome) {
                 assert.equal(error, null);
+                assert.strictEqual(outcome.success, true);
+                assert.strictEqual(outcome.autostart, true);
+                assert.strictEqual(outcome.port, 7777);
                 done();
             });
         });
@@ -648,10 +651,10 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             })
         });
-        it("and running = false", function(done) {
+        it("and isRunning = false", function(done) {
             Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.running, false);
+                assert.strictEqual(data.isRunning, false);
                 done();
             })
         });
@@ -663,10 +666,10 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             });
         });
-        it("and running = true", function(done) {
+        it("and isRunning = true", function(done) {
             Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.running, true);
+                assert.strictEqual(data.isRunning, true);
                 done();
             })
         });

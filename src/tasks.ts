@@ -25,19 +25,19 @@ import {andCall, andCallVoid} from './util';
  */
 export interface TaskInfo {
     /** the UUID of the task */
-    taskUid: string
+    taskUid: string,
     /** a human readable task name */
-    taskName: string
+    taskName: string,
     /** a number between 0 and 1 representing the task's progress; any negative number means that no prediction is available */
-    taskProgress: number
+    taskProgress: number,
     /** whether the task is complete, assume not if not provided */
-    complete?: boolean
+    complete?: boolean,
     /** only if complete; the time elapsed while the task was running, in milliseconds */
-    elapsedTime?: number
+    elapsedTime?: number,
     /** only if complete; the number of files successfully indexed */
-    nIndexed?: number
+    nIndexed?: number,
     /** only if complete; the number of indexing errors */
-    nErrors?: number
+    nErrors?: number,
 }
 
 export interface TaskOutcome {
