@@ -67,6 +67,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Full status of the DICOM service.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -83,8 +90,8 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#autostart" class="tsd-kind-icon">autostart</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#isrunning" class="tsd-kind-icon">is<wbr>Running</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#port" class="tsd-kind-icon">port</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.servicestatus.html#running" class="tsd-kind-icon">running</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,9 +105,29 @@
 					<div class="tsd-signature tsd-kind-icon">autostart<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/service.ts#L37">service.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/3c45d41/src/service.ts#L39">service.ts:39</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>whether the service starts automatically</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="isrunning" class="tsd-anchor"></a>
+					<h3>is<wbr>Running</h3>
+					<div class="tsd-signature tsd-kind-icon">is<wbr>Running<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/3c45d41/src/service.ts#L37">service.ts:37</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>whether the service is currently running</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="port" class="tsd-anchor"></a>
@@ -108,19 +135,14 @@
 					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/service.ts#L39">service.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/3c45d41/src/service.ts#L41">service.ts:41</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="running" class="tsd-anchor"></a>
-					<h3>running</h3>
-					<div class="tsd-signature tsd-kind-icon">running<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js/blob/feee3f8/src/service.ts#L35">service.ts:35</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>the TCP port that the service listens to</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -174,6 +196,9 @@
 						<a href="_service_.remotestorage.html" class="tsd-kind-icon">Remote<wbr>Storage</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_service_.servicechangeoutcome.html" class="tsd-kind-icon">Service<wbr>Change<wbr>Outcome</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_service_.serviceconfiguration.html" class="tsd-kind-icon">Service<wbr>Configuration</a>
 					</li>
 				</ul>
@@ -185,10 +210,10 @@
 								<a href="_service_.servicestatus.html#autostart" class="tsd-kind-icon">autostart</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.servicestatus.html#port" class="tsd-kind-icon">port</a>
+								<a href="_service_.servicestatus.html#isrunning" class="tsd-kind-icon">is<wbr>Running</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.servicestatus.html#running" class="tsd-kind-icon">running</a>
+								<a href="_service_.servicestatus.html#port" class="tsd-kind-icon">port</a>
 							</li>
 						</ul>
 					</li>
