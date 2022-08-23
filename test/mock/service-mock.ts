@@ -33,7 +33,7 @@ function validateURI(uri) {
  * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
-module.exports = function createDicoogleMock(port = 8080) {
+export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoogleClient> {
     const BASE_URL = `http://127.0.0.1:${port}`;
     
         // prepare Dicoogle server mock
@@ -213,7 +213,7 @@ module.exports = function createDicoogleMock(port = 8080) {
         nock(BASE_URL).get('/index/task')
             .times(3)
             .reply(200, function() {
-                const tasks = [];
+                const tasks: object[] = [];
                 if (!TaskStopped) {
                     tasks.push(RunningTasks[0]);
                 }

@@ -26,7 +26,7 @@ let nockDone = false;
  * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
-module.exports = function createDicoogleMock(port = 8484) {
+export default function createDicoogleMock(port = 8484) {
     const BASE_URL = `http://127.0.0.1:${port}`;
 
     // prepare Dicoogle server mock

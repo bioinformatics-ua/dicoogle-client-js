@@ -18,8 +18,8 @@
  */
 
 /* eslint-env mocha */
-const assert = require('chai').assert;
-const isDicomUUID = require('../src/util').isDicomUUID;
+import {assert} from 'chai';
+import {isDicomUUID} from '../src/util';
 
 describe('Utils: #isDicomUUID()', function() {
 

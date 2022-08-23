@@ -18,8 +18,8 @@
  */
 
 /* eslint-env mocha */
-const assert = require('chai').assert;
-const createMockedDicoogle = require('./mock/service-mock');
+import {assert} from 'chai';
+import createMockedDicoogle from './mock/service-mock';
 const dicoogleClient = require('../src');
 
 const DICOOGLE_VERSION = '2.4.1-TEST';
@@ -38,8 +38,7 @@ function createCheckVersion(done) {
 }
 
 describe('Dicoogle Client, callback API (under Node.js)', function() {
-  /** @type {ReturnType<dicoogleClient>} */
-  var Dicoogle;
+  var Dicoogle: ReturnType<typeof dicoogleClient>;
   before(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
