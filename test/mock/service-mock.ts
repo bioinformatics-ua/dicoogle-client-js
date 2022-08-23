@@ -17,10 +17,10 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dicoogleClient = require('../../src');
-const nock = require('nock');
-const URL = require('url');
-const qs = require('querystring');
+import dicoogleClient from '../../src';
+import nock from 'nock';
+import URL from 'url';
+import * as qs from 'querystring';
 
 function validateURI(uri) {
     if (typeof uri !== 'string') {
@@ -177,12 +177,12 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
 2016-05-24T15:05:52,808 | Plugins initialized`;
 
         let AETitle = 'TESTSRV';
-        let Storage = {
+        const Storage = {
             isRunning: true,
             autostart: false,
             port: 6666
         };
-        let QR = {
+        const QR = {
             isRunning: true,
             autostart: false,
             port: 1045
@@ -346,7 +346,8 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             // mock index on specific provider
             .post('/management/tasks/index')
             .query(({ uri, plugin }) => {
-                return validateURI(uri) && /\w+/.test(plugin);
+                const plugins = Array.isArray(plugin) ? plugin : [plugin!];
+                return validateURI(uri) && plugins.every(p => /\w+/.test(p));
             })
             .reply(200)
 
@@ -369,7 +370,8 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             // mock unindex on specific provider (via query string)
             .post('/management/tasks/unindex')
             .query(({ uri, plugin }) => {
-                return validateURI(uri) && /\w+/.test(plugin);
+                const plugins = Array.isArray(plugin) ? plugin : [plugin!];
+                return validateURI(uri) && plugins.every(p => /\w+/.test(p));
             })
             .reply(200)
 
@@ -726,7 +728,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             .reply(200, function() {
                 // apply side-effect
                 const qstring = URL.parse(this.req.path).query;
-                AETitle = String(qs.parse(qstring).aetitle).trim();
+                AETitle = String(qs.parse(qstring!).aetitle).trim();
                 return 'success';
             });
         
@@ -760,4 +762,4 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             ]});
 
     return dicoogleClient(BASE_URL);
-};
+}

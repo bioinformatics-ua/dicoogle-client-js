@@ -38,6 +38,7 @@
     "superagent": "^5.3.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.3",
     "@types/mocha": "^9.1.1",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
@@ -62,7 +63,8 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "check": "eslint --fix src/ test/*.js test/mock/*.js",
+    "check": "eslint --fix src/ test/*.ts test/mock/*.ts",
+    "strictCheck": "eslint src/ test/*.ts test/mock/*.ts",
     "build": "npm run check && npm run prepare && gulp bundle",
     "prepare": "tsc",
     "clean": "rimraf dist lib coverage .nyc_output docs",

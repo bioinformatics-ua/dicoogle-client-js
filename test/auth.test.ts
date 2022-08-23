@@ -20,10 +20,10 @@
 /* eslint-env mocha */
 import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-auth-mock';
-var UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
+const UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 
 describe('Dicoogle Authentication', function() {
-  var Dicoogle;
+  let Dicoogle;
   function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8484');
@@ -115,7 +115,7 @@ describe('Dicoogle Authentication', function() {
   });
 
   describe('Loading a previous session', function() {
-    var TOKEN = '00000000-0000-0000-0000-000000000001';
+    const TOKEN = '00000000-0000-0000-0000-000000000001';
     it('#setToken(string) should modify the session token', function() {
       Dicoogle.setToken(TOKEN);
       assert.strictEqual(Dicoogle.getToken(), TOKEN);
@@ -136,7 +136,7 @@ describe('Dicoogle Authentication', function() {
     });
 
     it("clear and restore previous session ; should give user name, admin and roles", function(done) {
-        var token = Dicoogle.getToken();
+        const token = Dicoogle.getToken();
         Dicoogle.reset();
 
         Dicoogle.restoreSession(token, function(error, data) {
