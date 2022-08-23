@@ -18,8 +18,8 @@
  */
 
 /* eslint-env mocha */
-const assert = require('chai').assert;
-const createMockedDicoogle = require('./mock/service-mock');
+import {assert} from 'chai';
+import createMockedDicoogle from './mock/service-mock';
 const dicoogleClient = require('../src');
 
 const DICOOGLE_VERSION = '2.4.1-TEST';

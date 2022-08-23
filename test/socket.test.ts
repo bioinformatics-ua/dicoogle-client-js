@@ -18,8 +18,8 @@
  */
 
 /* eslint-env mocha */
-const assert = require('chai').assert;
-const {Socket} = require('../src/socket');
+import {assert} from 'chai';
+import {Socket} from '../src/socket';
 
 describe('Dicoogle Client socket (under Node.js)', function() {
 

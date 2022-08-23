@@ -18,8 +18,8 @@
  */
 
 /* eslint-env mocha */
-var assert = require('chai').assert;
-var createMockedDicoogle = require('./mock/service-auth-mock');
+import {assert} from 'chai';
+import createMockedDicoogle from './mock/service-auth-mock';
 var UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 
 describe('Dicoogle Authentication', function() {
