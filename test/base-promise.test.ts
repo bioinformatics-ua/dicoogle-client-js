@@ -20,7 +20,8 @@
 /* eslint-env mocha */
 import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-mock';
-import dicoogleClient from '../src';
+import dicoogleClient, { DicoogleAccess } from '../src';
+import type { ServiceStatus } from '../src/service';
 
 const DICOOGLE_VERSION = '2.4.1-TEST';
 
@@ -30,8 +31,7 @@ function assertDicomUUID(uid) {
 }
 
 describe('Dicoogle Client, Promise API (under Node.js)', function() {
-  /** @type {ReturnType<dicoogleClient>} */
-  let dicoogle;
+  let dicoogle: DicoogleAccess;
   before(function initBaseURL() {
     dicoogle = createMockedDicoogle(8181);
     assert.strictEqual(dicoogle.getBase(), 'http://127.0.0.1:8181');
@@ -340,8 +340,8 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
       assert.isObject(resp, 'resp is an object');
       assert.isArray(resp.plugins, 'resp.plugins is an array');
       const {plugins} = resp;
-      assert(plugins.length > 0, 'list of plugins not empty');
-      for (const p of plugins) {
+      assert(plugins!.length > 0, 'list of plugins not empty');
+      for (const p of plugins!) {
           assert.isObject(p, 'plugin is an object');
           assert.isString(p.name, 'plugin name ok');
           assert.equal(p.type, 'index', 'plugin type matches requested type');
@@ -357,7 +357,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     });
   });
 
-  function checkServiceInfo(data) {
+  function checkServiceInfo(data: ServiceStatus) {
     assert.isBoolean(data.isRunning, 'isRunning must be a boolean');
     assert.isBoolean(data.autostart, 'autostart must be a boolean');
     assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
