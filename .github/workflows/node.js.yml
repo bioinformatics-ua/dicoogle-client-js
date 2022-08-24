@@ -27,8 +27,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run strictCheck
+      # only lint on current LTS version
+    - if: ${{ matrix.node-version == '16.x' }}
+      run: npm run strictCheck
     - run: npm run cover
+      # use LTS version to report to coveralls
     - name: Coveralls
       uses: coverallsapp/github-action@master
       if: ${{ matrix.node-version == '16.x' }}
