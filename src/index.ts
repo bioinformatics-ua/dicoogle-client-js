@@ -63,7 +63,7 @@ const ServiceSettings = Object.freeze({
 });
 
 /** Options for the `login` method.  */
-interface DicoogleClientOptions {
+export interface DicoogleClientOptions {
   /** The same user's token of a previous session, used only for restoring previous (but recent) sessions. */
   token?: string,
   /** Whether to use HTTPS instead of HTTP, if no scheme is specified in the url. */
@@ -71,7 +71,7 @@ interface DicoogleClientOptions {
 }
 
 /** Options for the `search` method. */
-interface SearchOptions {
+export interface SearchOptions {
   /** Force whether the query is keyword-based, defaults to automatic detection.
    * _Note:_ This field is deprecated in Dicoogle 3.
    */
@@ -102,7 +102,7 @@ interface SearchOptions {
 }
 
 /** Options for the `searchDIM` method. */
-interface SearchDIMOptions {
+export interface SearchDIMOptions {
   /** Force whether the query is keyword-based, defaults to automatic detection.
    * _Note:_ This field is deprecated in Dicoogle 3.
    */
@@ -135,7 +135,7 @@ interface SearchDIMOptions {
 }
 
 /** Options for the `issueExport` method. */
-interface ExportOptions {
+export interface ExportOptions {
   /** Force whether the query is keyword-based, defaults to automatic detection */
   keyword?: boolean,
   /** An array of query provider names, or a string of a provider, defaults to the server's default query provider(s) */
@@ -145,7 +145,7 @@ interface ExportOptions {
 type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
 /** An entry in the list of search results. */
-interface SearchResult {
+export interface SearchResult {
   /** A dictionary of DICOM fields of this item,
    * indexed by DICOM tag keyword such as `SOPInstanceUID` and `Modality`.
    * 
@@ -159,21 +159,21 @@ interface SearchResult {
   score?: number,
 }
 
-interface SearchOutcome {
+export interface SearchOutcome {
   /** The list of results */
   results: SearchResult[],
   /** The time spent performing the search in the server, in milliseconds */
   elapsedTime: number,
 }
 
-interface SearchDIMOutcome {
+export interface SearchDIMOutcome {
   /** The list of results */
   results: SearchPatientResult[],
   /** The time spent performing the search in the server, in milliseconds */
   elapsedTime: number,
 }
 
-interface SearchPatientResult {
+export interface SearchPatientResult {
   id: string,
   name: string,
   gender: string,
@@ -182,7 +182,7 @@ interface SearchPatientResult {
   studies: SearchStudyResult[],
 }
 
-interface SearchStudyResult {
+export interface SearchStudyResult {
   studyDate: string,
   studyDescription: string,
   studyInstanceUID: string,
@@ -191,7 +191,7 @@ interface SearchStudyResult {
   series: SearchSeriesResult[],
 }
 
-interface SearchSeriesResult {
+export interface SearchSeriesResult {
   serieNumber: number,
   serieInstanceUID: string,
   serieDescription: string,
@@ -199,28 +199,28 @@ interface SearchSeriesResult {
   images: SearchImageResult[],
 }
 
-interface SearchImageResult {
+export interface SearchImageResult {
   sopInstanceUID: string,
   uri: string,
   rawPath: string,
   filename: string,
 }
 
-interface DumpOutcome {
+export interface DumpOutcome {
   /** The contents of the requested item */
   results: SearchResult,
   /** The time spent performing the search in the server, in milliseconds */
   elapsedTime: number,
 }
 
-interface LoginOutcome extends UserInfo {
+export interface LoginOutcome extends UserInfo {
   /** The current session token */
   token: string,
 }
 
 /** Indexer settings fields
  */
-interface IndexerSettings {
+export interface IndexerSettings {
   /** The path to the directory to watch. */
   path?: string,
   /** Whether to index zip files. */
@@ -235,19 +235,19 @@ interface IndexerSettings {
   watcher?: boolean,
 }
 
-interface TransferSyntax {
+export interface TransferSyntax {
   uid: string,
   sop_name: string,
   options: TransferOption[],
 }
 
-interface TransferOption {
+export interface TransferOption {
   name: string,
   value: boolean,
 }
 
 /** Abridged information about a web UI plugin. */
-interface WebUIPlugin {
+export interface WebUIPlugin {
   name: string,
   version: string,
   description?: string,
@@ -261,50 +261,50 @@ interface WebUIPlugin {
 /** 
  * An object describing a plugin installed in Dicoogle.
  */
-type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
+export type PluginInfo = StoragePluginInfo | QueryPluginInfo | IndexPluginInfo | ServletPluginInfo;
 
 /** 
  * A string identifying the specific type of plugin
  * which can be installed in Dicoogle.
  * It does not account for plugin sets or dead plugins.
  */
-type PluginType = "query" | "index" | "storage" | "servlet";
+export type PluginType = "query" | "index" | "storage" | "servlet";
 
 /** 
  * A string identifying the type of plugin to request via `getPlugins`.
  * It accounts for plugin types that exist in Dicoogle,
  * as well as plugin sets and dead plugins.
  */
-type PluginInfoType = PluginType | "set" | "dead";
+export type PluginInfoType = PluginType | "set" | "dead";
 
-interface CommonPluginInfo {
+export interface CommonPluginInfo {
   name: string,
   type: string,
   enabled: boolean,
 }
 
-interface StoragePluginInfo extends CommonPluginInfo {
+export interface StoragePluginInfo extends CommonPluginInfo {
   type: "storage",
   scheme: string,
   default: null | boolean,
 }
 
-interface QueryPluginInfo extends CommonPluginInfo {
+export interface QueryPluginInfo extends CommonPluginInfo {
   type: "query",
   dim: null | boolean,
 }
 
-interface IndexPluginInfo extends CommonPluginInfo {
+export interface IndexPluginInfo extends CommonPluginInfo {
   type: "index",
   dim: null | boolean,
 }
 
-interface ServletPluginInfo extends CommonPluginInfo {
+export interface ServletPluginInfo extends CommonPluginInfo {
   type: "servlet",
   endpoints?: null | string[],
 }
 
-interface DeadPluginInfo {
+export interface DeadPluginInfo {
   name: string,
   cause: {
     class: string,
@@ -313,7 +313,7 @@ interface DeadPluginInfo {
 }
 
 /** Response to plugin information. */
-interface PluginsResponse {
+export interface PluginsResponse {
   plugins: PluginInfo[],
   sets: string[],
   dead: DeadPluginInfo[],
@@ -321,9 +321,15 @@ interface PluginsResponse {
 
 type password = string;
 
-/** Main entrypoint to the Dicoogle web API.
+/** Client and main entrypoint to the Dicoogle web API.
+ * 
+ * Obtain an instance of this type by calling the default export 
+ * or the export named `dicoogleClient`.
  */
-class DicoogleAccess {
+export class DicoogleAccess {
+
+  /** @private singleton module, do not use */
+  static __MODULE__ = new DicoogleAccess();
 
   /**
    * @private Please use the `dicoogleClient` function
@@ -631,10 +637,11 @@ class DicoogleAccess {
   }
 
   /** Retrieve information about currently installed web UI plugins.
-   * @param slotId the identifiers of slots to contemplate
+   * @param slotId the identifiers of slots to contemplate,
+   *        retrieve all kinds if empty or null
    * @param callback the callback function
    */
-  getWebUIPlugins(slotId: string, callback?: (error: any, plugins?: WebUIPlugin[]) => void): Promise<WebUIPlugin[]> {
+  getWebUIPlugins(slotId?: string | null, callback?: (error: any, plugins?: WebUIPlugin[]) => void): Promise<WebUIPlugin[]> {
     return andCall(this.request(Endpoints.WEBUI)
       .query(slotId ? {'slot-id': slotId} : {})
       .then((res) => {
@@ -1012,7 +1019,7 @@ class DicoogleAccess {
 }
 
 /** @private singleton module */
-const m: DicoogleAccess = new DicoogleAccess();
+const m: DicoogleAccess = DicoogleAccess.__MODULE__;
 
 /**
  * Initialize the Dicoogle access object, which can be used multiple times.
@@ -1021,7 +1028,7 @@ const m: DicoogleAccess = new DicoogleAccess();
  * @param options a set of options regarding service access and user authentication
  * @returns a singleton dicoogle service access object
  */
-function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): DicoogleAccess {
+export function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): DicoogleAccess {
     if (socket_ && (!url || url === socket_.getBase())) {
         return m;
     }
@@ -1045,4 +1052,4 @@ function dicoogleClient(url?: string, options: DicoogleClientOptions = {}): Dico
 
     return m;
 }
-export = dicoogleClient;
+export default dicoogleClient;

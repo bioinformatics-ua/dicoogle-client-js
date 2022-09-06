@@ -4,6 +4,7 @@
     "target": "ES6",
     "excludePrivate": true,
     "excludeExternals": true,
+    "exclude": ["src/util.ts"],
     "name": "Dicoogle JavaScript Client",
     "readme": "./README.docs.md"
 }
