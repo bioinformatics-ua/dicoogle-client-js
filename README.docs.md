@@ -9,7 +9,7 @@ Documentation was built from our TypeScript definitions, and should be automatic
 - [`dicoogleClient`] is a function for retrieving a Dicoogle access object.
 - [`DicoogleAccess`] is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`] documentation page for a list of all methods and namespaces within.
 
-[`dicoogleClient`]: modules.html#dicoogleClient
+[`dicoogleClient`]: functions/dicoogleClient.html
 [`DicoogleAccess`]: classes/DicoogleAccess.html
 
 ## Installing
