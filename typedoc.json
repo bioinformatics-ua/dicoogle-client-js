@@ -1,7 +1,7 @@
 {
-    "includeDeclarations": true,
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["src/index.ts"],
     "out": "./docs/",
-    "target": "ES6",
     "excludePrivate": true,
     "excludeExternals": true,
     "exclude": ["src/util.ts"],
