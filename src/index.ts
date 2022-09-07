@@ -29,6 +29,12 @@ import {andCall, andCallVoid, isDicomUUID} from './util';
 import {SuperAgentRequest} from 'superagent';
 import { Presets } from './presets';
 
+// re-export interfaces from submodules
+export type { StorageService, QueryRetrieveService } from './service';
+export type { Tasks } from './tasks';
+export type { UserService } from './users';
+export type { Presets } from './presets';
+
 // private variables of the module
 /**@private
  */
