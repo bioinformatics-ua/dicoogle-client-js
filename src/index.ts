@@ -148,7 +148,11 @@ export interface ExportOptions {
   provider?: string | string[],
 }
 
-type DIMLevel = "none" | "patient" | "study" | "series" | "image";
+/** The level of DICOM information requested in a search,
+ * from requesting only the number of records (`none`)
+ * to requesting all information down to the images (`image`).
+ */
+export type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
 /** An entry in the list of search results. */
 export interface SearchResult {
