@@ -10,7 +10,7 @@ span {
 <script src='../dist/dicoogle-client.min.js'></script>
 <script>
   var server = "http://localhost:8080";
-  var Dicoogle = DicoogleClient(server);
+  var Dicoogle = DicoogleClient.dicoogleClient(server);
 
   function doQuery() {
     var query = document.getElementById('txt').value;
