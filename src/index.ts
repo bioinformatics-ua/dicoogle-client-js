@@ -748,7 +748,7 @@ export class DicoogleAccess {
   /**
    * [EXPERTS] Assign the module's session token internally. This method is synchronous.
    * Use it only when you know what you are doing. When restoring a previous (but still
-   * living) session, please prefer [@link restoreSession] instead.
+   * living) session, please prefer {@link restoreSession} instead.
    * 
    * @param token the same user's token of a previous session
    */
