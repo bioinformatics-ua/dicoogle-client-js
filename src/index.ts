@@ -30,10 +30,11 @@ import {SuperAgentRequest} from 'superagent';
 import { Presets } from './presets';
 
 // re-export interfaces from submodules
-export type { StorageService, QueryRetrieveService } from './service';
-export type { Tasks } from './tasks';
-export type { UserService } from './users';
-export type { Presets } from './presets';
+export type { DicomQuerySettings, QueryRetrieveService, RemoteStorage, ServiceChangeOutcome, ServiceConfiguration, ServiceStatus, StorageService } from './service';
+export type { Tasks, TaskInfo, TaskOutcome } from './tasks';
+export type { UserService, User } from './users';
+export type { Presets, ExportPreset } from './presets';
+export type { UserInfo } from './socket';
 
 // private variables of the module
 /**@private
