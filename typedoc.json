@@ -3,6 +3,7 @@
     "entryPoints": ["src/index.ts"],
     "out": "./docs/",
     "excludePrivate": true,
+    "excludeProtected": true,
     "excludeExternals": true,
     "exclude": ["src/util.ts"],
     "name": "Dicoogle JavaScript Client",
