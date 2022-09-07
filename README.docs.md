@@ -4,13 +4,13 @@
 
 ## Top-level API
 
-Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 3+).
+Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 4+).
 
 - [`dicoogleClient`] is a function for retrieving a Dicoogle access object.
 - [`DicoogleAccess`] is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`] documentation page for a list of all methods and namespaces within.
 
-[`dicoogleClient`]: modules.html#dicoogleclient
-[`DicoogleAccess`]: classes/dicoogleaccess.html
+[`dicoogleClient`]: modules.html#dicoogleClient
+[`DicoogleAccess`]: classes/DicoogleAccess.html
 
 ## Installing
 
