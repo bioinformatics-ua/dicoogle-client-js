@@ -790,8 +790,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             });
     }
-    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
-    it("should give transfer syntax settings (patched)", testTransferSettings);
+    it("should give transfer syntax settings", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {
