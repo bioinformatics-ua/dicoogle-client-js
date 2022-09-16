@@ -153,4 +153,4 @@ export default function createDicoogleMock(port = 8484) {
     }
 
     return dicoogleClient(BASE_URL);
-};
+}

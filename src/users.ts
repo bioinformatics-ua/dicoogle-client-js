@@ -50,7 +50,15 @@ export class UserService {
      * @param admin whether the account is an administrator
      */
     add(username: string, password: password, admin: boolean, callback?: (error: Error | null, success?: boolean) => void): Promise<boolean> {
-        return andCall(this.socket.put(Endpoints.USER).query({username, password, admin})
+        return andCall(this.socket.post(Endpoints.USER).query({username, password, admin})
+            .catch((err) => {
+                if (err.status === 405) {
+                    // method not allowed means that we're using Dicoogle 2,
+                    // so we try again with the PUT method
+                    return this.socket.put(Endpoints.USER).query({username, password, admin});
+                }
+                throw err;
+            })
             .then((res) => res.body.success), callback);
     }
 
@@ -59,7 +67,7 @@ export class UserService {
      * @param username the identifier of the user to remove
      */
     remove(username: string, callback?: (error: Error | null, removed?: boolean) => void): Promise<boolean> {
-        return andCall(this.socket.request('DELETE', Endpoints.USER).query({username})
+        return andCall(this.socket.request('DELETE', [Endpoints.USER, username])
             .then((res) => res.body.success), callback);
     }
 }

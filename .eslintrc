@@ -38,6 +38,7 @@
     "eol-last": 1,
     "no-undef": 2,
     "valid-jsdoc": 0,
+    "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/no-unused-vars": [1, {
       "args": "none",
       "vars": "local",

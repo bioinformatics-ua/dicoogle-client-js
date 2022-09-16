@@ -37,7 +37,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
     const BASE_URL = `http://127.0.0.1:${port}`;
     
         // prepare Dicoogle server mock
-        const DICOOGLE_VERSION = '2.4.1-TEST';
+        const DICOOGLE_VERSION = '3.1.0-TEST';
 
         const SEARCH_RESULTS = [
             {
@@ -177,12 +177,12 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
 2016-05-24T15:05:52,808 | Plugins initialized`;
 
         let AETitle = 'TESTSRV';
-        let Storage = {
+        const Storage = {
             isRunning: true,
             autostart: false,
             port: 6666
         };
-        let QR = {
+        const QR = {
             isRunning: true,
             autostart: false,
             port: 1045
@@ -633,9 +633,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
 
         // mock indexer settings
         nock(BASE_URL).get('/management/settings/index')
-            .once().reply(200, () => JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
-        nock(BASE_URL).get('/management/settings/index')
-            .reply(200, () => INDEXER_SETTINGS); // with patched Dicoogle
+            .reply(200, () => INDEXER_SETTINGS); // patched Dicoogle
         // getters
         nock(BASE_URL)
             .get('/management/settings/index/path')
@@ -736,7 +734,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
                 { username: "dicoogle" },
                 { username: "other" }
             ]})
-            .put('/user')
+            .post('/user')
             .query(({username, password, admin}) => {
                 return username === 'drze' &&
                     typeof password === 'string' &&
@@ -750,8 +748,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
                 { username: "drze" },
                 { username: "other" }
             ]})
-            .delete('/user')
-            .query({username: 'drze'})
+            .delete('/user/drze')
             .reply(200, {success: true})
             .get('/user')
             .reply(200, {users: [
@@ -760,4 +757,4 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             ]});
 
     return dicoogleClient(BASE_URL);
-};
+}

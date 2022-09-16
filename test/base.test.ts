@@ -22,7 +22,7 @@ import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-mock';
 const dicoogleClient = require('../src');
 
-const DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '3.1.0-TEST';
 
 function assertDicomUUID(uid) {
     assert.strictEqual(typeof uid, 'string', "UUID must be a string");
@@ -38,7 +38,7 @@ function createCheckVersion(done) {
 }
 
 describe('Dicoogle Client, callback API (under Node.js)', function() {
-  var Dicoogle: ReturnType<typeof dicoogleClient>;
+  let Dicoogle: ReturnType<typeof dicoogleClient>;
   before(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
@@ -148,8 +148,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         assert.isArray(outcome.tasks);
         assert.strictEqual(outcome.tasks.length, 2);
         assert(outcome.count <= outcome.tasks.length);
-        for (var i = 0; i < outcome.tasks.length; i++) {
-            var task = outcome.tasks[i];
+        for (let i = 0; i < outcome.tasks.length; i++) {
+            const task = outcome.tasks[i];
             assert.isObject(task);
             assert.isString(task.taskUid);
             assert.isString(task.taskName);
@@ -174,7 +174,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 assert.isArray(outcome.tasks);
                 assert.strictEqual(outcome.tasks.length, 1);
                 assert.strictEqual(outcome.count, 1);
-                var task = outcome.tasks[0];
+                const task = outcome.tasks[0];
                 assert.isObject(task);
                 assert.isString(task.taskUid);
                 assert.notEqual(task.taskUid, 'f1b6588d-92c2-458c-8c77-e30d8706b662');
@@ -201,7 +201,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         assert.equal(error, null);
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
-        for (var i = 0; i < outcome.results.length; i++) {
+        for (let i = 0; i < outcome.results.length; i++) {
             assert.isObject(outcome.results[i], 'all results must be objects');
             assert.isObject(outcome.results[i].fields, 'all results must have a fields object');
             assert.strictEqual(outcome.results[i].fields.Modality, 'MR', 'all results must be MR');
@@ -231,12 +231,12 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         assert.equal(error, null);
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
-        for (var i = 0; i < outcome.results.length; i++) {
-            var patient = outcome.results[i];
+        for (let i = 0; i < outcome.results.length; i++) {
+            const patient = outcome.results[i];
             assert.isObject(patient, 'all patients must be objects');
             assert.isArray(patient.studies, 'all patients must have a studies array');
-            for (var j = 0; j < patient.studies.length; j++) {
-                var study = patient.studies[i];
+            for (let j = 0; j < patient.studies.length; j++) {
+                const study = patient.studies[i];
                 assert.isObject(study, 'all studies must be objects');
                 assertDicomUUID(study.studyInstanceUID);
                 assert.isArray(study.series, 'all studies must have a series array');
@@ -267,7 +267,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         assert.equal(error, null);
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
-        for (var i = 0; i < outcome.results.length; i++) {
+        for (let i = 0; i < outcome.results.length; i++) {
             assert.isObject(outcome.results[i], 'all results must be objects');
             assert.isObject(outcome.results[i].fields, 'all results must have a fields object');
             assertDicomUUID(outcome.results[i].fields.SOPInstanceUID);
@@ -442,7 +442,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         assert.isArray(resp.plugins, 'resp.plugins is an array');
         assert.isArray(resp.sets, 'resp.sets is an array');
         assert.isArray(resp.dead, 'resp.dead is an array');
-        let {plugins, sets, dead} = resp;
+        const {plugins, sets, dead} = resp;
         assert(plugins.length > 0, 'list of plugins not empty');
         for (const p of plugins) {
             assert.isObject(p, 'plugin is an object');
@@ -467,7 +467,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         assert.equal(error, null);
         assert.isObject(resp, 'resp is an object');
         assert.isArray(resp.plugins, 'resp.plugins is an array');
-        let {plugins} = resp;
+        const {plugins} = resp;
         assert(plugins.length > 0, 'list of plugins not empty');
         for (const p of plugins) {
             assert.isObject(p, 'plugin is an object');
@@ -778,11 +778,11 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
             Dicoogle.getTransferSyntaxSettings(function (error, data) {
                 assert.equal(error, null);
                 assert.isArray(data);
-                for (var i = 0; i < data.length; i++) {
+                for (let i = 0; i < data.length; i++) {
                     assert.isString(data[i].uid, 'uid must be a string');
                     assert.isString(data[i].sop_name, 'sop_name must be a string');
                     assert.isArray(data[i].options);
-                    for (var j = 0; j < data[i].options.length; j++) {
+                    for (let j = 0; j < data[i].options.length; j++) {
                         assert.isString(data[i].options[j].name);
                         assert.isBoolean(data[i].options[j].value);
                     }
@@ -790,8 +790,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             });
     }
-    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
-    it("should give transfer syntax settings (patched)", testTransferSettings);
+    it("should give transfer syntax settings", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {
@@ -865,7 +864,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
   });
 
   describe('AE Title', function() {
-    var title;
+    let title;
     describe('#getAETitle()', function() {
         it("should give a valid AE title", function(done) {
             Dicoogle.getAETitle(function(error, aetitle) {
