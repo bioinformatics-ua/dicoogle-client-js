@@ -752,8 +752,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
                 { username: "drze" },
                 { username: "other" }
             ]})
-            .delete('/user')
-            .query({username: 'drze'})
+            .delete('/user/drze')
             .reply(200, {success: true})
             .get('/user')
             .reply(200, {users: [

@@ -59,7 +59,7 @@ export class UserService {
      * @param username the identifier of the user to remove
      */
     remove(username: string, callback?: (error: Error | null, removed?: boolean) => void): Promise<boolean> {
-        return andCall(this.socket.request('DELETE', Endpoints.USER).query({username})
+        return andCall(this.socket.request('DELETE', [Endpoints.USER, username])
             .then((res) => res.body.success), callback);
     }
 }
