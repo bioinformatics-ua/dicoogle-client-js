@@ -561,8 +561,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         }
       }
     }
-    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
-    it("should give transfer syntax settings (patched)", testTransferSettings);
+    it("should give transfer syntax settings", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {
