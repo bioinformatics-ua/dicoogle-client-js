@@ -17,17 +17,8 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dicoogleClient = require('../../src');
-const nock = require('nock');
-const URL = require('url');
-const qs = require('querystring');
-
-function validateURI(uri) {
-    if (typeof uri !== 'string') {
-        return false;
-    }
-    return /^(file:)?[.-\w/%?&=]+$/.test(uri);
-}
+import dicoogleClient from '../../src';
+import nock from 'nock';
 
 /** Use nock to intercept Dicoogle client requests.
  * @param {number} [port] the TCP port to listen to

@@ -20,13 +20,12 @@
 /* eslint-env mocha */
 import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-legacy-mock';
-const dicoogleClient = require('../src');
+import { DicoogleAccess } from '../src';
 
 const DICOOGLE_VERSION = '2.5.4-TEST';
 
 describe('Dicoogle Client against old Dicoogle servers (under Node.js)', function() {
-  /** @type {ReturnType<dicoogleClient>} */
-  let dicoogle;
+  let dicoogle: DicoogleAccess;
   before(function initBaseURL() {
     dicoogle = createMockedDicoogle(8282);
     assert.strictEqual(dicoogle.getBase(), 'http://127.0.0.1:8282');
@@ -34,14 +33,14 @@ describe('Dicoogle Client against old Dicoogle servers (under Node.js)', functio
 
   describe('#getVersion()', function() {
     it("should give Dicoogle's version with no error", async function() {
-      let {version} = await dicoogle.getVersion();
+      const {version} = await dicoogle.getVersion();
       assert.strictEqual(version, DICOOGLE_VERSION);
     });
   });
 
   describe('User management service', () => {
     it('#list should provide the list of users', async () => {
-      let users = await dicoogle.users.list();
+      const users = await dicoogle.users.list();
       assert.isArray(users);
       for (const u of users) {
         assert.property(u, 'username');
@@ -50,7 +49,7 @@ describe('Dicoogle Client against old Dicoogle servers (under Node.js)', functio
 
     it('#add and #remove should add and remove users (Dicoogle v2)', async () => {
       // add a new user
-      let addSuccess = await dicoogle.users.add('drze', 'verygoodsecret', false);
+      const addSuccess = await dicoogle.users.add('drze', 'verygoodsecret', false);
       assert.isTrue(addSuccess);
 
       // check that the user now exists
@@ -59,7 +58,7 @@ describe('Dicoogle Client against old Dicoogle servers (under Node.js)', functio
       assert.deepInclude(users, {username: 'drze'});
 
       // now remove the user
-      let removeSuccess = await dicoogle.users.remove('drze');
+      const removeSuccess = await dicoogle.users.remove('drze');
       assert.isTrue(removeSuccess);
 
       // check the list again
@@ -70,7 +69,7 @@ describe('Dicoogle Client against old Dicoogle servers (under Node.js)', functio
 
   describe('#getTransferSettings() all', function() {
     async function testTransferSettings() {
-      let data = await dicoogle.getTransferSyntaxSettings();
+      const data = await dicoogle.getTransferSyntaxSettings();
       assert.isArray(data);
       for (let i = 0; i < data.length; i++) {
         assert.isString(data[i].uid, 'uid must be a string');
