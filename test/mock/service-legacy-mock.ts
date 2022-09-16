@@ -19,15 +19,6 @@
 
 const dicoogleClient = require('../../src');
 const nock = require('nock');
-const URL = require('url');
-const qs = require('querystring');
-
-function validateURI(uri) {
-    if (typeof uri !== 'string') {
-        return false;
-    }
-    return /^(file:)?[.-\w/%?&=]+$/.test(uri);
-}
 
 /** Use nock to intercept Dicoogle client requests.
  * @param {number} [port] the TCP port to listen to

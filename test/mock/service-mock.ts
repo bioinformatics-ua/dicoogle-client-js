@@ -177,12 +177,12 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
 2016-05-24T15:05:52,808 | Plugins initialized`;
 
         let AETitle = 'TESTSRV';
-        let Storage = {
+        const Storage = {
             isRunning: true,
             autostart: false,
             port: 6666
         };
-        let QR = {
+        const QR = {
             isRunning: true,
             autostart: false,
             port: 1045
@@ -757,4 +757,4 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             ]});
 
     return dicoogleClient(BASE_URL);
-};
+}
