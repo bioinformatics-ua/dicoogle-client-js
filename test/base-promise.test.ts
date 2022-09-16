@@ -23,7 +23,7 @@ import createMockedDicoogle from './mock/service-mock';
 import dicoogleClient, { DicoogleAccess } from '../src';
 import type { ServiceStatus } from '../src/service';
 
-const DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '3.1.0-TEST';
 
 function assertDicomUUID(uid) {
   assert.strictEqual(typeof uid, 'string', "UUID must be a string");
@@ -561,8 +561,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         }
       }
     }
-    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
-    it("should give transfer syntax settings (patched)", testTransferSettings);
+    it("should give transfer syntax settings", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {

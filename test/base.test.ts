@@ -22,7 +22,7 @@ import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-mock';
 import dicoogleClient, { DicoogleAccess } from '../src';
 
-const DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '3.1.0-TEST';
 
 function assertDicomUUID(uid) {
     assert.strictEqual(typeof uid, 'string', "UUID must be a string");
@@ -795,8 +795,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 done();
             });
     }
-    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
-    it("should give transfer syntax settings (patched)", testTransferSettings);
+    it("should give transfer syntax settings", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {
