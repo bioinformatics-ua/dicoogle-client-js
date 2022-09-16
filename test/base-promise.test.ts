@@ -23,7 +23,7 @@ import createMockedDicoogle from './mock/service-mock';
 import dicoogleClient, { DicoogleAccess } from '../src';
 import type { ServiceStatus } from '../src/service';
 
-const DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '3.1.0-TEST';
 
 function assertDicomUUID(uid) {
   assert.strictEqual(typeof uid, 'string', "UUID must be a string");

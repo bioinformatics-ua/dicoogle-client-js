@@ -37,7 +37,7 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
     const BASE_URL = `http://127.0.0.1:${port}`;
     
         // prepare Dicoogle server mock
-        const DICOOGLE_VERSION = '2.4.1-TEST';
+        const DICOOGLE_VERSION = '3.1.0-TEST';
 
         const SEARCH_RESULTS = [
             {
