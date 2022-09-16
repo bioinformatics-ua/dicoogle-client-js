@@ -22,7 +22,7 @@ import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-mock';
 const dicoogleClient = require('../src');
 
-const DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '3.1.0-TEST';
 
 function assertDicomUUID(uid) {
     assert.strictEqual(typeof uid, 'string', "UUID must be a string");
