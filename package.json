@@ -57,7 +57,7 @@
     "rimraf": "^3.0.2",
     "terser": "^5.14.1",
     "ts-node": "^9.1.1",
-    "typedoc": "^0.19.2",
+    "typedoc": "^0.23.21",
     "typescript": "^3.9.10",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
