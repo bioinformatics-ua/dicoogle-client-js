@@ -17,10 +17,10 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dicoogleClient = require('../../src');
-const nock = require('nock');
-const URL = require('url');
-const qs = require('querystring');
+import dicoogleClient from '../../src';
+import nock from 'nock';
+import URL from 'url';
+import * as qs from 'querystring';
 
 function validateURI(uri) {
     if (typeof uri !== 'string') {
@@ -33,11 +33,11 @@ function validateURI(uri) {
  * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
-module.exports = function createDicoogleMock(port = 8080) {
+export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoogleClient> {
     const BASE_URL = `http://127.0.0.1:${port}`;
     
         // prepare Dicoogle server mock
-        const DICOOGLE_VERSION = '2.4.1-TEST';
+        const DICOOGLE_VERSION = '3.1.0-TEST';
 
         const SEARCH_RESULTS = [
             {
@@ -177,12 +177,12 @@ module.exports = function createDicoogleMock(port = 8080) {
 2016-05-24T15:05:52,808 | Plugins initialized`;
 
         let AETitle = 'TESTSRV';
-        let Storage = {
+        const Storage = {
             isRunning: true,
             autostart: false,
             port: 6666
         };
-        let QR = {
+        const QR = {
             isRunning: true,
             autostart: false,
             port: 1045
@@ -213,7 +213,7 @@ module.exports = function createDicoogleMock(port = 8080) {
         nock(BASE_URL).get('/index/task')
             .times(3)
             .reply(200, function() {
-                const tasks = [];
+                const tasks: object[] = [];
                 if (!TaskStopped) {
                     tasks.push(RunningTasks[0]);
                 }
@@ -346,7 +346,8 @@ module.exports = function createDicoogleMock(port = 8080) {
             // mock index on specific provider
             .post('/management/tasks/index')
             .query(({ uri, plugin }) => {
-                return validateURI(uri) && /\w+/.test(plugin);
+                const plugins = Array.isArray(plugin) ? plugin : [plugin!];
+                return validateURI(uri) && plugins.every(p => /\w+/.test(p));
             })
             .reply(200)
 
@@ -369,7 +370,8 @@ module.exports = function createDicoogleMock(port = 8080) {
             // mock unindex on specific provider (via query string)
             .post('/management/tasks/unindex')
             .query(({ uri, plugin }) => {
-                return validateURI(uri) && /\w+/.test(plugin);
+                const plugins = Array.isArray(plugin) ? plugin : [plugin!];
+                return validateURI(uri) && plugins.every(p => /\w+/.test(p));
             })
             .reply(200)
 
@@ -633,9 +635,7 @@ module.exports = function createDicoogleMock(port = 8080) {
 
         // mock indexer settings
         nock(BASE_URL).get('/management/settings/index')
-            .once().reply(200, () => JSON.stringify(INDEXER_SETTINGS)); // in Dicoogle 2.3.1
-        nock(BASE_URL).get('/management/settings/index')
-            .reply(200, () => INDEXER_SETTINGS); // with patched Dicoogle
+            .reply(200, () => INDEXER_SETTINGS); // patched Dicoogle
         // getters
         nock(BASE_URL)
             .get('/management/settings/index/path')
@@ -726,7 +726,7 @@ module.exports = function createDicoogleMock(port = 8080) {
             .reply(200, function() {
                 // apply side-effect
                 const qstring = URL.parse(this.req.path).query;
-                AETitle = String(qs.parse(qstring).aetitle).trim();
+                AETitle = String(qs.parse(qstring!).aetitle).trim();
                 return 'success';
             });
         
@@ -736,7 +736,7 @@ module.exports = function createDicoogleMock(port = 8080) {
                 { username: "dicoogle" },
                 { username: "other" }
             ]})
-            .put('/user')
+            .post('/user')
             .query(({username, password, admin}) => {
                 return username === 'drze' &&
                     typeof password === 'string' &&
@@ -750,8 +750,7 @@ module.exports = function createDicoogleMock(port = 8080) {
                 { username: "drze" },
                 { username: "other" }
             ]})
-            .delete('/user')
-            .query({username: 'drze'})
+            .delete('/user/drze')
             .reply(200, {success: true})
             .get('/user')
             .reply(200, {users: [
@@ -760,4 +759,4 @@ module.exports = function createDicoogleMock(port = 8080) {
             ]});
 
     return dicoogleClient(BASE_URL);
-};
+}

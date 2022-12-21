@@ -1,10 +1,17 @@
 {
   "root": true,
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "module"
   },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "env": {
     "node": true,
     "es6": true
@@ -16,6 +23,7 @@
   "rules": {
     "no-alert": 2,
     "no-console": 1,
+    "@typescript-eslint/no-non-null-assertion": 0,
     "quotes": 0,
     "curly": 0,
     "global-strict": 0,

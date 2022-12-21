@@ -17,8 +17,8 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dicoogleClient = require('../../src');
-const nock = require('nock');
+import dicoogleClient from '../../src';
+import nock from 'nock';
 
 let nockDone = false;
 
@@ -26,7 +26,7 @@ let nockDone = false;
  * @param {number} [port] the TCP port to listen to
  * @returns {object} a Dicoogle access object Dicoogle access object connected to a mock Dicoogle server.
  */
-module.exports = function createDicoogleMock(port = 8484) {
+export default function createDicoogleMock(port = 8484) {
     const BASE_URL = `http://127.0.0.1:${port}`;
 
     // prepare Dicoogle server mock
@@ -67,7 +67,7 @@ module.exports = function createDicoogleMock(port = 8484) {
                 roles: ['Healthcare', 'Research']
             });
         nock(BASE_URL) // mock get session user information
-            .matchHeader('Authorization', null)
+            .matchHeader('Authorization', /.*/)
             .get('/login')
             .query(true)
             .reply(401);
@@ -153,4 +153,4 @@ module.exports = function createDicoogleMock(port = 8484) {
     }
 
     return dicoogleClient(BASE_URL);
-};
+}

@@ -7,9 +7,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, release/5.x ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, release/5.x ]
 
 jobs:
   build:
@@ -27,7 +27,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+      # only lint on current LTS version
+    - if: ${{ matrix.node-version == '16.x' }}
+      run: npm run strictCheck
     - run: npm run cover
+      # use LTS version to report to coveralls
     - name: Coveralls
       uses: coverallsapp/github-action@master
       if: ${{ matrix.node-version == '16.x' }}

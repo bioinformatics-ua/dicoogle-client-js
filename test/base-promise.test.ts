@@ -18,11 +18,12 @@
  */
 
 /* eslint-env mocha */
-const assert = require('chai').assert;
-const createMockedDicoogle = require('./mock/service-mock');
-const dicoogleClient = require('../src');
+import {assert} from 'chai';
+import createMockedDicoogle from './mock/service-mock';
+import dicoogleClient, { DicoogleAccess } from '../src';
+import type { ServiceStatus } from '../src/service';
 
-const DICOOGLE_VERSION = '2.4.1-TEST';
+const DICOOGLE_VERSION = '3.1.0-TEST';
 
 function assertDicomUUID(uid) {
   assert.strictEqual(typeof uid, 'string', "UUID must be a string");
@@ -30,8 +31,7 @@ function assertDicomUUID(uid) {
 }
 
 describe('Dicoogle Client, Promise API (under Node.js)', function() {
-  /** @type {ReturnType<dicoogleClient>} */
-  let dicoogle;
+  let dicoogle: DicoogleAccess;
   before(function initBaseURL() {
     dicoogle = createMockedDicoogle(8181);
     assert.strictEqual(dicoogle.getBase(), 'http://127.0.0.1:8181');
@@ -40,14 +40,14 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('#getVersion()', function() {
     it("should give Dicoogle's version with no error", async function() {
-      let {version} = await dicoogle.getVersion();
+      const {version} = await dicoogle.getVersion();
       assert.strictEqual(version, DICOOGLE_VERSION);
     });
   });
 
   describe('Get Log', function() {
     it("#getRawLog() should provide log text with no error", async function() {
-      let text = await dicoogle.getRawLog();
+      const text = await dicoogle.getRawLog();
       assert.isString(text);
     });
   });
@@ -55,13 +55,13 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Get Query Providers', function() {
     describe('using #getQueryProviders()', function() {
       it("should give 'lucene' and 'cbir' with no error", async function() {
-        let providers = await dicoogle.getQueryProviders();
+        const providers = await dicoogle.getQueryProviders();
         assert.sameMembers(providers, ['lucene', 'cbir']);
       });
     });
     describe('using #getProviders(function)', function() {
       it("should give 'lucene' and 'cbir' with no error", async function() {
-        let providers = await dicoogle.getProviders();
+        const providers = await dicoogle.getProviders();
         assert.sameMembers(providers, ['lucene', 'cbir']);
       });
     });
@@ -69,14 +69,14 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('Get Index Providers', function() {
     it("#getIndexProviders()", async function() {
-      let providers = await dicoogle.getIndexProviders();
+      const providers = await dicoogle.getIndexProviders();
       assert.sameMembers(providers, ['lucene', 'cbir']);
     });
   });
 
   describe('Get Storage Providers', function() {
     it("#getStorageProviders()", async function() {
-      let providers = await dicoogle.getStorageProviders();
+      const providers = await dicoogle.getStorageProviders();
       assert.sameMembers(providers, ['file', 'dropbox']);
     });
   });
@@ -84,13 +84,13 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Tasks', function() {
 
     it("tasks#list() before changes", async function() {
-      let outcome = await dicoogle.tasks.list();
+      const outcome = await dicoogle.tasks.list();
       assert.isNumber(outcome.count);
       assert.isArray(outcome.tasks);
       assert.strictEqual(outcome.tasks.length, 2);
       assert(outcome.count <= outcome.tasks.length);
       for (let i = 0; i < outcome.tasks.length; i++) {
-        let task = outcome.tasks[i];
+        const task = outcome.tasks[i];
         assert.isObject(task);
         assert.isString(task.taskUid);
         assert.isString(task.taskName);
@@ -108,11 +108,11 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     it("tasks#close() should successfully clear the task", async function() {
       await dicoogle.tasks.close('f1b6588d-92c2-458c-8c77-e30d8706b662');
 
-      let outcome = await dicoogle.tasks.list();
+      const outcome = await dicoogle.tasks.list();
       assert.isArray(outcome.tasks);
       assert.strictEqual(outcome.tasks.length, 1);
       assert.strictEqual(outcome.count, 1);
-      let task = outcome.tasks[0];
+      const task = outcome.tasks[0];
       assert.isObject(task);
       assert.isString(task.taskUid);
       assert.notEqual(task.taskUid, 'f1b6588d-92c2-458c-8c77-e30d8706b662');
@@ -120,7 +120,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
     it("tasks#stop() should successfully clear the task", async function() {
       await dicoogle.tasks.stop('1063922f-1823-4e43-8241-c84c1721a6c1');
-      let outcome = await dicoogle.tasks.list();
+      const outcome = await dicoogle.tasks.list();
       assert.deepEqual(outcome.tasks, []);
       assert.strictEqual(outcome.count, 0);
     });
@@ -130,7 +130,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     function handleOutcome(outcome) {
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
-        for (var i = 0; i < outcome.results.length; i++) {
+        for (let i = 0; i < outcome.results.length; i++) {
             assert.isObject(outcome.results[i], 'all results must be objects');
             assert.isObject(outcome.results[i].fields, 'all results must have a fields object');
             assert.strictEqual(outcome.results[i].fields.Modality, 'MR', 'all results must be MR');
@@ -140,12 +140,12 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     }
 
     it("takes a keyword-based query and gives results successfully", async function() {
-      let outcome = await dicoogle.search('Modality:MR', {provider: 'lucene', keyword: true});
+      const outcome = await dicoogle.search('Modality:MR', {provider: 'lucene', keyword: true});
       handleOutcome(outcome);
     });
 
     it("auto-detects a keyword-based query and gives results successfully", async function() {
-      let outcome = await dicoogle.search('Modality:MR', {provider: 'lucene'});
+      const outcome = await dicoogle.search('Modality:MR', {provider: 'lucene'});
       handleOutcome(outcome);
     });
   });
@@ -156,11 +156,11 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         assert.property(outcome, 'results', 'outcome has results');
         assert.isArray(outcome.results, 'results must be an array');
         for (let i = 0; i < outcome.results.length; i++) {
-            let patient = outcome.results[i];
+            const patient = outcome.results[i];
             assert.isObject(patient, 'all patients must be objects');
             assert.isArray(patient.studies, 'all patients must have a studies array');
             for (let j = 0; j < patient.studies.length; j++) {
-                let study = patient.studies[i];
+                const study = patient.studies[i];
                 assert.isObject(study, 'all studies must be objects');
                 assertDicomUUID(study.studyInstanceUID);
                 assert.isArray(study.series, 'all studies must have a series array');
@@ -171,19 +171,19 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     }
 
     it("with options, gives results successfully", async function() {
-      let outcome = await dicoogle.searchDIM('Modality:MR', {provider: 'lucene', keyword: true});
+      const outcome = await dicoogle.searchDIM('Modality:MR', {provider: 'lucene', keyword: true});
       handleResponse(outcome);
     });
 
     it("without options, gives results successfully", async function() {
-      let outcome = await dicoogle.searchDIM('Modality:MR');
+      const outcome = await dicoogle.searchDIM('Modality:MR');
       handleResponse(outcome);
     });
   });
 
   describe('#search() free text', function() {
     it("should auto-detect a free text query and give some results with no error", async function() {
-      let outcome = await dicoogle.search('Esquina');
+      const outcome = await dicoogle.search('Esquina');
       assert.property(outcome, 'results', 'outcome has results');
       assert.isArray(outcome.results, 'results must be an array');
       for (let i = 0; i < outcome.results.length; i++) {
@@ -251,7 +251,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('#dump()', function() {
     it("should give one result with no error", async function() {
-      let outcome = await dicoogle.dump('1.2.3.4.5.6.7777777.4444.1');
+      const outcome = await dicoogle.dump('1.2.3.4.5.6.7777777.4444.1');
       assert.property(outcome, 'results', 'outcome has results');
       assert.isObject(outcome.results, 'results must be an object');
       assert.isObject(outcome.results.fields, 'must have a fields object');
@@ -261,22 +261,22 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('#issueExport()', function() {
     it("array of fields + options - should give a UID", async function() {
-      let uid = await dicoogle.issueExport('Modality:MR', ['Modality', 'PatientName'], {keyword: true});
+      const uid = await dicoogle.issueExport('Modality:MR', ['Modality', 'PatientName'], {keyword: true});
       assert.isString(uid, 'uid must be a string');
     });
     it("array of fields - should give a UID", async function() {
-      let uid = await dicoogle.issueExport('Modality:MR', ['Modality', 'PatientName']);
+      const uid = await dicoogle.issueExport('Modality:MR', ['Modality', 'PatientName']);
       assert.isString(uid, 'uid must be a string');
     });
     it("one field - should give a UID", async function() {
-      let uid = await dicoogle.issueExport('Modality:MR', 'SOPInstanceUID');
+      const uid = await dicoogle.issueExport('Modality:MR', 'SOPInstanceUID');
       assert.isString(uid, 'uid must be a string');
     });
   });
 
   describe('presets#fieldList()', function() {
     it("should return an array", async function() {
-      let fields = await dicoogle.presets.fieldList();
+      const fields = await dicoogle.presets.fieldList();
       assert.isArray(fields, 'fields must be an array');
       for (const field of fields) {
         assert.isString(field, 'field must be a string');
@@ -286,7 +286,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('Web UI Plugins', function() {
       it("#getWebUIPlugins(); should give all plugins", async function() {
-        let plugins = await dicoogle.getWebUIPlugins(null);
+        const plugins = await dicoogle.getWebUIPlugins(null);
         assert.isArray(plugins, 'plugins is an array');
         assert(plugins.length > 0, 'list of web UI plugins not empty');
         for (const p of plugins) {
@@ -297,7 +297,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         }
       });
       it("#getWebUIPlugins(menu); should give all menu plugins", async function() {
-        let plugins = await dicoogle.getWebUIPlugins('menu');
+        const plugins = await dicoogle.getWebUIPlugins('menu');
         assert.isArray(plugins, 'plugins is an array');
         assert(plugins.length > 0, 'list of web UI plugins not empty');
         for (const p of plugins) {
@@ -311,12 +311,12 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('Plugin info', function() {
     it("#getPlugins(); should give all plugin information", async function() {
-      let resp = await dicoogle.getPlugins();
+      const resp = await dicoogle.getPlugins();
       assert.isObject(resp, 'resp is an object');
       assert.isArray(resp.plugins, 'resp.plugins is an array');
       assert.isArray(resp.sets, 'resp.sets is an array');
       assert.isArray(resp.dead, 'resp.dead is an array');
-      let {plugins, sets, dead} = resp;
+      const {plugins, sets, dead} = resp;
       assert(plugins.length > 0, 'list of plugins not empty');
       for (const p of plugins) {
           assert.isObject(p, 'plugin is an object');
@@ -336,12 +336,12 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     });
 
     it("#getPlugins(type); should give plugin information only of that type", async function() {
-      let resp = await dicoogle.getPlugins('index');
+      const resp = await dicoogle.getPlugins('index');
       assert.isObject(resp, 'resp is an object');
       assert.isArray(resp.plugins, 'resp.plugins is an array');
-      let {plugins} = resp;
-      assert(plugins.length > 0, 'list of plugins not empty');
-      for (const p of plugins) {
+      const {plugins} = resp;
+      assert(plugins!.length > 0, 'list of plugins not empty');
+      for (const p of plugins!) {
           assert.isObject(p, 'plugin is an object');
           assert.isString(p.name, 'plugin name ok');
           assert.equal(p.type, 'index', 'plugin type matches requested type');
@@ -357,7 +357,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     });
   });
 
-  function checkServiceInfo(data) {
+  function checkServiceInfo(data: ServiceStatus) {
     assert.isBoolean(data.isRunning, 'isRunning must be a boolean');
     assert.isBoolean(data.autostart, 'autostart must be a boolean');
     assert.strictEqual(data.port | 0, data.port, 'port must be an integer');
@@ -366,7 +366,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Query/Retrieve service', function() {
     describe('queryRetrieve#getStatus()', function() {
       it("should inform of DICOM QR service status with no error", async function() {
-        let data = await dicoogle.queryRetrieve.getStatus();
+        const data = await dicoogle.queryRetrieve.getStatus();
         checkServiceInfo(data);
       });
     });
@@ -375,7 +375,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         await dicoogle.queryRetrieve.stop();
       });
       it("and isRunning = false", async function() {
-        let data = await dicoogle.queryRetrieve.getStatus();
+        const data = await dicoogle.queryRetrieve.getStatus();
         assert.strictEqual(data.isRunning, false);
       });
     });
@@ -384,7 +384,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
           await dicoogle.queryRetrieve.start();
         });
         it("and isRunning = true", async function() {
-          let data = await dicoogle.queryRetrieve.getStatus();
+          const data = await dicoogle.queryRetrieve.getStatus();
           assert.strictEqual(data.isRunning, true);
         });
     });
@@ -396,7 +396,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
           });
         });
         it("and {autostart, port} changes", async function() {
-          let data = await dicoogle.queryRetrieve.getStatus();
+          const data = await dicoogle.queryRetrieve.getStatus();
           assert.strictEqual(data.autostart, true);
           assert.strictEqual(data.port, 7777);
         });
@@ -405,7 +405,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     describe('Settings', function() {
       describe('Get', function() {
         it("queryRetrieve#getDicomQuerySettings(); should give all settings", async function() {
-          let data = await dicoogle.queryRetrieve.getDicomQuerySettings();
+          const data = await dicoogle.queryRetrieve.getDicomQuerySettings();
           for (const field in data) {
               assert.isNumber(data[field]);
           }
@@ -421,7 +421,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('User management service', () => {
     it('#list should provide the list of users', async () => {
-      let users = await dicoogle.users.list();
+      const users = await dicoogle.users.list();
       assert.isArray(users);
       for (const u of users) {
         assert.property(u, 'username');
@@ -430,7 +430,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
     it('#add and #remove should add and remove users', async () => {
       // add a new user
-      let addSuccess = await dicoogle.users.add('drze', 'verygoodsecret', false);
+      const addSuccess = await dicoogle.users.add('drze', 'verygoodsecret', false);
       assert.isTrue(addSuccess);
 
       // check that the user now exists
@@ -439,7 +439,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
       assert.deepInclude(users, {username: 'drze'});
 
       // now remove the user
-      let removeSuccess = await dicoogle.users.remove('drze');
+      const removeSuccess = await dicoogle.users.remove('drze');
       assert.isTrue(removeSuccess);
 
       // check the list again
@@ -451,7 +451,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Storage service', function() {
     describe('#storage.getStatus()', function() {
       it("should inform of DICOM Storage service status with no error", async function() {
-        let data = await dicoogle.storage.getStatus();
+        const data = await dicoogle.storage.getStatus();
         checkServiceInfo(data);
       });
     });
@@ -460,7 +460,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         await dicoogle.storage.stop();
       });
       it("and isRunning = false", async function() {
-        let data = await dicoogle.storage.getStatus();
+        const data = await dicoogle.storage.getStatus();
         assert.strictEqual(data.isRunning, false);
       });
     });
@@ -469,14 +469,14 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         await dicoogle.storage.start();
       });
       it("and isRunning = true", async function() {
-        let data = await dicoogle.storage.getStatus();
+        const data = await dicoogle.storage.getStatus();
         assert.strictEqual(data.isRunning, true);
       });
     });
 
     describe('storage#configure()', function() {
       it("should give no error", async function() {
-        let outcome = await dicoogle.storage.configure({
+        const outcome = await dicoogle.storage.configure({
           autostart: true,
           port: 7777
         });
@@ -485,7 +485,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         assert.strictEqual(outcome.port, 7777);
       });
       it("and {autostart, port} changes", async function() {
-        let data = await dicoogle.storage.getStatus();
+        const data = await dicoogle.storage.getStatus();
         assert.strictEqual(data.autostart, true);
         assert.strictEqual(data.port, 7777);
       });
@@ -493,7 +493,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
     describe('Remote Storage Servers', function() {
       it("storage#getRemoteServers(); should give a list", async function() {
-        let remotes = await dicoogle.storage.getRemoteServers();
+        const remotes = await dicoogle.storage.getRemoteServers();
         assert.isArray(remotes);
         for (const s of remotes) {
           assert.isObject(s);
@@ -512,7 +512,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
             ip: '10.0.0.144',
             port: 6646
           });
-          let remotes = await dicoogle.storage.getRemoteServers();
+          const remotes = await dicoogle.storage.getRemoteServers();
           assert.strictEqual(remotes.length, 3);
         });
         it("storage#addRemoteServer(); increases list to 4 stores", async function() {
@@ -523,24 +523,24 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
             description: 'our public store',
             public: true
           });
-          let remotes = await dicoogle.storage.getRemoteServers();
+          const remotes = await dicoogle.storage.getRemoteServers();
           assert.strictEqual(remotes.length, 4);
         });
       });
 
       describe('Remove', function() {
         it("storage#removeRemoteServer(store); reduces the list back to 2", async function() {
-          let removed = await dicoogle.storage.removeRemoteServer({
+          const removed = await dicoogle.storage.removeRemoteServer({
             aetitle: 'A_NEW_STORAGE',
             ip: '10.0.0.144',
             port: 6646
           });
           assert(removed);
-          let remotes = await dicoogle.storage.getRemoteServers();
+          const remotes = await dicoogle.storage.getRemoteServers();
           assert.strictEqual(remotes.length, 2);
         });
         it("storage#removeRemoteServer(aetitle); should work", async function() {
-          let removed = await dicoogle.storage.removeRemoteServer('STORAGE_NO_WAY');
+          const removed = await dicoogle.storage.removeRemoteServer('STORAGE_NO_WAY');
           assert.isFalse(removed);
         });
       });
@@ -549,7 +549,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
   describe('#getTransferSettings() all', function() {
     async function testTransferSettings() {
-      let data = await dicoogle.getTransferSyntaxSettings();
+      const data = await dicoogle.getTransferSyntaxSettings();
       assert.isArray(data);
       for (let i = 0; i < data.length; i++) {
         assert.isString(data[i].uid, 'uid must be a string');
@@ -561,8 +561,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         }
       }
     }
-    it("should give transfer syntax settings (2.3.1)", testTransferSettings);
-    it("should give transfer syntax settings (patched)", testTransferSettings);
+    it("should give transfer syntax settings", testTransferSettings);
   });
 
   describe('#setTransferSyntaxOption() an option', function() {
@@ -574,7 +573,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Indexer Settings', function() {
     describe('Get Indexer Settings', function() {
       it("#getIndexerSettings(); should give all settings", async function() {
-        let data = await dicoogle.getIndexerSettings();
+        const data = await dicoogle.getIndexerSettings();
         assert.deepEqual(data, {
           path: '/opt/data',
           zip: false,
@@ -587,7 +586,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
 
       function createTest(name, value) {
         return async () => {
-          let data = await dicoogle.getIndexerSettings(name);
+          const data = await dicoogle.getIndexerSettings(name);
           assert.strictEqual(data, value);
         };
       }
@@ -603,14 +602,14 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     describe('Set Indexer Settings', function() {
       it("#setIndexerSettings('zip', true) should work ok", async function() {
         await dicoogle.setIndexerSettings(dicoogle.IndexerSettings.ZIP, true);
-        let out = await dicoogle.getIndexerSettings(dicoogle.IndexerSettings.ZIP);
+        const out = await dicoogle.getIndexerSettings(dicoogle.IndexerSettings.ZIP);
         assert.strictEqual(out, true);
       });
       it("#setIndexerSettings({'zip': false}) should work ok", async function() {
         const newSettings = {};
         newSettings[dicoogle.IndexerSettings.ZIP] = false;
         await dicoogle.setIndexerSettings(newSettings);
-        let out = await dicoogle.getIndexerSettings(dicoogle.IndexerSettings.ZIP);
+        const out = await dicoogle.getIndexerSettings(dicoogle.IndexerSettings.ZIP);
         assert.strictEqual(out, false);
       });
     });
@@ -620,7 +619,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     let title;
     describe('#getAETitle()', function() {
       it("should give a valid AE title", async function() {
-        let aetitle = await dicoogle.getAETitle();
+        const aetitle = await dicoogle.getAETitle();
         assert.isString(aetitle);
         title = aetitle;
       });
@@ -631,7 +630,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         await dicoogle.setAETitle(title);
       });
       it("and #getAETitle should give the AE title previously set", async function() {
-        let aetitle = await dicoogle.getAETitle();
+        const aetitle = await dicoogle.getAETitle();
         assert.strictEqual(aetitle, title);
       });
     });
@@ -640,12 +639,12 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
   describe('Dicoogle generic request', function() {
     describe("Get Dicoogle version", function() {
       it("#request('GET', 'ext/version') should give Dicoogle's version with no error", async function() {
-        let response = await dicoogle.request('GET', 'ext/version');
+        const response = await dicoogle.request('GET', 'ext/version');
         assert.isObject(response.body);
         assert.propertyVal(response.body, 'version', DICOOGLE_VERSION);
       });
       it("#request('GET', ['ext', 'version']) should give Dicoogle's version with no error", async function() {
-        let response = await dicoogle.request('GET', ['ext', 'version']);
+        const response = await dicoogle.request('GET', ['ext', 'version']);
         assert.isObject(response.body);
         assert.propertyVal(response.body, 'version', DICOOGLE_VERSION);
       });
@@ -656,7 +655,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
     it('Calling dicoogleClient() after initializing should work', async function() {
       const D = dicoogleClient();
 
-      let data = await D.getVersion();
+      const data = await D.getVersion();
       assert.isObject(data);
       assert.propertyVal(data, 'version', DICOOGLE_VERSION);
     });

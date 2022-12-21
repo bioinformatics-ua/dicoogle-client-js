@@ -93,7 +93,7 @@ class BaseService {
    * @param config a set of properties to configure
    * @param callback the callback function
    */
-  configure(config: ServiceConfiguration, callback?: (error: Error | null) => void): Promise<ServiceChangeOutcome> {
+  configure(config: ServiceConfiguration, callback?: (error: Error | null, outcome: ServiceChangeOutcome | undefined) => void): Promise<ServiceChangeOutcome> {
     const {running, autostart, port} = config;
     return andCall(this._socket.post(this._endpoint)
       .query({running, autostart, port})

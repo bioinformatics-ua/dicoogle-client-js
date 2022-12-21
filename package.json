@@ -14,7 +14,7 @@
     "client",
     "api"
   ],
-  "version": "5.2.1",
+  "version": "5.2.2",
   "engines": {
     "node": ">=10.0.0"
   },
@@ -38,6 +38,8 @@
     "superagent": "^5.3.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.3",
+    "@types/mocha": "^9.1.1",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
     "browserify": "^17.0.0",
@@ -61,13 +63,14 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "check": "eslint --fix src/ test/*.js test/mock/*.js",
+    "check": "eslint --fix src/ test/*.ts test/mock/*.ts",
+    "strictCheck": "eslint src/ test/*.ts test/mock/*.ts",
     "build": "npm run check && npm run prepare && gulp bundle",
     "prepare": "tsc",
     "clean": "rimraf dist lib coverage .nyc_output docs",
     "document": "typedoc ./src/",
-    "test": "cross-env NODE_ENV=test mocha -r ts-node/register",
-    "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=lcov --reporter=text mocha -r ts-node/register",
+    "test": "cross-env NODE_ENV=test mocha",
+    "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=lcov --reporter=text mocha",
     "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
