@@ -18,23 +18,24 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 16.x, 18.x]
+        node-version: [16.x, lts/*, latest]
+        # Minimum supported version, latest LTS, and latest stable
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
       # only lint on current LTS version
-    - if: ${{ matrix.node-version == '16.x' }}
+    - if: ${{ matrix.node-version == 'lts/*' }}
       run: npm run strictCheck
     - run: npm run cover
       # use LTS version to report to coveralls
     - name: Coveralls
       uses: coverallsapp/github-action@master
-      if: ${{ matrix.node-version == '16.x' }}
+      if: ${{ matrix.node-version == 'lts/*' }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         
