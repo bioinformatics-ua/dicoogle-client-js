@@ -14,7 +14,7 @@
     "client",
     "api"
   ],
-  "version": "5.2.3",
+  "version": "5.2.4",
   "engines": {
     "node": ">=16",
     "npm": ">=7"
