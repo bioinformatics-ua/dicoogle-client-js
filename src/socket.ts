@@ -21,7 +21,7 @@ import superagent from 'superagent'
 import {SuperAgentRequest} from 'superagent';
 import Endpoints from './endpoints';
 
-type password = string;
+export type password = string;
 
 export interface UserInfo {
     /** The user's unique name */

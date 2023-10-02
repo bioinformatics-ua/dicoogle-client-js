@@ -16,7 +16,8 @@
   ],
   "version": "5.2.3",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=16",
+    "npm": ">=7"
   },
   "main": "./lib/index",
   "types": "./lib/index.d.ts",
@@ -38,9 +39,11 @@
     "superagent": "^5.3.1"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.30.5",
-    "@typescript-eslint/parser": "^5.30.5",
+    "@types/chai": "^4.3.3",
+    "@types/mocha": "^10.0.2",
+    "@types/node": "^16.18.55",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
     "browserify": "^17.0.0",
     "chai": "^4.3.6",
     "coveralls": "^3.1.1",
@@ -50,10 +53,10 @@
     "gulp": "^4.0.2",
     "gulp-header": "^2.0.9",
     "gulp-terser": "^2.1.0",
-    "mocha": "^8.4.0",
+    "mocha": "^10.2.0",
     "nock": "^12.0.3",
     "nyc": "^15.1.0",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.5",
     "terser": "^5.14.1",
     "ts-node": "^9.1.1",
     "typedoc": "^0.19.2",

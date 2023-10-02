@@ -20,12 +20,12 @@
 /* eslint-env mocha */
 import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-legacy-mock';
+import { DicoogleAccess } from '../src';
 
 const DICOOGLE_VERSION = '2.5.4-TEST';
 
 describe('Dicoogle Client against old Dicoogle servers (under Node.js)', function() {
-  /** @type {ReturnType<dicoogleClient>} */
-  let dicoogle;
+  let dicoogle: DicoogleAccess;
   before(function initBaseURL() {
     dicoogle = createMockedDicoogle(8282);
     assert.strictEqual(dicoogle.getBase(), 'http://127.0.0.1:8282');

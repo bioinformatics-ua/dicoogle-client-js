@@ -20,7 +20,7 @@
 /* eslint-env mocha */
 import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-mock';
-const dicoogleClient = require('../src');
+import dicoogleClient, { DicoogleAccess } from '../src';
 
 const DICOOGLE_VERSION = '3.1.0-TEST';
 
@@ -38,7 +38,7 @@ function createCheckVersion(done) {
 }
 
 describe('Dicoogle Client, callback API (under Node.js)', function() {
-  let Dicoogle: ReturnType<typeof dicoogleClient>;
+  let Dicoogle: DicoogleAccess;
   before(function initBaseURL() {
     Dicoogle = createMockedDicoogle();
     assert.strictEqual(Dicoogle.getBase(), 'http://127.0.0.1:8080');
@@ -103,7 +103,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       it("should give 'lucene' and 'cbir' with no error", function(done) {
         Dicoogle.getQueryProviders(function(error, providers) {
           assert.equal(error, null);
-          assert.sameMembers(providers, ['lucene', 'cbir']);
+          assert.isArray(providers);
+          assert.sameMembers(providers!, ['lucene', 'cbir']);
           done();
         });
       });
@@ -112,7 +113,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       it("should give 'lucene' and 'cbir' with no error", function(done) {
         Dicoogle.getProviders(function(error, providers) {
           assert.equal(error, null);
-          assert.sameMembers(providers, ['lucene', 'cbir']);
+          assert.isArray(providers);
+          assert.sameMembers(providers!, ['lucene', 'cbir']);
           done();
         });
       });
@@ -123,7 +125,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
     it("#getIndexProviders()", function(done) {
       Dicoogle.getIndexProviders(function(error, providers) {
         assert.equal(error, null);
-        assert.sameMembers(providers, ['lucene', 'cbir']);
+        assert.isArray(providers);
+        assert.sameMembers(providers!, ['lucene', 'cbir']);
         done();
       });
     });
@@ -133,7 +136,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
     it("#getStorageProviders()", function(done) {
       Dicoogle.getStorageProviders(function(error, providers) {
         assert.equal(error, null);
-        assert.sameMembers(providers, ['file', 'dropbox']);
+        assert.isArray(providers);
+        assert.sameMembers(providers!, ['file', 'dropbox']);
         done();
       });
     });
@@ -358,9 +362,9 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       Dicoogle.dump('1.2.3.4.5.6.7777777.4444.1', function(error, outcome) {
         assert.equal(error, null);
         assert.property(outcome, 'results', 'outcome has results');
-        assert.isObject(outcome.results, 'results must be an object');
-        assert.isObject(outcome.results.fields, 'must have a fields object');
-        assert.isNumber(outcome.elapsedTime, 'outcome has the elapsed time');
+        assert.isObject(outcome!.results, 'results must be an object');
+        assert.isObject(outcome!.results.fields, 'must have a fields object');
+        assert.isNumber(outcome!.elapsedTime, 'outcome has the elapsed time');
         done();
       });
     });
@@ -395,7 +399,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       Dicoogle.presets.fieldList(function(error, fields) {
         assert.equal(error, null);
         assert.isArray(fields, 'fields must be an array');
-        for (const field of fields) {
+        for (const field of fields!) {
           assert.isString(field, 'field must be a string');
         }
         done();
@@ -408,8 +412,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         Dicoogle.getWebUIPlugins(null, function (error, plugins) {
           assert.equal(error, null);
           assert.isArray(plugins, 'plugins is an array');
-          assert(plugins.length > 0, 'list of web UI plugins not empty');
-          for (const p of plugins) {
+          assert(plugins!.length > 0, 'list of web UI plugins not empty');
+          for (const p of plugins!) {
               assert.isObject(p, 'plugin is an object');
               assert.isString(p.name, 'plugin name ok');
               assert.isString(p.version, 'plugin version ok');
@@ -422,8 +426,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         Dicoogle.getWebUIPlugins('menu', function (error, plugins) {
           assert.equal(error, null);
           assert.isArray(plugins, 'plugins is an array');
-          assert(plugins.length > 0, 'list of web UI plugins not empty');
-          for (const p of plugins) {
+          assert(plugins!.length > 0, 'list of web UI plugins not empty');
+          for (const p of plugins!) {
               assert.isObject(p, 'plugin is an object');
               assert.isString(p.name, 'plugin name ok');
               assert.isString(p.version, 'plugin version ok');
@@ -439,10 +443,10 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       Dicoogle.getPlugins(function (error, resp) {
         assert.equal(error, null);
         assert.isObject(resp, 'resp is an object');
-        assert.isArray(resp.plugins, 'resp.plugins is an array');
-        assert.isArray(resp.sets, 'resp.sets is an array');
-        assert.isArray(resp.dead, 'resp.dead is an array');
-        const {plugins, sets, dead} = resp;
+        assert.isArray(resp!.plugins, 'resp.plugins is an array');
+        assert.isArray(resp!.sets, 'resp.sets is an array');
+        assert.isArray(resp!.dead, 'resp.dead is an array');
+        const {plugins, sets, dead} = resp!;
         assert(plugins.length > 0, 'list of plugins not empty');
         for (const p of plugins) {
             assert.isObject(p, 'plugin is an object');
@@ -466,10 +470,10 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
       Dicoogle.getPlugins('index', function (error, resp) {
         assert.equal(error, null);
         assert.isObject(resp, 'resp is an object');
-        assert.isArray(resp.plugins, 'resp.plugins is an array');
-        const {plugins} = resp;
-        assert(plugins.length > 0, 'list of plugins not empty');
-        for (const p of plugins) {
+        assert.isArray(resp!.plugins, 'resp.plugins is an array');
+        const {plugins} = resp!;
+        assert(plugins!.length > 0, 'list of plugins not empty');
+        for (const p of plugins!) {
             assert.isObject(p, 'plugin is an object');
             assert.isString(p.name, 'plugin name ok');
             assert.equal(p.type, 'index', 'plugin type matches requested type');
@@ -519,7 +523,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         it("and isRunning = false", function(done) {
             Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, false);
+                assert.strictEqual(data!.isRunning, false);
                 done();
             });
         });
@@ -534,7 +538,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         it("and isRunning = true", function(done) {
             Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, true);
+                assert.strictEqual(data!.isRunning, true);
                 done();
             })
         });
@@ -546,17 +550,17 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                 port: 7777
             }, function (error, outcome) {
                 assert.equal(error, null);
-                assert.strictEqual(outcome.success, true);
-                assert.strictEqual(outcome.autostart, true);
-                assert.strictEqual(outcome.port, 7777);
+                assert.strictEqual(outcome!.success, true);
+                assert.strictEqual(outcome!.autostart, true);
+                assert.strictEqual(outcome!.port, 7777);
                 done();
             });
         });
         it("and {autostart, port} changes", function(done) {
             Dicoogle.queryRetrieve.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.autostart, true);
-                assert.strictEqual(data.port, 7777);
+                assert.strictEqual(data!.autostart, true);
+                assert.strictEqual(data!.port, 7777);
                 done();
             })
         });
@@ -592,7 +596,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         Dicoogle.users.list((err, users) => {
           assert.ifError(err);
           assert.isArray(users);
-          for (const u of users) {
+          for (const u of users!) {
             assert.property(u, 'username');
           }
           done()
@@ -612,7 +616,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
           // check that the user now exists
           Dicoogle.users.list((err, users) => {
             assert.ifError(err);
-            assert.deepInclude(users, {username: 'drze'});
+            assert.deepInclude(users!, {username: 'drze'});
 
             // now remove the user
             Dicoogle.users.remove('drze', (err, success) => {
@@ -622,7 +626,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
               // check the list again
               Dicoogle.users.list((err, users) => {
                 assert.ifError(err);
-                assert.notDeepInclude(users, {username: 'drze'});
+                assert.notDeepInclude(users!, {username: 'drze'});
                 done()
               });
             });
@@ -653,7 +657,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         it("and isRunning = false", function(done) {
             Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, false);
+                assert.strictEqual(data!.isRunning, false);
                 done();
             })
         });
@@ -668,7 +672,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         it("and isRunning = true", function(done) {
             Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.isRunning, true);
+                assert.strictEqual(data!.isRunning, true);
                 done();
             })
         });
@@ -687,8 +691,8 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
         it("and {autostart, port} changes", function(done) {
             Dicoogle.storage.getStatus(function (error, data) {
                 assert.equal(error, null);
-                assert.strictEqual(data.autostart, true);
-                assert.strictEqual(data.port, 7777);
+                assert.strictEqual(data!.autostart, true);
+                assert.strictEqual(data!.port, 7777);
                 done();
             })
         });
@@ -699,7 +703,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
             Dicoogle.storage.getRemoteServers(function (error, remotes) {
                 assert.equal(error, null);
                 assert.isArray(remotes);
-                for (const s of remotes) {
+                for (const s of remotes!) {
                     assert.isObject(s);
                     assert.isString(s.aetitle);
                     assert.isString(s.ip);
@@ -722,7 +726,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                     assert.equal(error, null);
                     Dicoogle.storage.getRemoteServers(function (error, remotes) {
                         assert.equal(error, null);
-                        assert.strictEqual(remotes.length, 3);
+                        assert.strictEqual(remotes!.length, 3);
                         done();
                     });
                 });
@@ -739,7 +743,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                     assert.equal(error, null);
                     Dicoogle.storage.getRemoteServers(function (error, remotes) {
                         assert.equal(error, null);
-                        assert.strictEqual(remotes.length, 4);
+                        assert.strictEqual(remotes!.length, 4);
                         done();
                     });
                 });
@@ -757,7 +761,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
                     assert(removed);
                     Dicoogle.storage.getRemoteServers(function (error, remotes) {
                         assert.equal(error, null);
-                        assert.strictEqual(remotes.length, 2);
+                        assert.strictEqual(remotes!.length, 2);
                         done();
                     });
                 });
@@ -778,6 +782,7 @@ describe('Dicoogle Client, callback API (under Node.js)', function() {
             Dicoogle.getTransferSyntaxSettings(function (error, data) {
                 assert.equal(error, null);
                 assert.isArray(data);
+                data = data!;
                 for (let i = 0; i < data.length; i++) {
                     assert.isString(data[i].uid, 'uid must be a string');
                     assert.isString(data[i].sop_name, 'sop_name must be a string');

@@ -17,8 +17,8 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dicoogleClient = require('../../src');
-const nock = require('nock');
+import dicoogleClient from '../../src';
+import nock from 'nock';
 
 let nockDone = false;
 
@@ -67,7 +67,7 @@ export default function createDicoogleMock(port = 8484) {
                 roles: ['Healthcare', 'Research']
             });
         nock(BASE_URL) // mock get session user information
-            .matchHeader('Authorization', null)
+            .matchHeader('Authorization', /.*/)
             .get('/login')
             .query(true)
             .reply(401);

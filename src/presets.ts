@@ -25,7 +25,7 @@ import { andCall } from "./util";
 /* Module for DICOM export presets. */
 
 /** A DICOM export preset */
-interface ExportPreset {
+export interface ExportPreset {
     /** The name of the preset */
     name: string,
     /** The DICOM fields to export in sequence */
