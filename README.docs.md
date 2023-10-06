@@ -2,6 +2,8 @@
 
 `dicoogle-client` is a client API to the web services provided by [Dicoogle](https://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 
+This library is compatible with Dicoogle versions 2 and 3.
+
 ## Top-level API
 
 Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 4+).
@@ -14,26 +16,31 @@ Documentation was built from our TypeScript definitions, and should be automatic
 
 ## Installing
 
-### In Node.js
+### Node.js or Browser with bundling
 
-Install "dicoogle-client" with `npm` and import the default export
-or the named export `dicoogleClient`
-from the "dicoogle-client" module.
+Install "dicoogle-client" with `npm` and
+import the _default_ export or the named export `dicoogleClient`
+from the _"dicoogle-client"_ module.
 This works both in JavaScript and in TypeScript.
 
 ```javascript
 import dicoogleClient from 'dicoogle-client';
 ```
 
-When not using ES2015 modules, you need to retrieve the export manually:
+When not using ECMAScript modules (CommonJS environment),
+you need to use an interoperability layer such as [Babel](https://babeljs.io).
+Otherwise, the module can be imported manually:
 
-```typescript
-const {dicoogleClient} = require('dicoogle-client');
+```javascript
+import('dicoogle-client')
+  .then(m => {
+    const dicoogleClient = m.default;
+  });
 ```
 
 ### On the browser, no module system
 
-When _not_ using Node.js or any module system, 
+When _not_ using Node.js or any bundling system,
 you can build the distributable bundle by running:
 
 ```sh
@@ -55,7 +62,7 @@ Calling the module function again will change the Dicoogle base URL of that obje
 This object provides a Promise-based API.
 You can write the following code inside an async function:
 
-```JavaScript
+```javascript
 const dicoogle = dicoogleClient("localhost:8080");
 
 // if required, login to the system before using
@@ -73,8 +80,8 @@ for (const r of result) {
 
 Alternatively, the same methods work when passing a callback as the last parameter.
 
-```JavaScript
-const dicoogle = dicoogleClient("localhost:8080").default;
+```javascript
+const dicoogle = dicoogleClient("localhost:8080");
 
 // if required, login to the system before using
 dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {

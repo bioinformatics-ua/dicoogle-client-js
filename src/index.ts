@@ -20,21 +20,21 @@
 /**
  * Dicoogle Service Wrapper
  */
-import Endpoints from './endpoints';
-import {Socket, UserInfo} from './socket';
-import {StorageService, QueryRetrieveService} from './service';
-import {Tasks} from './tasks';
-import {UserService} from './users';
-import {andCall, andCallVoid, isDicomUUID} from './util';
+import Endpoints from './endpoints.js';
+import {Socket, UserInfo} from './socket.js';
+import {StorageService, QueryRetrieveService} from './service.js';
+import {Tasks} from './tasks.js';
+import {UserService} from './users.js';
+import {andCall, andCallVoid, isDicomUUID} from './util.js';
 import {SuperAgentRequest} from 'superagent';
-import { Presets } from './presets';
+import { Presets } from './presets.js';
 
 // re-export interfaces from submodules
-export type { DicomQuerySettings, QueryRetrieveService, RemoteStorage, ServiceChangeOutcome, ServiceConfiguration, ServiceStatus, StorageService } from './service';
-export type { Tasks, TaskInfo, TaskOutcome } from './tasks';
-export type { UserService, User } from './users';
-export type { Presets, ExportPreset } from './presets';
-export type { UserInfo } from './socket';
+export type { DicomQuerySettings, QueryRetrieveService, RemoteStorage, ServiceChangeOutcome, ServiceConfiguration, ServiceStatus, StorageService } from './service.js';
+export type { Tasks, TaskInfo, TaskOutcome } from './tasks.js';
+export type { UserService, User } from './users.js';
+export type { Presets, ExportPreset } from './presets.js';
+export type { UserInfo } from './socket.js';
 
 // private variables of the module
 /**@private

@@ -19,7 +19,8 @@
     "node": ">=16",
     "npm": ">=7"
   },
-  "main": "./lib/index",
+  "main": "./lib/index.js",
+  "type": "module",
   "types": "./lib/index.d.ts",
   "browserify": {
     "transforms": [

@@ -6,23 +6,22 @@
  *
  * Usage:
  * dicoogle-query [-k] [-s server_location] [-p provider_name]* QUERY
- *
- * @author Eduardo Pinho (eduardopinho@ua.pt)
  */
-var dicoogleClient = require("../lib");
-var util = require('util');
-var server = "http://localhost:8080";
-var query;
-var keyword = undefined;
-var debug = false;
-var forceTTY = false;
-var forceJSON = false;
-var providers = [];
+import dicoogleClient from "../lib/index.js";
+import { inspect } from 'node:util';
 
-var USER = process.env.DICOOGLE_USER;
-var PASSWORD = process.env.DICOOGLE_PASSWORD;
+let server = "http://localhost:8080";
+let query;
+let keyword = undefined;
+let debug = false;
+let forceTTY = false;
+let forceJSON = false;
+let providers = [];
 
-for (var i = 2; i < process.argv.length; i++) {
+let USER = process.env.DICOOGLE_USER;
+let PASSWORD = process.env.DICOOGLE_PASSWORD;
+
+for (let i = 2; i < process.argv.length; i++) {
   if (process.argv[i] === '--help' || process.argv[i] === '-h') {
     console.log("Usage: dicoogle-query [OPTIONS] QUERY");
     console.log("Description: search for images in Dicoogle using text queries\n");
@@ -75,7 +74,7 @@ process.stdout.on('error', function() {
   // ignore problem, the user must have just closed the consumer
 });
 
-var Dicoogle = dicoogleClient(server);
+let Dicoogle = dicoogleClient(server);
 
 if (USER && PASSWORD) {
   Dicoogle.login(USER, PASSWORD, function(err, out) {
@@ -105,7 +104,7 @@ function doSearch() {
       } else {
         var result = outcome.results || [];
         if ((process.stdout.isTTY && !forceJSON) || forceTTY) {
-          console.log(util.inspect(result, {colors: true, depth: 2}));
+          console.log(inspect(result, {colors: true, depth: 2}));
         } else {
           console.log(JSON.stringify(result));
         }

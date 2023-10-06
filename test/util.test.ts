@@ -19,7 +19,7 @@
 
 /* eslint-env mocha */
 import {assert} from 'chai';
-import {isDicomUUID} from '../src/util';
+import {isDicomUUID} from '../src/util.js';
 
 describe('Utils: #isDicomUUID()', function() {
 

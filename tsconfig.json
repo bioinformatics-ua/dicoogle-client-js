@@ -1,8 +1,9 @@
 {
+    "esm": true,
     "compilerOptions": {
         "alwaysStrict": false,
-        "module": "commonjs",
-        "target": "ES2015",
+        "module": "NodeNext",
+        "target": "ES2019",
         "outDir": "lib",
         "rootDir": "src",
         "esModuleInterop": true,
@@ -10,7 +11,7 @@
         "declaration": true,
         "declarationMap": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "Node"
+        "moduleResolution": "NodeNext"
     },
     "include": [
         "src/"
