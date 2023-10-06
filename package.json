@@ -20,6 +20,7 @@
     "npm": ">=7"
   },
   "main": "./lib/index",
+  "type": "commonjs",
   "types": "./lib/index.d.ts",
   "browserify": {
     "transforms": [

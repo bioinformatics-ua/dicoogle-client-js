@@ -20,7 +20,7 @@
 /* eslint-env mocha */
 import {assert} from 'chai';
 import createMockedDicoogle from './mock/service-mock';
-import dicoogleClient, { DicoogleAccess } from '../src';
+import dicoogleClient, { DicoogleAccess } from '../src/index-module';
 
 const DICOOGLE_VERSION = '3.1.0-TEST';
 
