@@ -831,7 +831,7 @@ export class DicoogleAccess {
       callback = field;
       field = undefined;
     }
-    const url = [Endpoints.INDEXER_SETTINGS];
+    const url: string[] = [Endpoints.INDEXER_SETTINGS];
     let all = true;
     if (typeof field === 'string') {
       all = false;
