@@ -13,29 +13,21 @@ Documentation was built from our Typescript definitions, which are also availabl
 ### Quick Start
 
 ```javascript
-const DicoogleClient = require("dicoogle-client");
+import dicoogleClient from "dicoogle-client";
 
 // obtain a dicoogle access object
 const Dicoogle = DicoogleClient("localhost:8080");
 
 // if required, login to the system before using
-Dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
-  if (error) {
-    console.error(error);
-    return;
-  }
+await Dicoogle.login('admin', 'mysecretpassword');
 
-  // Ok! Start using Dicoogle!
-  Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'}, (error, outcome) => {
-    if (error) {
-      console.error(error);
-      return;
-    }
-    // use outcome
-    const {elapsedTime, results} = outcome;
-    // ...
-  });
-});
+// Ok! Start using Dicoogle!
+let outcome = await Dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'});
+// use outcome
+const {elapsedTime, results} = outcome;
+for (const r of result) {
+  console.log(`> ${r.uri}`);
+}
 ```
 
 ## Using the CLI client
@@ -63,7 +55,7 @@ Install this package globally (`npm install -g dicoogle-client`), then use `dico
 
 ## Further Notice
 
-This library is compatible with versions of Dicoogle in the range `>=2.0.0 <3.1.0`, and may be updated as future versions of Dicoogle are released.
+This library is compatible with versions of Dicoogle in the range `>=2.0.0 <3.2.0`, and may be updated as future versions of Dicoogle are released.
 
 ## License
 

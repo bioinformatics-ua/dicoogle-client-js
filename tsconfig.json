@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "allowJs": true,
         "alwaysStrict": false,
         "module": "commonjs",
         "target": "ES2015",
@@ -9,7 +8,9 @@
         "esModuleInterop": true,
         "sourceMap": true,
         "declaration": true,
-        "declarationMap": true
+        "declarationMap": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "Node"
     },
     "include": [
         "src/"

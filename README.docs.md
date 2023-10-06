@@ -1,52 +1,80 @@
 [![npm version](https://badge.fury.io/js/dicoogle-client.svg)](https://badge.fury.io/js/dicoogle-client)
 
-`dicoogle-client` is a client API to the web services provided by [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
+`dicoogle-client` is a client API to the web services provided by [Dicoogle](https://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 
 ## Top-level API
 
-Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 2+).
+Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 4+).
 
-- [`dicoogleClient`](modules/_index_.html#dicoogleclient) is a function for retrieving a Dicoogle access object.
+- [`dicoogleClient`] is a function for retrieving a Dicoogle access object.
 - [`DicoogleAccess`] is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`] documentation page for a list of all methods and namespaces within.
 
-[`DicoogleAccess`]: classes/_index_.dicoogleaccess.html
+[`dicoogleClient`]: functions/dicoogleClient.html
+[`DicoogleAccess`]: classes/DicoogleAccess.html
 
 ## Installing
 
-### In Node.js or CommonJS
+### In Node.js
 
-In Node.js, or when using a CommonJS compatible bundler (such as Browserify or webpack), install "dicoogle-client" with `npm` and `require` the "dicoogle-client" module.
+Install "dicoogle-client" with `npm` and import the default export
+or the named export `dicoogleClient`
+from the "dicoogle-client" module.
+This works both in JavaScript and in TypeScript.
 
 ```javascript
-const dicoogleClient = require('dicoogle-client');
+import dicoogleClient from 'dicoogle-client';
 ```
 
-When using TypeScript:
+When not using ES2015 modules, you need to retrieve the export manually:
 
 ```typescript
-import dicoogleClient = require('dicoogle-client');
+const {dicoogleClient} = require('dicoogle-client');
 ```
 
 ### On the browser, no module system
 
-When _not_ using Node.js or any module system, include the "dist/dicoogle-client.min.js" file as a script, thus exposing `DicoogleClient` as a global.
+When _not_ using Node.js or any module system, 
+you can build the distributable bundle by running:
 
-```HTML
-<script src='path/to/my/libs/dicoogle-client.min.js'></script>
+```sh
+npm run build
 ```
 
-### In ES2015
+Then include the "dist/dicoogle-client.min.js" file as a script,
+thus exposing the `DicoogleClient` module as a global variable.
 
-This is a CommonJS module, and not compatible with ES2015 modules.
-When using ES2015 modules or TypeScript with ES2015, you should import the default function using `require`, or include an interoperable require mechanism, such as using [Babel](https://babeljs.io/).
+```html
+<script src='path/to/my/libs/dicoogle-client.min.js'></script>
+```
 
 ## Basic Usage
 
 Once `dicoogleClient` is fetched, invoke it as a function with the Dicoogle server's endpoint to obtain an access object. The object is a singleton that can be used multiple times.
 Calling the module function again will change the Dicoogle base URL of that object, or retain the address if no argument is passed.
 
+This object provides a Promise-based API.
+You can write the following code inside an async function:
+
 ```JavaScript
 const dicoogle = dicoogleClient("localhost:8080");
+
+// if required, login to the system before using
+await dicoogle.login('admin', 'mysecretpassword');
+
+// Ok! Start using Dicoogle!
+let {elapsedTime, results} = await dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'});
+
+// use outcome
+const {elapsedTime, results} = outcome;
+for (const r of result) {
+  console.log(`> ${r.uri}`);
+}
+```
+
+Alternatively, the same methods work when passing a callback as the last parameter.
+
+```JavaScript
+const dicoogle = dicoogleClient("localhost:8080").default;
 
 // if required, login to the system before using
 dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
@@ -68,21 +96,6 @@ dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
 });
 ```
 
-A Promise-based API is available since version 5.0.0. Therefore, you can write
-the following code inside an async function:
-
-
-```JavaScript
-const dicoogle = dicoogleClient("localhost:8080");
-
-// if required, login to the system before using
-await dicoogle.login('admin', 'mysecretpassword');
-
-// Ok! Start using Dicoogle!
-let {elapsedTime, results} = await dicoogle.search("PatientName:Pinho^Eduardo", {provider: 'lucene'});
-
-// use outcome ...
-```
 
 ## Examples
 

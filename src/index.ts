@@ -29,6 +29,13 @@ import {andCall, andCallVoid, isDicomUUID} from './util';
 import {SuperAgentRequest} from 'superagent';
 import { Presets } from './presets';
 
+// re-export interfaces from submodules
+export type { DicomQuerySettings, QueryRetrieveService, RemoteStorage, ServiceChangeOutcome, ServiceConfiguration, ServiceStatus, StorageService } from './service';
+export type { Tasks, TaskInfo, TaskOutcome } from './tasks';
+export type { UserService, User } from './users';
+export type { Presets, ExportPreset } from './presets';
+export type { UserInfo } from './socket';
+
 // private variables of the module
 /**@private
  */
@@ -142,7 +149,11 @@ export interface ExportOptions {
   provider?: string | string[],
 }
 
-type DIMLevel = "none" | "patient" | "study" | "series" | "image";
+/** The level of DICOM information requested in a search,
+ * from requesting only the number of records (`none`)
+ * to requesting all information down to the images (`image`).
+ */
+export type DIMLevel = "none" | "patient" | "study" | "series" | "image";
 
 /** An entry in the list of search results. */
 export interface SearchResult {
@@ -737,7 +748,7 @@ export class DicoogleAccess {
   /**
    * [EXPERTS] Assign the module's session token internally. This method is synchronous.
    * Use it only when you know what you are doing. When restoring a previous (but still
-   * living) session, please prefer [@link restoreSession] instead.
+   * living) session, please prefer {@link restoreSession} instead.
    * 
    * @param token the same user's token of a previous session
    */
@@ -820,7 +831,7 @@ export class DicoogleAccess {
       callback = field;
       field = undefined;
     }
-    const url = [Endpoints.INDEXER_SETTINGS];
+    const url: string[] = [Endpoints.INDEXER_SETTINGS];
     let all = true;
     if (typeof field === 'string') {
       all = false;

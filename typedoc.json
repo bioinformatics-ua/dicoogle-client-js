@@ -1,8 +1,9 @@
 {
-    "includeDeclarations": true,
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["src/index.ts"],
     "out": "./docs/",
-    "target": "ES6",
     "excludePrivate": true,
+    "excludeProtected": true,
     "excludeExternals": true,
     "exclude": ["src/util.ts"],
     "name": "Dicoogle JavaScript Client",
