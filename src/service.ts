@@ -68,6 +68,7 @@ export interface DicomQuerySettings {
   [key: string]: any,
 }
 
+/** @private */
 class BaseService {
 
   protected _socket: Socket;
@@ -121,6 +122,7 @@ class BaseService {
 }
 
 export class StorageService extends BaseService {
+    /** @private */
     constructor(socket: Socket) {
         super(socket, Endpoints.STORAGE_SERVICE);
     }
@@ -182,6 +184,7 @@ export class StorageService extends BaseService {
 }
 
 export class QueryRetrieveService extends BaseService {
+    /** @private */
     constructor(socket) {
         super(socket, Endpoints.QR_SERVICE);
     }
