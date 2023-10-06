@@ -365,6 +365,8 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             .post('/management/tasks/unindex', ({ uri: uris }) => {
                 return uris.length > 0 && uris.every(validateURI);
             })
+            // client must send more than one URI via form data
+            .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
             .reply(200)
 
             // mock unindex on specific provider (via query string)
