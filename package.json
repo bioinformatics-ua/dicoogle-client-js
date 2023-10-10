@@ -45,6 +45,7 @@
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "browserify": "^17.0.0",
+    "c8": "^8.0.1",
     "chai": "^4.3.6",
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
@@ -55,7 +56,6 @@
     "gulp-terser": "^2.1.0",
     "mocha": "^10.2.0",
     "nock": "^12.0.3",
-    "nyc": "^15.1.0",
     "rimraf": "^5.0.5",
     "terser": "^5.14.1",
     "ts-node": "^10.9.1",
@@ -72,22 +72,12 @@
     "clean": "rimraf dist lib coverage .nyc_output docs",
     "document": "typedoc",
     "test": "cross-env NODE_ENV=test mocha",
-    "cover": "cross-env NODE_ENV=test nyc --reporter=html --reporter=lcov --reporter=text mocha",
-    "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
+    "cover": "cross-env NODE_ENV=test c8 --reporter=html --reporter=lcov --reporter=text mocha",
+    "coveralls": "cross-env NODE_ENV=test c8 report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/bioinformatics-ua/dicoogle-client-js.git"
   },
-  "homepage": "https://www.dicoogle.com",
-  "nyc": {
-    "extension": [
-      ".js",
-      ".ts"
-    ],
-    "exclude": [
-      "gulpfile.js",
-      "test/*"
-    ]
-  }
+  "homepage": "https://www.dicoogle.com"
 }
