@@ -16,20 +16,19 @@ Documentation was built from our TypeScript definitions, and should be automatic
 
 ## Installing
 
-### Node.js or Browser with bundling
+### Node.js
 
-Install "dicoogle-client" with `npm` and
-import the _default_ export or the named export `dicoogleClient`
-from the _"dicoogle-client"_ module.
+Install `dicoogle-client` with `npm` and
+import the _default_ export or the named export `dicoogleClient`.
 This works both in JavaScript and in TypeScript.
 
 ```javascript
 import dicoogleClient from 'dicoogle-client';
 ```
 
-When not using ECMAScript modules (CommonJS environment),
+When not using ECMAScript modules (e.g. using CommonJS),
 you need to use an interoperability layer such as [Babel](https://babeljs.io).
-Otherwise, the module can be imported manually:
+Otherwise, the module will need to be imported dynamically:
 
 ```javascript
 import('dicoogle-client')
@@ -38,21 +37,12 @@ import('dicoogle-client')
   });
 ```
 
-### On the browser, no module system
+### On a Browser with Bundling
 
-When _not_ using Node.js or any bundling system,
-you can build the distributable bundle by running:
-
-```sh
-npm run build
-```
-
-Then include the "dist/dicoogle-client.min.js" file as a script,
-thus exposing the `DicoogleClient` module as a global variable.
-
-```html
-<script src='path/to/my/libs/dicoogle-client.min.js'></script>
-```
+Install and use `dicoogle-client` like in Node.js.
+The library includes a few uses of `process.env.NODE_ENV`,
+which will need to be replaced in a browser environment.
+See an example of this using webpack [here](https://webpack.js.org/plugins/environment-plugin/#root).
 
 ## Basic Usage
 
@@ -106,7 +96,5 @@ dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
 
 ## Examples
 
-The repository includes two examples of dicoogle-client for simple querying:
-
- - "bin/dicoogle-query-cli.js" is a complete stand-alone Node.js application for querying Dicoogle. This is the source code of the `dicoogle-query` executable.
- - "example/app.html" is a web page demonstrating simple querying.
+ - "bin/dicoogle-query-cli.js" is a complete stand-alone Node.js application for querying Dicoogle.
+  This is the source code of the `dicoogle-query` executable.

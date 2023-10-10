@@ -5,7 +5,7 @@
 This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 This library is compatible with browser-based JavaScript and Node.js. A CLI application for searching medical images in Dicoogle is also included (`dicoogle-query`).
 
-This library is compatible with Dicoogle versions `>=2.0.0 <3.3.3`,
+This library intends to be fully compatible with Dicoogle versions 2 and 3,
 and may be updated as future versions of Dicoogle are released.
 
 ## Using the JavaScript API
