@@ -17,5 +17,8 @@
     ],
     "typeAcquisition": {
         "enable": true
+    },
+    "ts-node": {
+        "transpileOnly": true
     }
 }

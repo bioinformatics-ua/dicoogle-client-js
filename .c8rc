@@ -1,0 +1,9 @@
+{
+  "extension": [
+    ".js"
+  ],
+  "exclude": [
+    "gulpfile.js",
+    "test/*"
+  ]
+}
