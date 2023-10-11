@@ -17,9 +17,9 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Endpoints from './endpoints';
-import {Socket} from './socket';
-import {andCall, andCallVoid} from './util';
+import Endpoints from './endpoints.js';
+import {Socket} from './socket.js';
+import {andCall, andCallVoid} from './util.js';
 
 /** And entry describing a task in Dicoogle, which can be complete or in progress.
  */

@@ -19,9 +19,9 @@
 
 /* eslint-env mocha */
 import {assert} from 'chai';
-import createMockedDicoogle from './mock/service-mock';
-import dicoogleClient from '..';
-import type { DicoogleAccess, ServiceStatus } from '..';
+import createMockedDicoogle from './mock/service-mock.js';
+import dicoogleClient from '../src/index.js';
+import type { DicoogleAccess, ServiceStatus } from '../src/index.js';
 
 const DICOOGLE_VERSION = '3.1.0-TEST';
 

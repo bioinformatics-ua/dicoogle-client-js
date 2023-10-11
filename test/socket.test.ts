@@ -19,7 +19,7 @@
 
 /* eslint-env mocha */
 import {assert} from 'chai';
-import {Socket} from '../src/socket';
+import {Socket} from '../src/socket.js';
 
 describe('Dicoogle Client socket (under Node.js)', function() {
 

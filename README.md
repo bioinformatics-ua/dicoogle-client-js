@@ -5,6 +5,9 @@
 This is a web service client API to [Dicoogle](http://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 This library is compatible with browser-based JavaScript and Node.js. A CLI application for searching medical images in Dicoogle is also included (`dicoogle-query`).
 
+This library intends to be fully compatible with Dicoogle versions 2 and 3,
+and may be updated as future versions of Dicoogle are released.
+
 ## Using the JavaScript API
 
 The full API is documented [here](https://bioinformatics-ua.github.io/dicoogle-client-js).
@@ -52,10 +55,6 @@ Install this package globally (`npm install -g dicoogle-client`), then use `dico
  - `DICOOGLE_PASSWORD` : The user's password.
 
 **Example:** `dicoogle-query -p lucene -s "http://demo.dicoogle.com" "Modality:MR"`
-
-## Further Notice
-
-This library is compatible with versions of Dicoogle in the range `>=2.0.0 <3.2.0`, and may be updated as future versions of Dicoogle are released.
 
 ## License
 

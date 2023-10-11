@@ -19,7 +19,7 @@
 
 import superagent from 'superagent'
 import {SuperAgentRequest} from 'superagent';
-import Endpoints from './endpoints';
+import Endpoints from './endpoints.js';
 
 export type password = string;
 

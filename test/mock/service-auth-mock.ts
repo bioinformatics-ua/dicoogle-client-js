@@ -17,7 +17,7 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import dicoogleClient from '../..';
+import dicoogleClient from '../../src/index.js';
 import nock from 'nock';
 
 let nockDone = false;

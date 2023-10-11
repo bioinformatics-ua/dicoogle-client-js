@@ -2,6 +2,8 @@
 
 `dicoogle-client` is a client API to the web services provided by [Dicoogle](https://www.dicoogle.com), the open-source PACS archive, for use in JavaScript applications.
 
+This library is compatible with Dicoogle versions 2 and 3.
+
 ## Top-level API
 
 Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 4+).
@@ -14,38 +16,33 @@ Documentation was built from our TypeScript definitions, and should be automatic
 
 ## Installing
 
-### In Node.js
+### Node.js
 
-Install "dicoogle-client" with `npm` and import the default export
-or the named export `dicoogleClient`
-from the "dicoogle-client" module.
+Install `dicoogle-client` with `npm` and
+import the _default_ export or the named export `dicoogleClient`.
 This works both in JavaScript and in TypeScript.
 
 ```javascript
 import dicoogleClient from 'dicoogle-client';
 ```
 
-When not using ES2015 modules, you need to retrieve the export manually:
+When not using ECMAScript modules (e.g. using CommonJS),
+you need to use an interoperability layer such as [Babel](https://babeljs.io).
+Otherwise, the module will need to be imported dynamically:
 
-```typescript
-const {dicoogleClient} = require('dicoogle-client');
+```javascript
+import('dicoogle-client')
+  .then(m => {
+    const dicoogleClient = m.default;
+  });
 ```
 
-### On the browser, no module system
+### On a Browser with Bundling
 
-When _not_ using Node.js or any module system, 
-you can build the distributable bundle by running:
-
-```sh
-npm run build
-```
-
-Then include the "dist/dicoogle-client.min.js" file as a script,
-thus exposing the `DicoogleClient` module as a global variable.
-
-```html
-<script src='path/to/my/libs/dicoogle-client.min.js'></script>
-```
+Install and use `dicoogle-client` like in Node.js.
+The library includes a few uses of `process.env.NODE_ENV`,
+which will need to be replaced in a browser environment.
+See an example of this using webpack [here](https://webpack.js.org/plugins/environment-plugin/#root).
 
 ## Basic Usage
 
@@ -55,7 +52,7 @@ Calling the module function again will change the Dicoogle base URL of that obje
 This object provides a Promise-based API.
 You can write the following code inside an async function:
 
-```JavaScript
+```javascript
 const dicoogle = dicoogleClient("localhost:8080");
 
 // if required, login to the system before using
@@ -73,8 +70,8 @@ for (const r of result) {
 
 Alternatively, the same methods work when passing a callback as the last parameter.
 
-```JavaScript
-const dicoogle = dicoogleClient("localhost:8080").default;
+```javascript
+const dicoogle = dicoogleClient("localhost:8080");
 
 // if required, login to the system before using
 dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
@@ -99,7 +96,5 @@ dicoogle.login('admin', 'mysecretpassword', function(error, outcome) {
 
 ## Examples
 
-The repository includes two examples of dicoogle-client for simple querying:
-
- - "bin/dicoogle-query-cli.js" is a complete stand-alone Node.js application for querying Dicoogle. This is the source code of the `dicoogle-query` executable.
- - "example/app.html" is a web page demonstrating simple querying.
+ - "bin/dicoogle-query-cli.js" is a complete stand-alone Node.js application for querying Dicoogle.
+  This is the source code of the `dicoogle-query` executable.
