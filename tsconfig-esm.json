@@ -2,15 +2,14 @@
     "compilerOptions": {
         "module": "ES2022",
         "target": "ES2019",
+        "outDir": "lib/esm",
         "rootDir": "src",
         "esModuleInterop": true,
+        "sourceMap": true,
+        "declaration": true,
         "forceConsistentCasingInFileNames": true,
-        "noEmit": true
     },
     "include": [
         "src/"
-    ],
-    "ts-node": {
-        "transpileOnly": true
-    }
+    ]
 }
