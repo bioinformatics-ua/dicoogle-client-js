@@ -1,16 +1,14 @@
 {
     "compilerOptions": {
-        "module": "ES2022",
+        "module": "CommonJS",
         "target": "ES2019",
+        "outDir": "lib/cjs",
         "rootDir": "src",
         "esModuleInterop": true,
+        "sourceMap": true,
         "forceConsistentCasingInFileNames": true,
-        "noEmit": true
     },
     "include": [
         "src/"
-    ],
-    "ts-node": {
-        "transpileOnly": true
-    }
+    ]
 }

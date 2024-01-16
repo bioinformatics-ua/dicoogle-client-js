@@ -19,7 +19,7 @@
 
 /* eslint-env mocha */
 import {assert} from 'chai';
-import createMockedDicoogle from './mock/service-mock.js';
+import createMockedDicoogle from './mock/service-mock.mjs';
 import dicoogleClient from '../src/index.js';
 import type { DicoogleAccess, ServiceStatus } from '../src/index.js';
 
