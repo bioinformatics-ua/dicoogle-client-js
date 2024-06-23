@@ -6,7 +6,7 @@ This library is compatible with Dicoogle versions 2 and 3.
 
 ## Top-level API
 
-Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 4+).
+Documentation was built from our TypeScript definitions, and should be automatically considered by the TypeScript compiler (version 5+).
 
 - [`dicoogleClient`] is a function for retrieving a Dicoogle access object.
 - [`DicoogleAccess`] is a singleton comprising all methods for interacting with the Dicoogle instance. Enter the [`DicoogleAccess`] documentation page for a list of all methods and namespaces within.
@@ -27,14 +27,10 @@ import dicoogleClient from 'dicoogle-client';
 ```
 
 When not using ECMAScript modules (e.g. using CommonJS),
-you need to use an interoperability layer such as [Babel](https://babeljs.io).
-Otherwise, the module will need to be imported dynamically:
+use `require` to fetch the `default` or `dicoogleClient` export.
 
 ```javascript
-import('dicoogle-client')
-  .then(m => {
-    const dicoogleClient = m.default;
-  });
+const { dicoogleClient } = require('dicoogle-client');
 ```
 
 ### On a Browser with Bundling

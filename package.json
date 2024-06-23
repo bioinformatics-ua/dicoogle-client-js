@@ -19,9 +19,12 @@
     "node": ">=16",
     "npm": ">=7"
   },
-  "main": "./lib/index.js",
   "type": "module",
-  "types": "./lib/index.d.ts",
+  "exports": {
+    "import": "./lib/esm/index.js",
+    "require": "./lib/cjs/index.js",
+    "types": "./lib/esm/index.d.ts"
+  },
   "files": [
     "bin/",
     "lib/"
@@ -53,10 +56,10 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "check": "eslint --fix src/ test/*.ts test/mock/*.ts",
-    "strictCheck": "eslint src/ test/*.ts test/mock/*.ts",
+    "check": "eslint --fix src/ test/*.mts test/mock/*.mts",
+    "strictCheck": "eslint src/ test/*.mts test/mock/*.mts",
     "build": "npm run check && npm run prepare",
-    "prepare": "tsc",
+    "prepare": "tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
     "clean": "rimraf dist lib coverage .nyc_output docs",
     "document": "typedoc",
     "test": "cross-env NODE_ENV=test mocha",
