@@ -185,7 +185,8 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
         const QR = {
             isRunning: true,
             autostart: false,
-            port: 1045
+            port: 1045,
+            hostname: undefined
         };
         let TaskClosed = false;
         let TaskStopped = false;
@@ -503,18 +504,27 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
                 error: "Incomplete configurations"
             })
             .post('/management/dicom/query')
-            .query({
-                autostart: true,
-                port: 7777
-            })
+            .query((query) => !!(query.autostart || query.port || query.hostname))
             .reply(200, function() {
-                QR.autostart = true;
-                QR.port = 7777;
-                return {
+                // pass whatever is in the query parameters
+                let query = URL.parse(this.req.path, true).query;
+                let out: {[key: string]: any} = {
                     success: true,
-                    autostart: true,
-                    port: 7777
                 };
+
+                if (query.autostart) {
+                    QR.autostart = query.autostart == 'true';
+                    out.autostart = QR.autostart;
+                }
+                if (query.port) {
+                    QR.port = +query.port;
+                    out.port = QR.port;
+                }
+                if (query.hostname) {
+                    QR.hostname = query.hostname ? query.hostname : undefined;
+                    out.hostname = QR.hostname;
+                }
+                return out;
             })
 
 
