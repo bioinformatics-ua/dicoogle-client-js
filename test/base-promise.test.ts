@@ -392,6 +392,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
         it("should give no error", async function() {
           await dicoogle.queryRetrieve.configure({
             autostart: true,
+            hostname: '127.1',
             port: 7777
           });
         });
@@ -399,6 +400,7 @@ describe('Dicoogle Client, Promise API (under Node.js)', function() {
           const data = await dicoogle.queryRetrieve.getStatus();
           assert.strictEqual(data.autostart, true);
           assert.strictEqual(data.port, 7777);
+          assert.strictEqual(data.hostname, '127.1');
         });
     });
 
