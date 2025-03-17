@@ -29,6 +29,11 @@ export interface ServiceConfiguration {
   autostart?: boolean,
   /** the TCP port that the service should listen to */
   port?: number,
+  /** the hostname that the service should bind to
+   *
+   * _Note:_ Available since Dicoogle 3.5.0
+   */
+  hostname?: string,
 }
 
 /** Full status of the DICOM service. */
@@ -39,6 +44,11 @@ export interface ServiceStatus {
   autostart: boolean,
   /** the TCP port that the service listens to */
   port: number,
+  /** the hostname that the service is bound to
+   *
+   * _Note:_ Available since Dicoogle 3.5.0
+   */
+  hostname?: string,
 }
 
 /** A DICOM service change outcome object,
@@ -52,15 +62,15 @@ export interface ServiceChangeOutcome extends ServiceConfiguration {
 }
 
 export interface RemoteStorage {
-  /// {string} aetitle
+  /** called AE title of the remote DICOM node */
   aetitle: string,
-  /// {string} ip
+  /** IP address or hostname of the remote DICOM node */
   ip: string,
-  /// {number} port
+  /** TCP port to the remote DICOM node */
   port: number,
-  /// {?string} description
+  /** Free text description of the DICOM node */
   description?: string,
-  /// {?boolean} public
+  /** Whether the DICOM node is public */
   public?: boolean,
 }
 
@@ -94,9 +104,9 @@ class BaseService {
    * @param callback the callback function
    */
   configure(config: ServiceConfiguration, callback?: (error: Error | null, outcome: ServiceChangeOutcome | undefined) => void): Promise<ServiceChangeOutcome> {
-    const {running, autostart, port} = config;
+    const {running, autostart, port, hostname} = config;
     return andCall(this._socket.post(this._endpoint)
-      .query({running, autostart, port})
+      .query({running, autostart, hostname, port})
       .then((resp) => resp.body), callback);
   }
 
