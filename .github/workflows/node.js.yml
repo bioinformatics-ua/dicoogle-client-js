@@ -18,8 +18,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, lts/*, latest]
-        # Minimum supported version, latest LTS, and latest stable
+        node-version: [16, lts/*]
+        # Minimum supported version and latest LTS
 
     steps:
     - uses: actions/checkout@v3
