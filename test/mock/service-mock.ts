@@ -507,8 +507,8 @@ export default function createDicoogleMock(port = 8080): ReturnType<typeof dicoo
             .query((query) => !!(query.autostart || query.port || query.hostname))
             .reply(200, function() {
                 // pass whatever is in the query parameters
-                let query = URL.parse(this.req.path, true).query;
-                let out: {[key: string]: any} = {
+                const {query} = URL.parse(this.req.path, true);
+                const out: {[key: string]: string | boolean | number} = {
                     success: true,
                 };
 
