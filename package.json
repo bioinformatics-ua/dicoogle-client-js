@@ -32,7 +32,7 @@
   "license": "GPL-3.0+",
   "dependencies": {
     "@types/superagent": "^4.1.15",
-    "superagent": "^8.1.2"
+    "superagent": "^10.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.3",
